@@ -3,297 +3,690 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DOMOS — AI-платформа для управления жилыми домами</title>
+<title>DOMOS – AI-платформа управления жилыми домами</title>
+<meta name="description" content="DOMOS – операционная система обслуживания жилых домов. От заявки жителя до результата подрядчика: AI-классификация, автоматическая маршрутизация, контроль SLA, прогноз поломок.">
 <style>
 :root{
-  --green-dark:#0f3d2e;--green:#1a5a44;--green-mid:#2d8b6f;
-  --green-light:#e8f1ec;--bg:#f8f6f1;--card:#fff;
-  --text:#1a2b24;--muted:#5a6b64;--border:#e4e8e5;
+  --green-dark:#0f3d2e;
+  --green:#1a5a44;
+  --green-mid:#2d8b6f;
+  --green-light:#e8f1ec;
+  --green-bright:#2ec4a0;
   --navy:#16324a;
+  --bg:#f8f6f1;
+  --bg-dark:#0a1410;
+  --card:#ffffff;
+  --text:#0f1a17;
+  --muted:#5a6b64;
+  --muted-2:#7a8781;
+  --border:#e4e8e5;
+  --danger:#dc2626;
+  --warn:#f59e0b;
+  --ok:#059669;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   background:var(--bg);color:var(--text);line-height:1.55;font-size:16px;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden}
-.container{max-width:1280px;margin:0 auto;padding:0 32px}
-
-/* ============ LOGO ============ */
-.logo{display:inline-flex;align-items:center;font-size:28px;font-weight:700;
-  letter-spacing:3px;color:var(--navy);cursor:pointer;font-family:inherit;
-  line-height:1}
-.logo small{font-size:11px;font-weight:400;letter-spacing:0;color:var(--muted);
-  margin-left:14px;align-self:center;line-height:1.3;text-transform:none}
-.logo-mark{
-  display:inline-block;
-  width:28px;height:28px;
-  margin:0 5px;
-  vertical-align:-5px;
-  flex-shrink:0;
+  overflow-x:hidden;
 }
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+.container{max-width:1240px;margin:0 auto;padding:0 32px}
+
+/* ============ ЛОГОТИП ============ */
+.logo{display:inline-flex;align-items:center;font-size:28px;font-weight:800;
+  letter-spacing:3px;color:var(--green-dark);line-height:1}
+.logo-mark{display:inline-block;width:26px;height:26px;margin:0 5px;
+  vertical-align:-4px;flex-shrink:0}
 .logo-mark svg{width:100%;height:100%;display:block}
 
-/* ============ HEADER ============ */
-.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.96);
-  backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
-.nav{display:flex;gap:28px;align-items:center}
-.nav a{color:var(--text);text-decoration:none;font-size:15px;font-weight:500;
-  transition:color .15s;cursor:pointer}
+/* ============ ШАПКА ============ */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(248,246,241,.85);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid transparent;
+  transition:all .3s ease;
+}
+.header.scrolled{
+  background:rgba(248,246,241,.95);
+  border-bottom-color:var(--border);
+}
+.header-inner{display:flex;align-items:center;justify-content:space-between;
+  padding:18px 0;gap:24px}
+.nav{display:flex;gap:32px}
+.nav a{color:var(--text);font-size:15px;font-weight:500;
+  transition:color .15s;cursor:pointer;position:relative;padding:4px 0}
 .nav a:hover{color:var(--green-mid)}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:10px;
-  border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;
-  transition:all .15s;text-decoration:none}
-.btn-primary{background:var(--green-dark);color:#fff}
-.btn-primary:hover{background:var(--green);transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,61,46,.25)}
-.btn-outline{background:transparent;color:var(--green-dark);border:1.5px solid var(--green-dark)}
+.nav a::after{
+  content:'';position:absolute;bottom:-2px;left:0;right:0;height:2px;
+  background:var(--green-mid);transform:scaleX(0);transition:transform .2s;
+  transform-origin:left;
+}
+.nav a:hover::after{transform:scaleX(1)}
+
+/* Бургер */
+.burger{
+  display:none;width:44px;height:44px;border-radius:12px;
+  align-items:center;justify-content:center;flex-direction:column;gap:5px;
+  border:1px solid var(--border);background:#fff;flex-shrink:0;
+}
+.burger span{display:block;width:20px;height:2px;background:var(--green-dark);
+  border-radius:2px;transition:transform .25s,opacity .25s}
+.burger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.active span:nth-child(2){opacity:0}
+.burger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Мобильное меню */
+.mobile-menu{
+  display:none;position:fixed;inset:0;z-index:99;
+  background:rgba(248,246,241,.98);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  padding:100px 32px 40px;
+  flex-direction:column;gap:8px;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.mobile-menu.open{opacity:1;pointer-events:auto}
+.mobile-menu a{
+  display:block;padding:16px 0;font-size:20px;font-weight:600;
+  color:var(--green-dark);border-bottom:1px solid var(--border);
+  cursor:pointer;
+}
+.mobile-menu .btn{margin-top:24px;justify-content:center}
+
+/* ============ КНОПКИ ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 26px;border-radius:12px;font-size:15px;font-weight:600;
+  transition:all .2s ease;cursor:pointer;white-space:nowrap;
+  min-height:48px;text-align:center}
+.btn-primary{background:var(--green-dark);color:#fff;
+  box-shadow:0 4px 14px rgba(15,61,46,.15)}
+.btn-primary:hover{background:var(--green);
+  transform:translateY(-2px);box-shadow:0 12px 24px rgba(15,61,46,.25)}
+.btn-outline{background:transparent;color:var(--green-dark);
+  border:1.5px solid var(--green-dark)}
 .btn-outline:hover{background:var(--green-dark);color:#fff}
-.btn-proto{background:linear-gradient(135deg,#16324a,#2ec4a0);color:#fff}
-.btn-proto:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(46,196,160,.35)}
+.btn-bright{background:linear-gradient(135deg,var(--navy),var(--green-bright));
+  color:#fff;box-shadow:0 4px 14px rgba(46,196,160,.3)}
+.btn-bright:hover{transform:translateY(-2px);
+  box-shadow:0 12px 28px rgba(46,196,160,.45)}
+.btn-lg{padding:17px 32px;font-size:16px;border-radius:14px}
+.btn-sm{padding:10px 18px;font-size:14px;border-radius:10px;min-height:40px}
+.btn-block{width:100%;justify-content:center}
 
 /* ============ HERO ============ */
-.hero{position:relative;padding:70px 0 0;
-  background:linear-gradient(180deg,rgba(248,246,241,.85) 0%,rgba(248,246,241,.65) 50%,rgba(248,246,241,.95) 100%),
-  url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1600&q=80') center/cover}
-.hero-inner{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:center}
-.hero h1{font-size:44px;line-height:1.12;font-weight:800;color:var(--green-dark);
-  letter-spacing:-.5px;margin-bottom:22px}
-.hero p{font-size:17px;color:var(--text);margin-bottom:32px;max-width:520px;line-height:1.6}
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
-.hero-phone{display:flex;justify-content:center}
-
-/* ============ PHONE ============ */
-.phone{width:280px;height:580px;background:#1a1f1c;border-radius:38px;padding:10px;
-  box-shadow:0 30px 60px rgba(15,61,46,.25),0 10px 20px rgba(0,0,0,.1);position:relative}
-.phone::before{content:'';position:absolute;top:18px;left:50%;transform:translateX(-50%);
-  width:100px;height:22px;background:#1a1f1c;border-radius:0 0 14px 14px;z-index:10}
-.phone-screen{width:100%;height:100%;background:#f8f6f1;border-radius:30px;overflow:hidden;
-  display:flex;flex-direction:column;position:relative}
-.phone-status{display:flex;justify-content:space-between;align-items:center;
-  padding:14px 20px 10px;font-size:12px;font-weight:600;color:var(--green-dark)}
-.phone-app-header{padding:8px 20px 16px;display:flex;justify-content:space-between;align-items:center}
-.phone-app-header .logo{font-size:15px;letter-spacing:2px}
-.phone-app-header .logo .logo-mark{width:14px;height:14px;margin:0 3px;vertical-align:-2px}
-.phone-app-header .avatar{width:28px;height:28px;border-radius:50%;
-  background:linear-gradient(135deg,#f4a261,#e76f51);display:flex;align-items:center;
-  justify-content:center;color:#fff;font-size:13px;font-weight:600}
-.phone-content{flex:1;padding:0 16px;overflow-y:auto}
-.phone-content::-webkit-scrollbar{display:none}
-.phone-section-title{font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600;
-  letter-spacing:.4px;text-transform:uppercase}
-.phone-card{background:#fff;border-radius:12px;padding:12px;margin-bottom:10px;
-  box-shadow:0 2px 8px rgba(15,61,46,.05);border:1px solid #eef1ef}
-.phone-card-title{font-size:13px;font-weight:600;margin-bottom:4px}
-.phone-card-meta{font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center}
-.phone-card-meta .dot{width:5px;height:5px;border-radius:50%;background:var(--green-mid)}
-.phone-badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;
-  font-weight:600;background:#e8f1ec;color:var(--green);margin-top:6px}
-.phone-badge.work{background:#fef3c7;color:#92400e}
-.phone-nav{display:flex;justify-content:space-around;padding:10px 0 12px;
-  border-top:1px solid #eef1ef;background:#fff;font-size:9px;color:var(--muted)}
-.phone-nav div{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
-.phone-nav div.active{color:var(--green-dark);font-weight:600}
-.phone-nav .ico{font-size:16px}
-.phone-photo{width:100%;height:70px;border-radius:8px;margin-top:8px;object-fit:cover}
-
-/* ============ FEATURES ROW ============ */
-.features-row{margin-top:-50px;position:relative;z-index:2;background:#fff;
-  border-radius:20px;padding:28px 32px;box-shadow:0 20px 40px rgba(15,61,46,.08);
-  display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
-.feature-icon{display:flex;flex-direction:column;align-items:center;gap:10px;
-  text-align:center;font-size:13px;color:var(--text);cursor:pointer;padding:14px 8px;
-  border-radius:12px;transition:background .15s,transform .15s}
-.feature-icon:hover{background:var(--green-light);transform:translateY(-3px)}
-.feature-icon .icon-circle{width:48px;height:48px;border-radius:50%;background:var(--green-light);
-  color:var(--green);display:flex;align-items:center;justify-content:center;font-size:22px}
-.feature-icon b{font-size:13px;font-weight:600;line-height:1.3}
-
-/* ============ SECTIONS ============ */
-.section{padding:80px 0}
-.section-title{font-size:34px;font-weight:800;color:var(--green-dark);
-  letter-spacing:-.5px;margin-bottom:14px}
-.section-sub{color:var(--muted);font-size:16px;margin-bottom:48px;max-width:640px}
-
-/* ============ HOW IT WORKS ============ */
-.how-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:60px;align-items:start}
-.steps-flow{display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:32px;position:relative}
-.steps-flow::before{content:'';position:absolute;top:38px;left:10%;right:10%;
-  height:2px;background:#d5e5db;z-index:0}
-.step-dot{display:flex;flex-direction:column;align-items:center;gap:10px;
-  position:relative;z-index:1;flex:1;cursor:pointer}
-.step-circle{width:76px;height:76px;border-radius:50%;background:#fff;
-  border:2px solid #d5e5db;display:flex;align-items:center;justify-content:center;
-  font-size:26px;transition:all .2s}
-.step-dot.active .step-circle{background:var(--green-dark);border-color:var(--green-dark);
-  color:#fff;box-shadow:0 10px 24px rgba(15,61,46,.3);transform:scale(1.05)}
-.step-dot:hover .step-circle{border-color:var(--green-mid)}
-.step-label{font-size:13px;font-weight:600;text-align:center;color:var(--text);
-  max-width:120px;line-height:1.3}
-.step-dot.active .step-label{color:var(--green-dark)}
-.step-num{font-size:11px;font-weight:700;color:var(--green-mid);letter-spacing:.5px}
-.step-card{background:#fff;border-radius:16px;padding:28px;margin-top:8px;
-  box-shadow:0 10px 30px rgba(15,61,46,.06);border:1px solid var(--border);
-  min-height:140px;transition:opacity .15s}
-.step-card h3{font-size:18px;margin-bottom:10px;color:var(--green-dark)}
-.step-card p{color:var(--muted);font-size:14.5px;line-height:1.6}
-
-.ai-card{background:linear-gradient(135deg,#0f3d2e 0%,#1a5a44 100%);color:#fff;
-  border-radius:20px;padding:36px;box-shadow:0 20px 40px rgba(15,61,46,.2)}
-.ai-card h3{font-size:20px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
-.ai-check{display:flex;align-items:flex-start;gap:10px;padding:7px 0;
-  font-size:14.5px;color:#dceee6}
-.ai-check::before{content:'✓';color:#7bd3a8;font-weight:700;flex-shrink:0;
-  width:18px;height:18px;border-radius:50%;background:rgba(123,211,168,.18);
-  display:inline-flex;align-items:center;justify-content:center;font-size:11px;margin-top:3px}
-.ai-result{margin-top:24px;padding:18px 20px;border-radius:12px;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
-  font-size:14px;line-height:1.6;color:#e8f5ef}
-.ai-result b{display:block;color:#fff;margin-bottom:6px;font-size:15px}
-
-/* ============ PHONES CAROUSEL ============ */
-.phones-carousel{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:40px}
-.phone-mini{display:flex;flex-direction:column;align-items:center;gap:14px}
-.phone-mini .phone{width:220px;height:450px;padding:8px;border-radius:32px}
-.phone-mini .phone-screen{border-radius:24px}
-.phone-mini .phone::before{width:80px;height:18px;top:14px;border-radius:0 0 12px 12px}
-.phone-mini .phone-app-header .logo{font-size:13px;letter-spacing:1.5px}
-.phone-mini .phone-app-header .logo .logo-mark{width:12px;height:12px;margin:0 3px;vertical-align:-2px}
-.phone-caption{font-size:13px;font-weight:600;color:var(--green-dark);
-  text-align:center;max-width:200px;line-height:1.35}
-
-/* ============ RESIDENTS ============ */
-.residents{background:#fff;border-radius:24px;padding:56px;
-  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
-  box-shadow:0 20px 40px rgba(15,61,46,.06)}
-.residents-features{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:32px}
-.res-feat{display:flex;gap:12px;align-items:flex-start}
-.res-feat .icon-circle{width:44px;height:44px;border-radius:50%;
-  background:var(--green-light);color:var(--green);display:flex;align-items:center;
-  justify-content:center;font-size:20px;flex-shrink:0}
-.res-feat b{font-size:14px;display:block;margin-bottom:2px}
-.res-feat span{font-size:13px;color:var(--muted);line-height:1.45}
-
-/* ============ UK GRID ============ */
-.uk-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:60px;align-items:center}
-.uk-list{display:flex;flex-direction:column;gap:14px;margin-top:32px}
-.uk-item{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;
-  background:#fff;border-radius:12px;border:1px solid var(--border);transition:all .15s}
-.uk-item:hover{border-color:var(--green-mid);transform:translateX(4px);
-  box-shadow:0 6px 20px rgba(15,61,46,.06)}
-.uk-item .icon-circle{width:38px;height:38px;border-radius:10px;
-  background:var(--green-light);color:var(--green);display:flex;align-items:center;
-  justify-content:center;font-size:18px;flex-shrink:0}
-.uk-item b{font-size:14.5px;display:block;margin-bottom:2px}
-.uk-item span{font-size:13px;color:var(--muted)}
-
-/* ============ BRANDS ============ */
-.brands-row{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:40px}
-.brand-phone{display:flex;flex-direction:column;align-items:center;gap:16px;cursor:pointer}
-.brand-phone .phone{width:220px;height:450px;padding:8px;border-radius:32px;
-  transition:transform .2s}
-.brand-phone:hover .phone{transform:translateY(-6px)}
-.brand-phone .phone-screen{border-radius:24px;background:#fff}
-.brand-phone .phone::before{width:80px;height:16px;top:14px;border-radius:0 0 12px 12px}
-.brand-label{text-align:center;font-weight:600;color:var(--green-dark);font-size:15px}
-.brand-swatch{display:flex;gap:6px;justify-content:center;margin-top:6px}
-.brand-swatch span{width:16px;height:16px;border-radius:50%;
-  border:2px solid #fff;box-shadow:0 0 0 1px var(--border)}
-
-/* ============ PALETTE ============ */
-.palette{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
-.palette span{width:28px;height:28px;border-radius:50%;border:2px solid #fff;
-  box-shadow:0 0 0 1px var(--border);cursor:pointer;transition:transform .15s}
-.palette span:hover{transform:scale(1.15)}
-.palette span.active{transform:scale(1.2);box-shadow:0 0 0 2px var(--green-dark)}
-
-/* ============ CTA PROTO ============ */
-.cta-proto{background:linear-gradient(135deg,#0f3d2e 0%,#1a5a44 60%,#2ec4a0 100%);
-  border-radius:24px;padding:56px;text-align:center;color:#fff;margin:40px 0;
-  box-shadow:0 20px 50px rgba(15,61,46,.25);position:relative;overflow:hidden}
-.cta-proto::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;
-  background:radial-gradient(circle,rgba(46,196,160,.35),transparent 70%);border-radius:50%}
-.cta-proto h2{font-size:30px;font-weight:800;margin-bottom:12px;
-  letter-spacing:-.5px;position:relative;z-index:1}
-.cta-proto p{font-size:16px;color:#c8e6da;margin-bottom:28px;max-width:560px;
-  margin-left:auto;margin-right:auto;position:relative;z-index:1}
-.cta-proto .btn-proto{background:#fff;color:var(--green-dark);font-size:15px;
-  padding:14px 28px;border-radius:12px;font-weight:700;position:relative;z-index:1}
-.cta-proto .btn-proto:hover{background:#f0fdf9;transform:translateY(-2px);
-  box-shadow:0 12px 30px rgba(0,0,0,.2)}
-
-/* ============ FOOTER ============ */
-.footer{background:var(--green-dark);color:#fff;padding:56px 0 32px;margin-top:80px}
-.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
-.footer-logo{font-size:30px;font-weight:700;letter-spacing:3px;margin-bottom:12px;
-  display:inline-flex;align-items:center;color:#fff}
-.footer-logo .logo-mark{width:28px;height:28px;margin:0 5px;vertical-align:-5px}
-.footer-tag{color:#a8c4b6;font-size:14px;margin-bottom:20px}
-.footer-col h4{font-size:14px;margin-bottom:16px;color:#fff;font-weight:600}
-.footer-col a{display:block;color:#a8c4b6;text-decoration:none;font-size:14px;
-  padding:5px 0;transition:color .15s;cursor:pointer}
-.footer-col a:hover{color:#fff}
-.footer-bottom{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);
-  display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#a8c4b6;
-  flex-wrap:wrap;gap:12px}
-
-/* ============ MODAL ============ */
-.modal-overlay{position:fixed;inset:0;background:rgba(15,61,46,.6);
-  backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;
-  justify-content:center;padding:24px}
-.modal-overlay.show{display:flex}
-.modal{background:#f8f6f1;border-radius:24px;padding:36px;max-width:640px;
-  width:100%;max-height:90vh;overflow-y:auto;position:relative;
-  animation:modalIn .25s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-.modal-close{position:absolute;top:20px;right:20px;width:38px;height:38px;
-  border-radius:50%;border:none;background:#fff;cursor:pointer;font-size:18px;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 12px rgba(0,0,0,.1);transition:transform .15s}
-.modal-close:hover{transform:rotate(90deg)}
-.modal h2{font-size:26px;margin-bottom:8px;color:var(--green-dark)}
-.modal .modal-sub{color:var(--muted);margin-bottom:20px}
-.modal-text ul{list-style:none;padding:0}
-.modal-text li{padding:14px 0;border-bottom:1px solid var(--border);
-  display:flex;gap:12px;align-items:flex-start;font-size:14.5px;line-height:1.55}
-.modal-text li:last-child{border-bottom:none}
-.modal-text li::before{content:'→';color:var(--green-mid);font-weight:700;flex-shrink:0}
-
-/* ============ RESPONSIVE ============ */
-@media (max-width:1024px){
-  .hero-inner{grid-template-columns:1fr;gap:40px;text-align:center}
-  .hero h1{font-size:34px}
-  .hero p{margin:0 auto 32px}
-  .hero-actions{justify-content:center}
-  .features-row{grid-template-columns:repeat(3,1fr);margin-top:24px;padding:20px}
-  .how-grid{grid-template-columns:1fr;gap:40px}
-  .phones-carousel{grid-template-columns:repeat(2,1fr)}
-  .residents{grid-template-columns:1fr;padding:32px}
-  .uk-grid{grid-template-columns:1fr}
-  .brands-row{grid-template-columns:1fr;gap:48px}
-  .footer-inner{grid-template-columns:1fr 1fr}
-  .nav{display:none}
-  .cta-proto{padding:40px 24px}
-  .cta-proto h2{font-size:24px}
+.hero{
+  position:relative;padding:140px 0 100px;overflow:hidden;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(46,196,160,.12) 0%, transparent 50%),
+    radial-gradient(circle at 20% 80%, rgba(22,50,74,.08) 0%, transparent 50%),
+    var(--bg);
 }
-@media (max-width:600px){
+.hero-inner{
+  display:grid;grid-template-columns:1.15fr 1fr;gap:80px;align-items:center;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#fff;border:1px solid var(--border);
+  padding:8px 16px;border-radius:100px;font-size:13px;font-weight:600;
+  color:var(--green-dark);margin-bottom:28px;
+  box-shadow:0 2px 10px rgba(15,61,46,.05);
+}
+.hero-badge .dot{
+  width:8px;height:8px;border-radius:50%;background:var(--green-bright);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(46,196,160,.5)}
+  50%{box-shadow:0 0 0 8px rgba(46,196,160,0)}
+}
+.hero h1{
+  font-size:60px;line-height:1.05;font-weight:800;color:var(--green-dark);
+  letter-spacing:-1.5px;margin-bottom:24px;
+}
+.hero h1 .accent{
+  background:linear-gradient(135deg,var(--navy),var(--green-bright));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p.lead{
+  font-size:19px;color:var(--muted);line-height:1.55;
+  margin-bottom:40px;max-width:560px;
+}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px}
+.hero-stats{
+  display:flex;gap:40px;flex-wrap:wrap;
+  padding-top:32px;border-top:1px solid var(--border);
+}
+.hero-stat b{
+  display:block;font-size:32px;font-weight:800;color:var(--green-dark);
+  letter-spacing:-1px;line-height:1;
+}
+.hero-stat span{
+  font-size:13px;color:var(--muted);margin-top:6px;display:block;
+}
+
+/* Мини-демо: телефон */
+.hero-visual{
+  position:relative;display:flex;justify-content:center;
+  animation:float 6s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
+}
+.phone-mockup{
+  width:320px;height:640px;background:#1a1f1c;border-radius:44px;padding:12px;
+  box-shadow:
+    0 40px 80px rgba(15,61,46,.25),
+    0 0 0 2px #333,
+    inset 0 0 0 2px #2a2a2a;
+  position:relative;
+}
+.phone-mockup::before{
+  content:'';position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  width:90px;height:22px;background:#1a1f1c;border-radius:0 0 14px 14px;z-index:10;
+}
+.phone-screen{
+  width:100%;height:100%;background:#f4f6f4;border-radius:34px;
+  overflow:hidden;display:flex;flex-direction:column;
+}
+.phone-status{
+  display:flex;justify-content:space-between;padding:14px 22px 6px;
+  font-size:13px;font-weight:600;color:var(--green-dark);
+}
+.phone-header{
+  padding:10px 20px 16px;display:flex;justify-content:space-between;
+  align-items:center;
+}
+.phone-logo{
+  font-size:15px;font-weight:800;color:var(--navy);letter-spacing:2px;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.phone-logo .lm{width:14px;height:14px}
+.phone-avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,#f4a261,#e76f51);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:12px;font-weight:700;
+}
+.phone-body{flex:1;padding:0 18px;overflow:hidden}
+.phone-greet{font-size:12px;color:var(--muted-2)}
+.phone-name{font-size:20px;font-weight:700;margin-top:2px;margin-bottom:18px}
+.phone-card{
+  background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;
+  border:1px solid #eef1ef;box-shadow:0 2px 8px rgba(15,61,46,.04);
+}
+.phone-badge{
+  display:inline-block;padding:3px 9px;border-radius:20px;
+  font-size:10px;font-weight:700;margin-bottom:6px;
+}
+.phone-badge.warn{background:#fef3c7;color:#92400e}
+.phone-badge.ok{background:#d1fae5;color:#065f46}
+.phone-badge.danger{background:#fee2e2;color:#991b1b}
+.phone-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.phone-meta{font-size:11px;color:var(--muted-2)}
+.phone-chat{
+  background:linear-gradient(135deg,var(--green-dark),var(--green));
+  color:#fff;border-radius:14px;padding:14px;
+}
+.phone-chat-title{font-size:12px;font-weight:700;margin-bottom:6px;
+  display:flex;align-items:center;gap:6px}
+.phone-chat-title::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:var(--green-bright);
+  animation:pulse 1.5s infinite;
+}
+.phone-chat-text{font-size:11.5px;line-height:1.5;opacity:.9}
+
+/* Плавающие бейджи вокруг телефона */
+.float-badge{
+  position:absolute;background:#fff;border:1px solid var(--border);
+  border-radius:14px;padding:12px 16px;
+  box-shadow:0 12px 30px rgba(15,61,46,.12);
+  font-size:13px;font-weight:600;color:var(--green-dark);
+  display:flex;align-items:center;gap:10px;
+  animation:float 6s ease-in-out infinite;
+}
+.float-badge .icon{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+}
+.float-badge.ai{top:14%;left:-40px;animation-delay:-2s}
+.float-badge.ai .icon{background:#e8f1ec;color:var(--green)}
+.float-badge.sla{top:42%;right:-50px;animation-delay:-1s}
+.float-badge.sla .icon{background:#fef3c7;color:#92400e}
+.float-badge.rating{bottom:14%;left:-30px;animation-delay:-4s}
+.float-badge.rating .icon{background:#dbeafe;color:#1e40af}
+
+/* ============ СЕКЦИИ ============ */
+.section{padding:110px 0;position:relative}
+.section-dark{
+  background:linear-gradient(180deg,#0a1410,#0f3d2e);
+  color:#fff;
+}
+.section-dark .section-title{color:#fff}
+.section-dark .section-sub{color:rgba(255,255,255,.7)}
+.section-dark .section-label{color:var(--green-bright)}
+
+.section-label{
+  display:inline-block;font-size:13px;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--green-mid);margin-bottom:16px;
+}
+.section-title{
+  font-size:48px;font-weight:800;color:var(--green-dark);
+  letter-spacing:-1px;line-height:1.1;margin-bottom:20px;
+  max-width:900px;
+}
+.section-sub{
+  font-size:18px;color:var(--muted);line-height:1.6;
+  max-width:720px;margin-bottom:64px;
+}
+
+/* ============ ПРОБЛЕМА ============ */
+.problem-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.problem-card{
+  background:#fff;border:1px solid var(--border);border-radius:20px;
+  padding:32px;position:relative;overflow:hidden;
+  transition:all .3s ease;
+}
+.problem-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 40px rgba(15,61,46,.08);
+  border-color:var(--green-mid);
+}
+.problem-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--danger),#f87171);opacity:.7;
+}
+.problem-icon{
+  width:52px;height:52px;border-radius:14px;background:#fef2f2;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  margin-bottom:20px;
+}
+.problem-card h3{
+  font-size:19px;font-weight:700;color:var(--green-dark);
+  margin-bottom:10px;line-height:1.3;
+}
+.problem-card p{
+  font-size:15px;color:var(--muted);line-height:1.6;
+}
+.problem-big{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;
+  margin-top:56px;padding:40px;background:#fff;border-radius:20px;
+  border:1px solid var(--border);
+}
+.problem-big-stat{
+  text-align:center;padding:0 20px;
+  border-right:1px solid var(--border);
+}
+.problem-big-stat:last-child{border-right:none}
+.problem-big-stat b{
+  display:block;font-size:44px;font-weight:800;
+  color:var(--green-dark);letter-spacing:-1.5px;line-height:1;
+  margin-bottom:10px;
+}
+.problem-big-stat span{
+  font-size:14px;color:var(--muted);line-height:1.5;
+}
+
+/* ============ РЕШЕНИЕ ============ */
+.solution-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.solution-features{
+  display:flex;flex-direction:column;gap:20px;
+}
+.solution-feature{
+  display:flex;gap:20px;padding:24px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;transition:all .3s;
+}
+.solution-feature:hover{
+  background:rgba(46,196,160,.08);
+  border-color:rgba(46,196,160,.3);
+  transform:translateX(6px);
+}
+.solution-feature .icon{
+  width:48px;height:48px;border-radius:12px;
+  background:rgba(46,196,160,.15);color:var(--green-bright);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  flex-shrink:0;
+}
+.solution-feature h4{
+  font-size:17px;font-weight:700;margin-bottom:6px;color:#fff;
+}
+.solution-feature p{
+  font-size:14.5px;color:rgba(255,255,255,.7);line-height:1.55;
+}
+
+.solution-visual{
+  position:relative;padding:40px;
+  background:rgba(46,196,160,.05);border:1px solid rgba(46,196,160,.2);
+  border-radius:24px;
+}
+.solution-flow{
+  display:flex;flex-direction:column;gap:16px;
+}
+.flow-item{
+  display:flex;align-items:center;gap:16px;padding:18px 22px;
+  background:rgba(255,255,255,.05);border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  animation:slideIn 8s ease-in-out infinite;
+  opacity:0;
+}
+.flow-item:nth-child(1){animation-delay:0s}
+.flow-item:nth-child(2){animation-delay:1s}
+.flow-item:nth-child(3){animation-delay:2s}
+.flow-item:nth-child(4){animation-delay:3s}
+.flow-item:nth-child(5){animation-delay:4s}
+@keyframes slideIn{
+  0%,12%{opacity:0;transform:translateX(-12px)}
+  18%,96%{opacity:1;transform:translateX(0)}
+  100%{opacity:0;transform:translateX(-12px)}
+}
+.flow-num{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--navy),var(--green-bright));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+}
+.flow-text{font-size:14.5px;color:rgba(255,255,255,.9);font-weight:500}
+
+/* ============ КАК РАБОТАЕТ ============ */
+.how-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  position:relative;
+}
+.how-grid::before{
+  content:'';position:absolute;top:44px;left:8%;right:8%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green-mid),transparent);
+  z-index:0;
+}
+.how-step{
+  position:relative;z-index:1;text-align:center;
+  cursor:pointer;transition:transform .3s;
+}
+.how-step:hover{transform:translateY(-6px)}
+.how-circle{
+  width:88px;height:88px;border-radius:50%;background:#fff;
+  border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+  margin:0 auto 20px;
+  transition:all .3s ease;
+  box-shadow:0 10px 30px rgba(15,61,46,.06);
+}
+.how-step:hover .how-circle{
+  background:linear-gradient(135deg,var(--green-dark),var(--green));
+  border-color:var(--green-dark);color:#fff;
+  transform:scale(1.05);box-shadow:0 20px 40px rgba(15,61,46,.2);
+}
+.how-num{
+  display:inline-block;padding:4px 12px;border-radius:20px;
+  background:var(--green-light);color:var(--green-dark);
+  font-size:12px;font-weight:700;margin-bottom:14px;
+}
+.how-step h4{
+  font-size:17px;font-weight:700;color:var(--green-dark);
+  margin-bottom:10px;line-height:1.3;
+}
+.how-step p{
+  font-size:14px;color:var(--muted);line-height:1.55;
+}
+
+/* ============ ОТСТРОЙКА ============ */
+.compare-wrap{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:24px;overflow:hidden;margin-top:40px;
+}
+.compare-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.compare-table{width:100%;border-collapse:collapse;min-width:560px}
+.compare-table th,
+.compare-table td{
+  padding:22px 24px;text-align:left;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:15px;
+}
+.compare-table th{
+  font-size:13px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:rgba(255,255,255,.5);
+  background:rgba(0,0,0,.15);
+}
+.compare-table th:first-child{color:rgba(255,255,255,.5)}
+.compare-table th.us{color:var(--green-bright)}
+.compare-table td{color:rgba(255,255,255,.75)}
+.compare-table td.us{
+  color:#fff;font-weight:600;
+  background:rgba(46,196,160,.06);
+}
+.compare-table td .icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:50%;font-size:11px;margin-right:8px;
+}
+.compare-table td .icon.no{background:rgba(220,38,38,.2);color:#fca5a5}
+.compare-table td .icon.yes{background:rgba(46,196,160,.2);color:#5ee9c0}
+.compare-table tr:last-child td{border-bottom:none}
+
+.killer-quote{
+  margin-top:48px;padding:40px;
+  background:linear-gradient(135deg,rgba(46,196,160,.1),rgba(22,50,74,.1));
+  border-left:4px solid var(--green-bright);
+  border-radius:16px;
+}
+.killer-quote p{
+  font-size:22px;line-height:1.5;color:#fff;font-weight:500;
+  font-style:italic;
+}
+.killer-quote p b{color:var(--green-bright);font-style:normal}
+
+/* ============ РОЛИ / ПРОТОТИПЫ ============ */
+.roles-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+.role-card{
+  background:#fff;border-radius:24px;padding:36px 32px;
+  border:1px solid var(--border);position:relative;overflow:hidden;
+  transition:all .3s ease;display:flex;flex-direction:column;
+}
+.role-card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 30px 60px rgba(15,61,46,.12);
+}
+.role-card.featured{
+  background:linear-gradient(180deg,#fff,#f0f9f5);
+  border-color:var(--green-mid);
+}
+.role-card.featured::before{
+  content:'Для УК · рекомендуем';
+  position:absolute;top:20px;right:-32px;
+  background:linear-gradient(135deg,var(--green-dark),var(--green-bright));
+  color:#fff;font-size:11px;font-weight:700;
+  padding:5px 40px;transform:rotate(45deg);
+  letter-spacing:.4px;
+}
+.role-icon{
+  width:64px;height:64px;border-radius:16px;
+  background:var(--green-light);color:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;margin-bottom:24px;
+}
+.role-card h3{
+  font-size:22px;font-weight:700;color:var(--green-dark);
+  margin-bottom:12px;
+}
+.role-desc{
+  font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:24px;
+  flex:1;
+}
+.role-list{
+  list-style:none;padding:0;margin-bottom:28px;
+}
+.role-list li{
+  font-size:14px;color:var(--text);padding:8px 0;
+  display:flex;align-items:flex-start;gap:10px;line-height:1.5;
+}
+.role-list li::before{
+  content:'✓';color:var(--green-mid);font-weight:700;flex-shrink:0;
+  width:18px;height:18px;border-radius:50%;background:var(--green-light);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;margin-top:2px;
+}
+
+/* ============ CTA ============ */
+.cta-block{
+  padding:100px 60px;border-radius:32px;text-align:center;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--green-dark) 50%,var(--green-bright) 150%);
+  color:#fff;position:relative;overflow:hidden;
+  box-shadow:0 40px 80px rgba(15,61,46,.25);
+}
+.cta-block::before{
+  content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(46,196,160,.3),transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.cta-block::after{
+  content:'';position:absolute;bottom:-50%;left:-20%;width:500px;height:500px;
+  background:radial-gradient(circle,rgba(22,50,74,.4),transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.cta-block h2{
+  font-size:44px;font-weight:800;letter-spacing:-1px;
+  margin-bottom:20px;position:relative;z-index:1;line-height:1.1;
+}
+.cta-block p{
+  font-size:18px;color:rgba(255,255,255,.85);
+  margin-bottom:36px;max-width:640px;margin-left:auto;margin-right:auto;
+  position:relative;z-index:1;line-height:1.55;
+}
+.cta-actions{
+  display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+  position:relative;z-index:1;
+}
+.cta-block .btn-outline{color:#fff;border-color:rgba(255,255,255,.4)}
+.cta-block .btn-outline:hover{background:#fff;color:var(--green-dark);
+  border-color:#fff}
+
+/* ============ ФУТЕР ============ */
+.footer{
+  background:var(--green-dark);color:#fff;padding:80px 0 32px;margin-top:0;
+}
+.footer-inner{
+  display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:48px;
+  padding-bottom:56px;border-bottom:1px solid rgba(255,255,255,.1);
+}
+.footer .logo{color:#fff;font-size:32px;margin-bottom:16px}
+.footer-tag{color:#a8c4b6;font-size:14px;line-height:1.6;
+  margin-bottom:24px;max-width:340px}
+.footer-col h4{
+  font-size:14px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:18px;color:#fff;
+}
+.footer-col a{
+  display:block;color:#a8c4b6;font-size:14px;padding:6px 0;
+  transition:color .15s;cursor:pointer;
+}
+.footer-col a:hover{color:#fff}
+.footer-bottom{
+  padding-top:28px;display:flex;justify-content:space-between;
+  align-items:center;font-size:13px;color:#a8c4b6;flex-wrap:wrap;gap:12px;
+}
+
+/* ============ АНИМАЦИЯ ПОЯВЛЕНИЯ ============ */
+.reveal{
+  opacity:0;transform:translateY(40px);
+  transition:opacity .8s ease,transform .8s ease;
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ============ АДАПТИВ ============ */
+@media (max-width:1100px){
+  .hero-inner{grid-template-columns:1fr;gap:60px;text-align:center}
+  .hero p.lead{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  .hero-stats{justify-content:center}
+  .hero h1{font-size:48px}
+  .hero-visual{order:-1}
+  .solution-grid{grid-template-columns:1fr;gap:48px}
+  .section-title{font-size:38px}
+  .problem-grid,
+  .roles-grid{grid-template-columns:1fr 1fr}
+  .how-grid{grid-template-columns:repeat(2,1fr);gap:40px}
+  .how-grid::before{display:none}
+  .footer-inner{grid-template-columns:1fr 1fr;gap:40px}
+  .problem-big{grid-template-columns:1fr;gap:24px;padding:32px}
+  .problem-big-stat{border-right:none;border-bottom:1px solid var(--border);
+    padding-bottom:20px}
+  .problem-big-stat:last-child{border-bottom:none;padding-bottom:0}
+  .cta-block{padding:80px 40px}
+  .cta-block h2{font-size:34px}
+}
+
+@media (max-width:900px){
+  .nav{display:none}
+  .burger{display:flex}
+  .mobile-menu{display:flex}
+  .header .btn-desktop{display:none}
+}
+
+@media (max-width:720px){
   .container{padding:0 20px}
-  .hero h1{font-size:26px}
+  .header-inner{padding:14px 0}
+  .logo{font-size:22px}
+  .logo-mark{width:20px;height:20px}
+  .hero{padding:110px 0 60px}
+  .hero h1{font-size:34px;letter-spacing:-.5px}
+  .hero p.lead{font-size:16px}
+  .hero-stats{gap:24px;padding-top:24px}
+  .hero-stat b{font-size:24px}
+  .section{padding:70px 0}
+  .section-title{font-size:28px}
+  .section-sub{font-size:16px;margin-bottom:44px}
+  .problem-grid,
+  .roles-grid,
+  .how-grid{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .compare-table th,
+  .compare-table td{padding:14px 16px;font-size:13px}
+  .killer-quote{padding:28px 24px}
+  .killer-quote p{font-size:17px}
+  .cta-block{padding:60px 24px;border-radius:24px}
+  .cta-block h2{font-size:26px}
+  .cta-block p{font-size:16px}
+  .footer{padding:60px 0 24px}
+  .footer-inner{grid-template-columns:1fr;gap:32px}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+  .role-card{padding:28px 24px}
+  .role-card.featured::before{display:none}
+  .hero-actions{flex-direction:column;width:100%}
+  .hero-actions .btn{width:100%;justify-content:center}
+  .btn-lg{padding:15px 24px;font-size:15px}
+  .problem-card{padding:24px}
+}
+
+@media (max-width:400px){
+  .hero h1{font-size:28px}
   .section-title{font-size:24px}
-  .features-row{grid-template-columns:repeat(2,1fr);padding:16px}
-  .phones-carousel{grid-template-columns:1fr}
-  .footer-inner{grid-template-columns:1fr}
-  .steps-flow{flex-wrap:wrap;gap:16px}
-  .steps-flow::before{display:none}
-  .logo{font-size:22px;letter-spacing:2px}
-  .logo small{display:none}
-  .logo-mark{width:22px;height:22px;vertical-align:-4px}
+  .how-circle{width:72px;height:72px;font-size:28px}
+}
+
+/* Отключаем тяжёлые анимации для пользователей с prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
 }
 </style>
 </head>
 <body>
 
-<!-- Общий SVG-градиент для логотипа -->
+<!-- SVG-градиент для логотипа -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <linearGradient id="domosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -304,552 +697,673 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
   </defs>
 </svg>
 
-<!-- HEADER -->
-<header class="header">
+<!-- ============ ШАПКА ============ -->
+<header class="header" id="header">
   <div class="container header-inner">
-    <div class="logo" onclick="scrollTo({top:0,behavior:'smooth'})">
+    <a href="#" class="logo" aria-label="DOMOS – на главную">
       DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S
-      <small>Умный дом. Забота о людях.</small>
-    </div>
-    <nav class="nav">
-      <a onclick="scrollToSection('features')">Возможности</a>
-      <a onclick="scrollToSection('how')">Как работает</a>
-      <a onclick="scrollToSection('residents')">Жителям</a>
-      <a onclick="scrollToSection('uk')">УК и девелоперам</a>
-      <a href="app.html" target="_blank" style="color:#2d8b6f;font-weight:600">Прототип →</a>
+    </a>
+
+    <nav class="nav" aria-label="Основная навигация">
+      <a data-scroll="problem">Проблема</a>
+      <a data-scroll="solution">Решение</a>
+      <a data-scroll="how">Как работает</a>
+      <a data-scroll="why">Отличие</a>
+      <a data-scroll="roles">Прототипы</a>
     </nav>
-    <button class="btn btn-primary" onclick="openModal('demo')">Запросить демо</button>
+
+    <a href="uk.html" target="_blank" rel="noopener" class="btn btn-primary btn-sm btn-desktop">
+      Открыть прототип
+    </a>
+
+    <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
-<!-- HERO -->
+<!-- ============ МОБИЛЬНОЕ МЕНЮ ============ -->
+<div class="mobile-menu" id="mobileMenu">
+  <a data-scroll="problem">Проблема</a>
+  <a data-scroll="solution">Решение</a>
+  <a data-scroll="how">Как работает</a>
+  <a data-scroll="why">Отличие</a>
+  <a data-scroll="roles">Прототипы</a>
+  <a href="uk.html" target="_blank" rel="noopener" class="btn btn-primary">Открыть прототип</a>
+</div>
+
+<!-- ============ HERO ============ -->
 <section class="hero">
   <div class="container">
     <div class="hero-inner">
       <div>
-        <h1>AI-платформа для управления обслуживанием жилых домов</h1>
-        <p>Объединяем жителей, УК и подрядчиков в единую систему. От заявки до результата — прозрачно и быстро.</p>
+        <div class="hero-badge">
+          <span class="dot"></span>
+          AI-платформа нового поколения
+        </div>
+        <h1>
+          Управление домом,<br>
+          которое <span class="accent">работает само</span>
+        </h1>
+        <p class="lead">
+          DOMOS превращает обслуживание жилых домов из набора чатов,
+          звонков и таблиц в единую операционную систему.
+          Житель фотографирует проблему – AI классифицирует, назначает
+          исполнителя, контролирует SLA и собирает аналитику.
+        </p>
         <div class="hero-actions">
-          <button class="btn btn-primary" onclick="openModal('demo')">Запросить демо</button>
-          <button class="btn btn-outline" onclick="scrollToSection('how')">Как это работает</button>
-          <a class="btn btn-proto" href="app.html" target="_blank">📱 Смотреть прототип</a>
+          <a href="uk.html" target="_blank" rel="noopener" class="btn btn-bright btn-lg">
+            Открыть прототип →
+          </a>
+          <button type="button" class="btn btn-outline btn-lg" data-scroll="how">
+            Как это работает
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <b>↓ 40%</b>
+            <span>времени на обработку заявки</span>
+          </div>
+          <div class="hero-stat">
+            <b>× 3</b>
+            <span>скорость реакции на аварию</span>
+          </div>
+          <div class="hero-stat">
+            <b>87/100</b>
+            <span>средний Health Score дома</span>
+          </div>
         </div>
       </div>
-      <div class="hero-phone">
-        <div class="phone">
+
+      <!-- Мини-демо телефон -->
+      <div class="hero-visual">
+        <div class="float-badge ai">
+          <div class="icon">🤖</div>
+          <div>
+            AI классифицировал
+            <div style="font-weight:400;color:#7a8781;font-size:11px;margin-top:2px">
+              Электрика · Высокий приоритет
+            </div>
+          </div>
+        </div>
+
+        <div class="phone-mockup">
           <div class="phone-screen">
-            <div class="phone-status"><span>9:41</span><span>📶 🔋</span></div>
-            <div class="phone-app-header">
-              <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
-              <div class="avatar">А</div>
+            <div class="phone-status">
+              <span>9:41</span>
+              <span>📶 🔋</span>
             </div>
-            <div class="phone-content">
-              <div class="phone-section-title">ЖК Солнечный, корпус 1</div>
-              <div class="phone-card">
-                <div class="phone-card-title">Ваша заявка</div>
-                <div class="phone-card-meta"><span class="dot"></span>В работе</div>
-                <div style="font-size:13px;margin-top:8px">Не работает свет в подъезде</div>
-                <div class="phone-card-meta" style="margin-top:6px">№ 2487 · 12 мая, 14:32</div>
-                <img class="phone-photo" src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400&q=70" alt="">
+            <div class="phone-header">
+              <div class="phone-logo">
+                DOM<span class="lm"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#fff"/></svg></span>S
               </div>
-              <div class="phone-section-title">Новости и события</div>
+              <div class="phone-avatar">А</div>
+            </div>
+            <div class="phone-body">
+              <div class="phone-greet">Добрый день,</div>
+              <div class="phone-name">Анна 👋</div>
+
               <div class="phone-card">
-                <div class="phone-card-title">Отключение горячей воды</div>
-                <div class="phone-card-meta">15–17 мая, 9:00–18:00</div>
+                <span class="phone-badge warn">В РАБОТЕ</span>
+                <div class="phone-title">Не работает свет в подъезде</div>
+                <div class="phone-meta">Мастер выехал · 15 мин</div>
               </div>
-              <div class="phone-section-title">Общие зоны</div>
-              <div class="phone-card">
-                <div class="phone-card-meta" style="color:var(--green-mid);font-weight:600">Забронировано</div>
-                <div class="phone-card-title" style="margin-top:4px">Коворкинг · Спортзал · Кинозал</div>
+
+              <div class="phone-chat">
+                <div class="phone-chat-title">AI-ассистент</div>
+                <div class="phone-chat-text">
+                  Похожая заявка была 14 апреля. Возможна проблема в проводке,
+                  а не в лампе.
+                </div>
               </div>
             </div>
-            <div class="phone-nav">
-              <div class="active"><span class="ico">🏠</span>Главная</div>
-              <div><span class="ico">📋</span>Заявки</div>
-              <div><span class="ico">👥</span>Сообщество</div>
-              <div><span class="ico">⋯</span>Ещё</div>
+          </div>
+        </div>
+
+        <div class="float-badge sla">
+          <div class="icon">⏱</div>
+          <div>
+            SLA 4 часа
+            <div style="font-weight:400;color:#7a8781;font-size:11px;margin-top:2px">
+              Успевает · 96%
+            </div>
+          </div>
+        </div>
+
+        <div class="float-badge rating">
+          <div class="icon">⭐</div>
+          <div>
+            Оценка 4.9
+            <div style="font-weight:400;color:#7a8781;font-size:11px;margin-top:2px">
+              Жители довольны
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- FEATURES ROW -->
-    <div class="features-row" id="features">
-      <div class="feature-icon" onclick="openFeature('requests')">
-        <div class="icon-circle">📋</div>
-        <b>Заявки и&nbsp;статусы</b>
+<!-- ============ ПРОБЛЕМА ============ -->
+<section class="section" id="problem">
+  <div class="container">
+    <div class="reveal">
+      <span class="section-label">Проблема</span>
+      <h2 class="section-title">Управлять домом сегодня – это хаос</h2>
+      <p class="section-sub">
+        УК, жители и подрядчики живут в разных системах: Telegram, звонки,
+        Excel, старая диспетчерская. Заявки теряются, сроки срываются,
+        а житель не понимает, что происходит с его проблемой.
+      </p>
+    </div>
+
+    <div class="problem-grid">
+      <div class="problem-card reveal">
+        <div class="problem-icon">💬</div>
+        <h3>Заявки теряются в чатах</h3>
+        <p>
+          Житель пишет в Telegram, звонит диспетчеру, оставляет бумажку.
+          Никто не знает, кто отвечает и в каком статусе проблема.
+        </p>
       </div>
-      <div class="feature-icon" onclick="openFeature('news')">
-        <div class="icon-circle">📰</div>
-        <b>Новости дома</b>
+
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-icon">🕐</div>
+        <h3>Сроки срываются</h3>
+        <p>
+          Подрядчику передали задачу – но непонятно, за какой срок он
+          обязан её выполнить. Нет SLA – нет ответственности.
+        </p>
       </div>
-      <div class="feature-icon" onclick="openFeature('booking')">
-        <div class="icon-circle">🏊</div>
-        <b>Бронирование общих зон</b>
+
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-icon">🔁</div>
+        <h3>Повторные ремонты</h3>
+        <p>
+          Дверь починили 12 сентября, а 18 сентября – снова заявка.
+          Проблема не решена, деньги потрачены дважды.
+        </p>
       </div>
-      <div class="feature-icon" onclick="openFeature('votes')">
-        <div class="icon-circle">🗳</div>
-        <b>Голосования и&nbsp;опросы</b>
+
+      <div class="problem-card reveal">
+        <div class="problem-icon">💸</div>
+        <h3>Нет аналитики</h3>
+        <p>
+          УК не видит, сколько денег уходит на подъезд №1, а сколько –
+          на №2. Непонятно, какому подрядчику платить, а какого менять.
+        </p>
       </div>
-      <div class="feature-icon" onclick="openFeature('community')">
-        <div class="icon-circle">💬</div>
-        <b>Сообщество жителей</b>
+
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-icon">👥</div>
+        <h3>Житель не понимает, что происходит</h3>
+        <p>
+          Отправил фото – и тишина. Через неделю звонит в УК: «Что там
+          с моим светом?». Начинается ругань.
+        </p>
       </div>
-      <div class="feature-icon" onclick="openFeature('infra')">
-        <div class="icon-circle">🏢</div>
-        <b>Инфраструктура и&nbsp;сервисы</b>
+
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-icon">📊</div>
+        <h3>Аварии случаются внезапно</h3>
+        <p>
+          Никто не видит, что за 3 месяца на один узел пришло 9 заявок.
+          Авария «внезапная» – на самом деле её не заметили.
+        </p>
+      </div>
+    </div>
+
+    <div class="problem-big reveal">
+      <div class="problem-big-stat">
+        <b>70%</b>
+        <span>времени УК уходит на ручную обработку заявок</span>
+      </div>
+      <div class="problem-big-stat">
+        <b>2×</b>
+        <span>средний расход на повторные ремонты</span>
+      </div>
+      <div class="problem-big-stat">
+        <b>3 из 10</b>
+        <span>жителей недовольны скоростью реакции</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- ============ РЕШЕНИЕ ============ -->
+<section class="section section-dark" id="solution">
+  <div class="container">
+    <div class="solution-grid">
+      <div class="reveal">
+        <span class="section-label">Решение</span>
+        <h2 class="section-title">
+          Не чат, не helpdesk.<br>
+          Операционная система дома.
+        </h2>
+        <p class="section-sub" style="margin-bottom:40px">
+          DOMOS – единый операционный слой, который связывает жителя,
+          УК, сотрудника и подрядчика. AI берёт на себя рутину: понимает
+          проблему, определяет приоритет, находит исполнителя,
+          контролирует срок и собирает доказательство работы.
+        </p>
+
+        <div class="solution-features">
+          <div class="solution-feature">
+            <div class="icon">🤖</div>
+            <div>
+              <h4>AI-триаж заявки</h4>
+              <p>Категория, приоритет, SLA и зона ответственности –
+                автоматически, по фото и тексту.</p>
+            </div>
+          </div>
+
+          <div class="solution-feature">
+            <div class="icon">🎯</div>
+            <div>
+              <h4>Подбор исполнителя</h4>
+              <p>Не «ответственный сотрудник», а лучший мастер под задачу –
+                с учётом района, SLA, стоимости и истории.</p>
+            </div>
+          </div>
+
+          <div class="solution-feature">
+            <div class="icon">⏱</div>
+            <div>
+              <h4>Контроль SLA</h4>
+              <p>Житель видит срок, УК видит просрочки, система сама
+                сигналит, когда SLA под угрозой.</p>
+            </div>
+          </div>
+
+          <div class="solution-feature">
+            <div class="icon">🔮</div>
+            <div>
+              <h4>Прогноз поломок</h4>
+              <p>Дом получает Building Health Score, а УК – прогноз:
+                где через месяц рванёт, если не вмешаться.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="solution-visual reveal reveal-delay-2">
+        <div class="solution-flow">
+          <div class="flow-item">
+            <div class="flow-num">1</div>
+            <div class="flow-text">Житель фотографирует проблему</div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-num">2</div>
+            <div class="flow-text">AI понимает, что произошло</div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-num">3</div>
+            <div class="flow-text">Определяет приоритет и SLA</div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-num">4</div>
+            <div class="flow-text">Назначает лучшего исполнителя</div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-num">5</div>
+            <div class="flow-text">Контролирует до результата</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ КАК РАБОТАЕТ ============ -->
 <section class="section" id="how">
   <div class="container">
-    <h2 class="section-title">Как это работает?</h2>
-    <p class="section-sub">Простой и прозрачный процесс — с ИИ на каждом этапе.</p>
+    <div class="reveal" style="text-align:center">
+      <span class="section-label">Как это работает</span>
+      <h2 class="section-title" style="margin-left:auto;margin-right:auto">
+        От фотографии до результата
+      </h2>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto">
+        Один понятный сценарий, в котором нет потерянных заявок
+        и непонятных статусов.
+      </p>
+    </div>
 
     <div class="how-grid">
-      <div>
-        <div class="steps-flow">
-          <div class="step-dot active" onclick="selectStep(0)">
-            <div class="step-circle">📝</div>
-            <div class="step-num">1</div>
-            <div class="step-label">Житель сообщает о проблеме</div>
-          </div>
-          <div class="step-dot" onclick="selectStep(1)">
-            <div class="step-circle">🤖</div>
-            <div class="step-num">2</div>
-            <div class="step-label">AI анализирует</div>
-          </div>
-          <div class="step-dot" onclick="selectStep(2)">
-            <div class="step-circle">👤</div>
-            <div class="step-num">3</div>
-            <div class="step-label">Назначается исполнитель</div>
-          </div>
-          <div class="step-dot" onclick="selectStep(3)">
-            <div class="step-circle">✓</div>
-            <div class="step-num">4</div>
-            <div class="step-label">Контроль и результат</div>
-          </div>
-        </div>
-        <div class="step-card" id="stepCard">
-          <h3>Житель сообщает о проблеме</h3>
-          <p>Через текст, фото, видео или голос. Всё через удобное мобильное приложение — заявка сразу попадает в систему.</p>
-        </div>
+      <div class="how-step reveal">
+        <div class="how-circle">📷</div>
+        <div class="how-num">ШАГ 1</div>
+        <h4>Житель сообщает о проблеме</h4>
+        <p>Фото, видео, голос или текст – через приложение.
+          Заявка сразу попадает в систему.</p>
       </div>
 
-      <div class="ai-card">
-        <h3>⚙️ AI берёт на себя рутинные процессы</h3>
-        <div class="ai-check">Классификация обращений</div>
-        <div class="ai-check">Приоритизация</div>
-        <div class="ai-check">Подбор исполнителей</div>
-        <div class="ai-check">Контроль сроков</div>
-        <div class="ai-check">Аналитика и отчёты</div>
-
-        <div class="ai-result">
-          <b>✓ Результат для УК</b>
-          Выявление повторяющихся поломок, проблемных зон и слабых мест в обслуживании дома.
-        </div>
-      </div>
-    </div>
-
-    <!-- PHONES CAROUSEL -->
-    <div class="phones-carousel">
-      <div class="phone-mini">
-        <div class="phone">
-          <div class="phone-screen">
-            <div class="phone-status"><span>9:41</span><span>📶 🔋</span></div>
-            <div class="phone-app-header">
-              <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
-              <div class="avatar" style="width:24px;height:24px;font-size:11px">А</div>
-            </div>
-            <div class="phone-content">
-              <div class="phone-section-title">Новая заявка</div>
-              <div style="display:flex;gap:6px;margin-bottom:10px">
-                <span class="phone-badge">Текст</span>
-                <span class="phone-badge">Фото</span>
-                <span class="phone-badge">Видео</span>
-              </div>
-              <div class="phone-card">
-                <div style="font-size:12px">Не работает свет в подъезде, 3 этаж</div>
-                <img class="phone-photo" src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400&q=70" alt="">
-              </div>
-              <div style="margin-top:12px;padding:10px;background:var(--green-dark);color:#fff;border-radius:10px;text-align:center;font-size:12px;font-weight:600;cursor:pointer">Отправить</div>
-            </div>
-          </div>
-        </div>
-        <div class="phone-caption">Житель создаёт заявку за 15 секунд</div>
+      <div class="how-step reveal reveal-delay-1">
+        <div class="how-circle">🤖</div>
+        <div class="how-num">ШАГ 2</div>
+        <h4>AI анализирует</h4>
+        <p>Определяет категорию, срочность, риск и подбирает
+          подходящего исполнителя.</p>
       </div>
 
-      <div class="phone-mini">
-        <div class="phone">
-          <div class="phone-screen">
-            <div class="phone-status"><span>9:41</span><span>📶 🔋</span></div>
-            <div class="phone-app-header">
-              <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
-              <div class="avatar" style="width:24px;height:24px;font-size:11px">А</div>
-            </div>
-            <div class="phone-content">
-              <div class="phone-section-title">Заявка №2487</div>
-              <div class="phone-card">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <div class="phone-card-title">В работе</div>
-                  <span class="phone-badge work">Срочный</span>
-                </div>
-                <div style="font-size:12px;margin-top:6px">Не работает свет в подъезде, 3 этаж</div>
-                <div style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.8">
-                  <div style="display:flex;gap:6px;align-items:center"><span style="color:var(--green-mid)">✓</span> Создана — 12 мая, 14:32</div>
-                  <div style="display:flex;gap:6px;align-items:center"><span style="color:var(--green-mid)">✓</span> Назначен исполнитель — 12 мая, 15:00</div>
-                  <div style="display:flex;gap:6px;align-items:center"><span style="color:#d5e5db">○</span> Выполнено — ожидается</div>
-                </div>
-              </div>
-              <div style="margin-top:12px;padding:10px;background:var(--green-dark);color:#fff;border-radius:10px;text-align:center;font-size:12px;font-weight:600;cursor:pointer">Подтвердить</div>
-              <div style="margin-top:8px;padding:10px;border:1px solid var(--border);border-radius:10px;text-align:center;font-size:12px;color:var(--muted);cursor:pointer">Оценить работу</div>
-            </div>
-          </div>
-        </div>
-        <div class="phone-caption">Прозрачный статус — от подачи до выполнения</div>
+      <div class="how-step reveal reveal-delay-2">
+        <div class="how-circle">👷</div>
+        <div class="how-num">ШАГ 3</div>
+        <h4>Назначается исполнитель</h4>
+        <p>Мастер получает задачу, житель видит – кто и когда
+          возьмётся за работу.</p>
       </div>
 
-      <div class="phone-mini">
-        <div class="phone">
-          <div class="phone-screen">
-            <div class="phone-status"><span>9:41</span><span>📶 🔋</span></div>
-            <div class="phone-app-header">
-              <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
-              <div class="avatar" style="width:24px;height:24px;font-size:11px">А</div>
-            </div>
-            <div class="phone-content">
-              <div class="phone-section-title">Общие зоны</div>
-              <div class="phone-card">
-                <div class="phone-card-title">Коворкинг</div>
-                <div class="phone-card-meta">с 9:00 до 21:00</div>
-                <div class="phone-badge">Забронировано</div>
-              </div>
-              <div class="phone-card">
-                <div class="phone-card-title">Спортзал</div>
-                <div class="phone-card-meta">с 7:00 до 23:00</div>
-                <div class="phone-badge">Забронировать</div>
-              </div>
-              <div class="phone-card">
-                <div class="phone-card-title">Кинозал</div>
-                <div class="phone-card-meta">по расписанию</div>
-                <div class="phone-badge">Забронировать</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="phone-caption">Бронирование общих зон в один клик</div>
-      </div>
-
-      <div class="phone-mini">
-        <div class="phone">
-          <div class="phone-screen">
-            <div class="phone-status"><span>9:41</span><span>📶 🔋</span></div>
-            <div class="phone-app-header">
-              <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
-              <div class="avatar" style="width:24px;height:24px;font-size:11px">А</div>
-            </div>
-            <div class="phone-content">
-              <div class="phone-section-title">Сообщество</div>
-              <div style="display:flex;gap:8px;margin-bottom:10px">
-                <span class="phone-badge">Чаты</span>
-                <span class="phone-badge" style="background:#f5f5f5;color:var(--text)">Соседи</span>
-                <span class="phone-badge" style="background:#f5f5f5;color:var(--text)">Сервисы</span>
-              </div>
-              <div class="phone-card">
-                <div style="display:flex;gap:8px;align-items:center">
-                  <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f4a261,#e76f51);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600">А</div>
-                  <div>
-                    <div style="font-size:12px;font-weight:600">Анна Петрова</div>
-                    <div style="font-size:10px;color:var(--muted)">Кто идёт на йогу в субботу?</div>
-                  </div>
-                </div>
-              </div>
-              <div class="phone-section-title" style="margin-top:12px">Голосования</div>
-              <div class="phone-card">
-                <div style="font-size:12px;font-weight:600">Установить шлагбаум?</div>
-                <div style="font-size:10px;color:var(--muted);margin-top:4px">Проголосовало 42 из 68</div>
-                <div style="margin-top:8px;height:6px;background:#eef1ef;border-radius:3px;overflow:hidden">
-                  <div style="width:62%;height:100%;background:var(--green-mid)"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="phone-caption">Сообщество и голосования внутри дома</div>
+      <div class="how-step reveal reveal-delay-3">
+        <div class="how-circle">✓</div>
+        <div class="how-num">ШАГ 4</div>
+        <h4>Контроль и результат</h4>
+        <p>Житель подтверждает, ставит оценку. УК видит историю,
+          сроки и качество.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CTA PROTOTYPE -->
-<section class="container">
-  <div class="cta-proto">
-    <h2>Хотите посмотреть приложение?</h2>
-    <p>Кликабельный прототип — все экраны, кнопки и переходы. Откроется в новой вкладке на телефоне или компьютере.</p>
-    <a class="btn btn-proto" href="app.html" target="_blank">📱 Открыть прототип</a>
-  </div>
-</section>
-
-<!-- RESIDENTS -->
-<section class="section" id="residents" style="padding-top:20px">
+<!-- ============ ОТЛИЧИЕ / СРАВНЕНИЕ ============ -->
+<section class="section section-dark" id="why">
   <div class="container">
-    <div class="residents">
-      <div>
-        <h2 class="section-title" style="font-size:28px">Для жителей</h2>
-        <p style="color:var(--muted);font-size:15.5px">Удобный сервис для комфортной жизни. Всё, что нужно — в одном приложении.</p>
-        <div class="residents-features">
-          <div class="res-feat"><div class="icon-circle">📋</div><div><b>Заявки и статусы</b><span>Прозрачно на каждом этапе</span></div></div>
-          <div class="res-feat"><div class="icon-circle">📰</div><div><b>Новости дома</b><span>Важное — сразу в ленте</span></div></div>
-          <div class="res-feat"><div class="icon-circle">🏊</div><div><b>Бронирование общих зон</b><span>Коворкинг, спортзал, кинозал</span></div></div>
-          <div class="res-feat"><div class="icon-circle">🗳</div><div><b>Голосования и опросы</b><span>Влияйте на жизнь дома</span></div></div>
-          <div class="res-feat"><div class="icon-circle">💬</div><div><b>Обсуждения и комьюнити</b><span>Соседи рядом — в одном чате</span></div></div>
-          <div class="res-feat"><div class="icon-circle">🏢</div><div><b>Инфраструктура и сервисы</b><span>Всё про дом и услуги</span></div></div>
-        </div>
+    <div class="reveal">
+      <span class="section-label">Наше отличие</span>
+      <h2 class="section-title">
+        DOMOS оцифровывает коммуникацию.<br>
+        Мы автоматизируем исполнение.
+      </h2>
+      <p class="section-sub">
+        На рынке уже есть сильные платформы. Мы не пытаемся победить
+        их количеством функций. Мы делаем то, чего у них нет – 
+        операционный слой от заявки жителя до результата подрядчика.
+      </p>
+    </div>
+
+    <div class="compare-wrap reveal">
+      <div class="compare-scroll">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Обычные системы</th>
+              <th class="us">DOMOS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Приём заявок</td>
+              <td><span class="icon yes">✓</span>Есть</td>
+              <td class="us"><span class="icon yes">✓</span>Есть</td>
+            </tr>
+            <tr>
+              <td>AI-классификация</td>
+              <td><span class="icon no">–</span>Не заявлена как ключевая</td>
+              <td class="us"><span class="icon yes">✓</span>Ядро продукта</td>
+            </tr>
+            <tr>
+              <td>AI-приоритизация</td>
+              <td><span class="icon no">–</span>Вручную</td>
+              <td class="us"><span class="icon yes">✓</span>Автоматически</td>
+            </tr>
+            <tr>
+              <td>Подбор исполнителя</td>
+              <td><span class="icon no">–</span>Ответственный сотрудник</td>
+              <td class="us"><span class="icon yes">✓</span>AI подбирает лучшего</td>
+            </tr>
+            <tr>
+              <td>SLA</td>
+              <td><span class="icon no">–</span>Контроль вручную</td>
+              <td class="us"><span class="icon yes">✓</span>Управление автоматически</td>
+            </tr>
+            <tr>
+              <td>Повторные проблемы</td>
+              <td><span class="icon no">–</span>История</td>
+              <td class="us"><span class="icon yes">✓</span>Автовыявление</td>
+            </tr>
+            <tr>
+              <td>Прогноз поломок</td>
+              <td><span class="icon no">–</span>Нет</td>
+              <td class="us"><span class="icon yes">✓</span>Predictive maintenance</td>
+            </tr>
+            <tr>
+              <td>Building Health Score</td>
+              <td><span class="icon no">–</span>Нет</td>
+              <td class="us"><span class="icon yes">✓</span>Есть</td>
+            </tr>
+            <tr>
+              <td>Рейтинг подрядчиков</td>
+              <td><span class="icon no">–</span>История нагрузки</td>
+              <td class="us"><span class="icon yes">✓</span>Полноценный рейтинг</td>
+            </tr>
+            <tr>
+              <td>Работа поверх существующей системы</td>
+              <td><span class="icon no">–</span>Интеграции</td>
+              <td class="us"><span class="icon yes">✓</span>Основной принцип</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div style="display:flex;justify-content:center">
-        <div class="phone" style="width:240px;height:500px;padding:8px;border-radius:34px">
-          <div class="phone-screen" style="border-radius:26px">
-            <div class="phone-status" style="padding:12px 18px 8px;font-size:11px"><span>9:41</span><span>📶 🔋</span></div>
-            <div class="phone-app-header" style="padding:6px 18px 14px">
-              <div class="logo" style="font-size:13px;letter-spacing:1.5px">DOM<span class="logo-mark" style="width:14px;height:14px;margin:0 3px;vertical-align:-3px"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
-              <div class="avatar" style="width:22px;height:22px;font-size:10px">А</div>
-            </div>
-            <div class="phone-content" style="padding:0 14px">
-              <div class="phone-section-title" style="font-size:10px">Сообщество</div>
-              <div style="display:flex;gap:6px;margin-bottom:10px;font-size:10px">
-                <span class="phone-badge" style="font-size:9px">Чаты</span>
-                <span class="phone-badge" style="background:#f5f5f5;color:var(--text);font-size:9px">Соседи</span>
-                <span class="phone-badge" style="background:#f5f5f5;color:var(--text);font-size:9px">Сервисы</span>
-              </div>
-              <div class="phone-card">
-                <div style="font-size:11px;font-weight:600">Анна Петрова</div>
-                <div style="font-size:10px;color:var(--muted);margin-top:2px">Кто идёт на йогу в субботу?</div>
-              </div>
-              <div class="phone-card">
-                <div style="font-size:11px;font-weight:600">Игорь Смирнов</div>
-                <div style="font-size:10px;color:var(--muted);margin-top:2px">Соседи, кто-нибудь дома?</div>
-              </div>
-              <div class="phone-card">
-                <div style="font-size:11px;font-weight:600">Марина К.</div>
-                <div style="font-size:10px;color:var(--muted);margin-top:2px">Спасибо за оперативность!</div>
-              </div>
-              <img class="phone-photo" style="height:80px" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=70" alt="">
-            </div>
-          </div>
-        </div>
-      </div>
+    </div>
+
+    <div class="killer-quote reveal">
+      <p>
+        «Мы не делаем <b>“DOMOS, только красивее”</b>. 
+        Мы делаем DOMOS следующего слоя – 
+        <b>систему, которая доводит проблему до гарантированного решения</b>.»
+      </p>
     </div>
   </div>
 </section>
 
-<!-- UK SECTION -->
-<section class="section" id="uk">
+<!-- ============ РОЛИ / ПРОТОТИПЫ ============ -->
+<section class="section" id="roles">
   <div class="container">
-    <div class="uk-grid">
-      <div>
-        <h2 class="section-title" style="font-size:28px">Для УК и девелоперов</h2>
-        <p style="color:var(--muted);font-size:15.5px">Работаем в формате white-label — ваше приложение сохраняет бренд.</p>
-        <div class="uk-list">
-          <div class="uk-item"><div class="icon-circle">🧠</div><div><b>Наша инфраструктура и AI</b><span>Мы берём на себя технологии, вы — клиентов</span></div></div>
-          <div class="uk-item"><div class="icon-circle">🔄</div><div><b>Обновления и развитие</b><span>Продукт растёт вместе с вами</span></div></div>
-          <div class="uk-item"><div class="icon-circle">🛠</div><div><b>Техническая поддержка</b><span>Решаем вопросы, не отвлекая вашу команду</span></div></div>
-          <div class="uk-item"><div class="icon-circle">💰</div><div><b>Экономия ресурсов</b><span>Меньше затрат на разработку и обслуживание</span></div></div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:center">
-        <div class="phone">
-          <div class="phone-screen" style="background:#fff">
-            <div class="phone-status" style="padding:14px 20px 10px"><span>9:41</span><span>📶 🔋</span></div>
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;gap:20px">
-              <div style="font-size:22px;font-weight:800;color:var(--green-dark);letter-spacing:1px">Ваш бренд</div>
-              <img style="width:100%;border-radius:12px" src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400&q=70" alt="">
-              <div style="font-size:13px;color:var(--muted);line-height:1.5">Приложение работает<br>на платформе DOMOS</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="reveal" style="text-align:center">
+      <span class="section-label">Прототипы</span>
+      <h2 class="section-title" style="margin-left:auto;margin-right:auto">
+        Попробуйте все три интерфейса
+      </h2>
+      <p class="section-sub" style="margin-left:auto;margin-right:auto">
+        Кликабельные прототипы для жителя, управляющей компании
+        и подрядчика. Откройте прямо в браузере.
+      </p>
     </div>
 
-    <!-- FLEXIBLE -->
-    <div style="margin-top:80px">
-      <h2 class="section-title" style="font-size:28px">Гибкое решение для любого ЖК</h2>
-      <p class="section-sub" style="margin-bottom:8px">Каждый дом может иметь свой уникальный бренд и дизайн приложения.</p>
-      <div class="palette">
-        <span style="background:#0f3d2e" class="active" onclick="setPalette(this)"></span>
-        <span style="background:#5a6b64" onclick="setPalette(this)"></span>
-        <span style="background:#8b3a62" onclick="setPalette(this)"></span>
-        <span style="background:#c47d2a" onclick="setPalette(this)"></span>
-        <span style="background:#c73e3e" onclick="setPalette(this)"></span>
-        <span style="background:#2d8b6f" onclick="setPalette(this)"></span>
+    <div class="roles-grid">
+      <div class="role-card reveal">
+        <div class="role-icon">👤</div>
+        <h3>Приложение жителя</h3>
+        <p class="role-desc">
+          Одна точка входа для всех задач дома: заявки, новости,
+          события, бронирование зон и связь с УК.
+        </p>
+        <ul class="role-list">
+          <li>Заявка с фото или видео</li>
+          <li>Чат с AI-ассистентом</li>
+          <li>Новости и отключения</li>
+          <li>Скидки для жителей ЖК</li>
+        </ul>
+        <a href="app.html" target="_blank" rel="noopener" class="btn btn-outline btn-block">
+          Открыть прототип
+        </a>
       </div>
-      <div class="brands-row">
-        <div class="brand-phone" onclick="openFeature('brand1')">
-          <div class="phone">
-            <div class="phone-screen" style="background:linear-gradient(180deg,#fef3c7 0%,#fff 50%)">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:16px">
-                <div style="font-size:17px;font-weight:800;color:#92400e;letter-spacing:1px">СОЛНЕЧНЫЙ ЖК</div>
-                <img style="width:100%;border-radius:10px;height:140px;object-fit:cover" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=70" alt="">
-                <div style="font-size:11px;color:#92400e;opacity:.8">Премиум-класс</div>
-              </div>
-            </div>
-          </div>
-          <div class="brand-label">Солнечный ЖК</div>
-          <div class="brand-swatch">
-            <span style="background:#92400e"></span><span style="background:#fef3c7"></span>
-          </div>
-        </div>
-        <div class="brand-phone" onclick="openFeature('brand2')">
-          <div class="phone">
-            <div class="phone-screen" style="background:linear-gradient(180deg,#dbeafe 0%,#fff 50%)">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:16px">
-                <div style="font-size:17px;font-weight:800;color:#1e40af;letter-spacing:1px">RIVER PARK</div>
-                <img style="width:100%;border-radius:10px;height:140px;object-fit:cover" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=70" alt="">
-                <div style="font-size:11px;color:#1e40af;opacity:.8">Бизнес-класс</div>
-              </div>
-            </div>
-          </div>
-          <div class="brand-label">River Park</div>
-          <div class="brand-swatch">
-            <span style="background:#1e40af"></span><span style="background:#dbeafe"></span>
-          </div>
-        </div>
-        <div class="brand-phone" onclick="openFeature('brand3')">
-          <div class="phone">
-            <div class="phone-screen" style="background:linear-gradient(180deg,#dcfce7 0%,#fff 50%)">
-              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:16px">
-                <div style="font-size:17px;font-weight:800;color:#166534;letter-spacing:1px">GREEN HOUSE</div>
-                <img style="width:100%;border-radius:10px;height:140px;object-fit:cover" src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&q=70" alt="">
-                <div style="font-size:11px;color:#166534;opacity:.8">Комфорт-класс</div>
-              </div>
-            </div>
-          </div>
-          <div class="brand-label">Green House</div>
-          <div class="brand-swatch">
-            <span style="background:#166534"></span><span style="background:#dcfce7"></span>
-          </div>
-        </div>
+
+      <div class="role-card featured reveal reveal-delay-1">
+        <div class="role-icon">🏢</div>
+        <h3>Панель УК</h3>
+        <p class="role-desc">
+          Операционная панель управляющей компании: дашборд, аналитика,
+          заявки, рейтинг подрядчиков и прогноз поломок.
+        </p>
+        <ul class="role-list">
+          <li>Dashboard с ключевыми метриками</li>
+          <li>AI-очередь заявок по приоритету</li>
+          <li>Рейтинг подрядчиков и SLA</li>
+          <li>Прогноз поломок и Health Score</li>
+        </ul>
+        <a href="uk.html" target="_blank" rel="noopener" class="btn btn-primary btn-block">
+          Открыть прототип
+        </a>
+      </div>
+
+      <div class="role-card reveal reveal-delay-2">
+        <div class="role-icon">👷</div>
+        <h3>Приложение мастера</h3>
+        <p class="role-desc">
+          Рабочее место подрядчика: назначенные задачи, чаты с жильцами,
+          календарь, доход и AI-подсказки.
+        </p>
+        <ul class="role-list">
+          <li>Список назначенных задач</li>
+          <li>Фото и видео результата</li>
+          <li>Чат с жильцом по заявке</li>
+          <li>Доход и рейтинг</li>
+        </ul>
+        <a href="contractor.html" target="_blank" rel="noopener" class="btn btn-outline btn-block">
+          Открыть прототип
+        </a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ============ CTA ============ -->
+<section class="section" id="cta">
+  <div class="container">
+    <div class="cta-block reveal">
+      <h2>Готовы увидеть систему в деле?</h2>
+      <p>
+        Откройте интерактивный прототип. Три роли, реальные сценарии,
+        никаких ограничений.
+      </p>
+      <div class="cta-actions">
+        <a href="uk.html" target="_blank" rel="noopener" class="btn btn-bright btn-lg">
+          Протестировать прототип →
+        </a>
+        <a href="app.html" target="_blank" rel="noopener" class="btn btn-outline btn-lg">
+          Прототип жителя
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ФУТЕР ============ -->
 <footer class="footer">
   <div class="container">
     <div class="footer-inner">
       <div>
-        <div class="footer-logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
-        <div class="footer-tag">Операционная система жилого дома</div>
-        <div style="display:flex;gap:24px;flex-wrap:wrap;color:#a8c4b6;font-size:13px">
-          <div>⏱ Меньше времени на обработку заявок</div>
-          <div>🌱 Эффективное использование ресурсов</div>
-          <div>😊 Довольные жители</div>
-          <div>📊 Прозрачный контроль и аналитика</div>
+        <div class="logo">
+          DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S
         </div>
+        <p class="footer-tag">
+          AI-платформа для управления эксплуатацией жилых комплексов.
+          От заявки жителя до результата подрядчика.
+        </p>
       </div>
       <div class="footer-col">
         <h4>Продукт</h4>
-        <a onclick="scrollToSection('features')">Возможности</a>
-        <a onclick="scrollToSection('how')">Как работает</a>
-        <a onclick="openModal('demo')">Запросить демо</a>
-        <a href="app.html" target="_blank">Прототип</a>
+        <a data-scroll="problem">Проблема</a>
+        <a data-scroll="solution">Решение</a>
+        <a data-scroll="how">Как работает</a>
+        <a data-scroll="why">Отличие</a>
       </div>
       <div class="footer-col">
-        <h4>Клиентам</h4>
-        <a onclick="scrollToSection('residents')">Жителям</a>
-        <a onclick="scrollToSection('uk')">УК и девелоперам</a>
-        <a onclick="openFeature('support')">Поддержка</a>
-      </div>
-      <div class="footer-col">
-        <h4>Компания</h4>
-        <a onclick="openFeature('about')">О нас</a>
-        <a onclick="openFeature('contacts')">Контакты</a>
-        <a onclick="openFeature('blog')">Блог</a>
+        <h4>Прототипы</h4>
+        <a href="app.html" target="_blank" rel="noopener">Приложение жителя</a>
+        <a href="uk.html" target="_blank" rel="noopener">Панель УК</a>
+        <a href="contractor.html" target="_blank" rel="noopener">Приложение мастера</a>
       </div>
     </div>
     <div class="footer-bottom">
       <div>© 2026 DOMOS. Все права защищены.</div>
-      <div style="font-style:italic">DOMOS — pro людей ♥</div>
+      <div style="font-style:italic">DOMOS – pro людей ♥</div>
     </div>
   </div>
 </footer>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div id="modalBody" class="modal-text"></div>
-  </div>
-</div>
-
 <script>
-const STEPS = [
-  {title:'Житель сообщает о проблеме', text:'Через текст, фото, видео или голос. Всё через удобное мобильное приложение — заявка сразу попадает в систему.'},
-  {title:'AI анализирует', text:'Определяет категорию, срочность и подбирает лучшего исполнителя. Заявка автоматически маршрутизируется по нужному направлению.'},
-  {title:'Назначается исполнитель', text:'Устанавливается SLA и запускается задача. Житель видит, кто и когда займётся его вопросом, и может следить за прогрессом.'},
-  {title:'Контроль и результат', text:'Житель видит статус, подтверждает выполнение и оценивает качество. Система собирает обратную связь и формирует отчёты.'}
-];
-
-const FEATURES = {
-  requests:{title:'Заявки и статусы',text:'Подача заявки в несколько кликов. Полная история, прозрачные статусы, оценка качества работы. AI классифицирует, приоритизирует и подбирает исполнителя автоматически.', points:['Мгновенное создание заявки','Фото, видео, голос — любые форматы','Уведомления о каждом изменении','Оценка исполнителя после работы']},
-  news:{title:'Новости дома',text:'Все важные объявления — в одной ленте. Отключения, ремонтные работы, события и анонсы. Ничего не потеряется в чатах и домовых группах.', points:['Лента объявлений от УК','Push-уведомления о важном','Архив прошлых объявлений','Отметки «прочитано»']},
-  booking:{title:'Бронирование общих зон',text:'Коворкинг, спортзал, кинозал, барбекю — всё бронируется онлайн. Прозрачное расписание, автоматические правила, никаких конфликтов.', points:['Онлайн-календарь занятости','Правила бронирования и лимиты','Подтверждение и напоминания','Отмена в один клик']},
-  votes:{title:'Голосования и опросы',text:'Жители влияют на жизнь дома, а УК получает легитимные решения. Прозрачные результаты, кворум, история голосований.', points:['Опросы любого формата','Подсчёт голосов в реальном времени','Уведомления о старте','История решений']},
-  community:{title:'Сообщество жителей',text:'Домовые чаты, соседские обсуждения, обмен опытом. Комьюнити формируется естественно и остаётся внутри дома.', points:['Общий чат дома и подъезда','Тематические каналы','Посты и фото с комментариями','Личные сообщения соседям']},
-  infra:{title:'Инфраструктура и сервисы',text:'Всё о доме — в одном месте. Услуги, подрядчики, документы, тарифы, показания счётчиков.', points:['Каталог услуг и подрядчиков','Показания счётчиков и тарифы','Документы и регламенты','Контакты экстренных служб']},
-  brand1:{title:'Солнечный ЖК',text:'Пример white-label решения для жилого комплекса премиум-класса. Тёплая цветовая гамма, акцент на комфорт и сообщество.', points:['Индивидуальный бренд и логотип','Настроенная цветовая схема','Кастомные разделы для ЖК','Свой домен и приложение в сторах']},
-  brand2:{title:'River Park',text:'Пример для бизнес-класса. Строгий синий, акцент на сервис и инфраструктуру. Хорошо работает для крупных комплексов с развитой инфраструктурой.', points:['Многоуровневая структура по корпусам','Разделение на кластеры','Премиум-набор сервисов','Отдельная аналитика']},
-  brand3:{title:'Green House',text:'Пример для комфорт-класса. Свежий зелёный, дружелюбный интерфейс. Идеален для семейных ЖК с фокусом на сообществе.', points:['Фокус на сообществе','Мероприятия и события','Детские и семейные разделы','Программа лояльности']},
-  demo:{title:'Запросить демо',text:'Оставьте заявку — покажем платформу на вашем доме или ЖК, ответим на вопросы и рассчитаем стоимость.', points:['Онлайн-демонстрация платформы','Разбор задач вашего ЖК','Расчёт стоимости и сроков','Возможность пилота']},
-  support:{title:'Поддержка',text:'Круглосуточная техническая поддержка для УК и девелоперов. Помогаем с настройкой, интеграциями и обучением команды.', points:['Ответ в течение 15 минут','Персональный менеджер','Обучение и документация','Мониторинг платформы 24/7']},
-  about:{title:'О нас',text:'DOMOS — команда, которая делает жилые дома удобнее. Мы объединяем технологии AI и экспертизу в управлении недвижимостью.', points:['Команда с опытом в PropTech','Более 500 ЖК на платформе','Работаем по всей России и СНГ','Партнёры — крупнейшие УК']},
-  contacts:{title:'Контакты',text:'Свяжитесь с нами любым удобным способом.', points:['Email: hello@domos.app','Телефон: +7 (495) 000-00-00','Telegram: @domos_app','Офис: Москва, Пресненская наб., 12']},
-  blog:{title:'Блог',text:'Пишем про управление жилыми домами, технологии и комьюнити.', points:['Кейсы внедрения','Гайды для УК','Тренды PropTech','Истории жителей']}
-};
-
-function scrollToSection(id){
-  const el = document.getElementById(id);
-  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+/* ============ ПЛАВНЫЙ СКРОЛЛ (безопасный, с учётом шапки) ============ */
+function smoothScrollTo(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  var header = document.getElementById('header');
+  var headerH = header ? header.offsetHeight : 0;
+  var top = el.getBoundingClientRect().top + window.pageYOffset - headerH - 12;
+  window.scrollTo({top: top, behavior:'smooth'});
 }
 
-function selectStep(i){
-  document.querySelectorAll('.step-dot').forEach((d,j) => d.classList.toggle('active', j===i));
-  const card = document.getElementById('stepCard');
-  card.style.opacity = 0;
-  setTimeout(() => {
-    card.innerHTML = '<h3>' + STEPS[i].title + '</h3><p>' + STEPS[i].text + '</p>';
-    card.style.opacity = 1;
-  }, 150);
-}
+/* ============ ВСЕ ЭЛЕМЕНТЫ С data-scroll ============ */
+document.querySelectorAll('[data-scroll]').forEach(function(el){
+  el.addEventListener('click', function(e){
+    e.preventDefault();
+    var id = el.getAttribute('data-scroll');
+    smoothScrollTo(id);
+    closeMobileMenu();
+  });
+});
 
-function setPalette(el){
-  document.querySelectorAll('.palette span').forEach(s => s.classList.remove('active'));
-  el.classList.add('active');
-}
+/* ============ ШАПКА ПРИ СКРОЛЛЕ ============ */
+window.addEventListener('scroll', function(){
+  var header = document.getElementById('header');
+  if(header){
+    if(window.scrollY > 20) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  }
+}, {passive:true});
 
-function openModal(key){
-  const d = FEATURES[key];
-  if(!d) return;
-  document.getElementById('modalBody').innerHTML =
-    '<h2>' + d.title + '</h2>' +
-    '<p class="modal-sub">' + d.text + '</p>' +
-    '<ul>' + d.points.map(p => '<li>' + p + '</li>').join('') + '</ul>';
-  document.getElementById('modalOverlay').classList.add('show');
+/* ============ БУРГЕР-МЕНЮ ============ */
+var burger = document.getElementById('burger');
+var mobileMenu = document.getElementById('mobileMenu');
+
+function openMobileMenu(){
+  if(!mobileMenu || !burger) return;
+  mobileMenu.classList.add('open');
+  burger.classList.add('active');
+  burger.setAttribute('aria-expanded','true');
   document.body.style.overflow = 'hidden';
 }
-
-function openFeature(key){ openModal(key); }
-
-function closeModal(){
-  document.getElementById('modalOverlay').classList.remove('show');
+function closeMobileMenu(){
+  if(!mobileMenu || !burger) return;
+  mobileMenu.classList.remove('open');
+  burger.classList.remove('active');
+  burger.setAttribute('aria-expanded','false');
   document.body.style.overflow = '';
 }
+if(burger){
+  burger.addEventListener('click', function(){
+    if(mobileMenu.classList.contains('open')) closeMobileMenu();
+    else openMobileMenu();
+  });
+}
+/* Закрытие по Escape */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeMobileMenu();
+});
 
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+/* ============ ПОЯВЛЕНИЕ БЛОКОВ ПРИ СКРОЛЛЕ ============ */
+document.addEventListener('DOMContentLoaded', function(){
+  var revealElements = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    });
+    revealElements.forEach(function(el){ observer.observe(el); });
+  } else {
+    /* Фолбэк: показываем всё сразу */
+    revealElements.forEach(function(el){ el.classList.add('visible'); });
+  }
+});
 </script>
+
 </body>
 </html>

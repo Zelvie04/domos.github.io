@@ -1,0 +1,2933 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f3d2e">
+<title>DOMOS — приложение</title>
+<style>
+:root{
+  --green-dark:#0f3d2e;--green:#1a5a44;--green-mid:#2d8b6f;
+  --green-light:#e8f1ec;--bg:#f4f6f4;--card:#fff;
+  --text:#1a2b24;--muted:#7a8781;--border:#e6eae8;
+  --navy:#16324a;--warn:#f59e0b;--danger:#dc2626;--ok:#059669;
+  --uk-bg:#0f1419;--uk-card:#1a1f28;--uk-border:#222833;--uk-muted:#7d8590;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:#0a0a0a;color:var(--text);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;overflow:hidden}
+@media (min-width:560px){
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;
+    background:radial-gradient(circle at 50% 0%,#1a3a2e 0%,#0a0a0a 70%)}
+  .phone-frame{width:390px;height:840px;background:#000;border-radius:44px;
+    padding:12px;box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 2px #333;position:relative}
+  .phone-frame::after{content:'';position:absolute;top:22px;left:50%;
+    transform:translateX(-50%);width:110px;height:26px;background:#000;
+    border-radius:0 0 16px 16px;z-index:100}
+  .phone-screen{width:100%;height:100%;background:var(--bg);border-radius:34px;
+    overflow:hidden;position:relative;display:flex;flex-direction:column}
+}
+@media (max-width:559px){
+  .phone-frame{width:100%;height:100dvh}
+  .phone-screen{width:100%;height:100%;background:var(--bg);overflow:hidden;
+    position:relative;display:flex;flex-direction:column}
+}
+.role-view{position:absolute;inset:0;display:none;flex-direction:column;
+  background:var(--bg);overflow:hidden}
+.role-view.active{display:flex}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;
+  background:var(--bg);overflow:hidden}
+.screen.active{display:flex;animation:slideIn .22s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+.status-bar{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 22px 6px;font-size:13px;font-weight:600;color:var(--text);
+  flex-shrink:0;position:relative;z-index:10}
+.status-bar .right{display:flex;gap:4px;font-size:12px}
+.top-bar{display:flex;align-items:center;gap:10px;padding:6px 18px 14px;
+  flex-shrink:0;background:transparent}
+.top-bar .back{width:34px;height:34px;border-radius:50%;background:#fff;
+  border:none;display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);
+  color:var(--text);flex-shrink:0}
+.top-bar .back:active{transform:scale(.94)}
+.top-bar h1{font-size:19px;font-weight:700;letter-spacing:-.3px;flex:1}
+.top-bar .action{font-size:14px;color:var(--green-mid);font-weight:600;
+  background:none;border:none;cursor:pointer}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:0 18px 100px;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+.tab-bar{position:absolute;bottom:0;left:0;right:0;background:#fff;
+  border-top:1px solid var(--border);display:flex;justify-content:space-around;
+  padding:8px 0 22px;z-index:50;box-shadow:0 -2px 12px rgba(0,0,0,.03)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 8px;border-radius:10px;cursor:pointer;flex:1;
+  transition:transform .12s;background:none;border:none;font-family:inherit}
+.tab:active{transform:scale(.92)}
+.tab .ti{font-size:20px;line-height:1;color:#9aa39f;transition:color .15s}
+.tab .tl{font-size:10px;font-weight:500;color:#9aa39f}
+.tab.active .ti{color:var(--green-dark)}
+.tab.active .tl{color:var(--green-dark);font-weight:600}
+.logo{display:inline-flex;align-items:center;font-size:22px;font-weight:700;
+  letter-spacing:2px;color:var(--navy);line-height:1}
+.logo-mark{display:inline-block;width:22px;height:22px;margin:0 4px;
+  vertical-align:-3px;flex-shrink:0}
+.logo-mark svg{width:100%;height:100%;display:block}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;
+  box-shadow:0 2px 10px rgba(15,61,46,.05);border:1px solid #eef1ef}
+.section-title{font-size:12px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px;
+  display:flex;justify-content:space-between;align-items:center}
+.section-title:first-child{margin-top:4px}
+.section-title .more{color:var(--green-mid);font-size:13px;text-transform:none;
+  letter-spacing:0;cursor:pointer;font-weight:500}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;background:var(--green-light);color:var(--green)}
+.badge.warn{background:#fef3c7;color:#92400e}
+.badge.danger{background:#fee2e2;color:#991b1b}
+.badge.ok{background:#d1fae5;color:#065f46}
+.badge.gray{background:#f1f3f2;color:#5a6b64}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 22px;border-radius:14px;border:none;font-size:15px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:all .12s;text-decoration:none;width:100%}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--green-dark);color:#fff}
+.btn-outline{background:#fff;color:var(--green-dark);border:1.5px solid #d5ddd9}
+.btn-soft{background:var(--green-light);color:var(--green-dark)}
+.btn-sm{padding:9px 14px;font-size:13px;border-radius:10px;width:auto}
+.row{display:flex;align-items:center;gap:10px}
+.row.between{justify-content:space-between}
+.row.center{justify-content:center}
+.meta{font-size:13px;color:var(--muted);line-height:1.5}
+.meta.small{font-size:12px}
+.photo{width:100%;border-radius:12px;object-fit:cover;display:block}
+.icon-circle{width:44px;height:44px;border-radius:50%;background:var(--green-light);
+  color:var(--green);display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0}
+.icon-circle.sm{width:36px;height:36px;font-size:16px}
+.avatar{width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,#f4a261,#e76f51);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0}
+.divider{height:1px;background:var(--border);margin:12px 0}
+.timeline{display:flex;flex-direction:column;gap:14px;padding:4px 0}
+.tl-item{display:flex;gap:12px;align-items:flex-start;position:relative}
+.tl-dot{width:26px;height:26px;border-radius:50%;background:#f1f3f2;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  flex-shrink:0;color:#9aa39f;font-weight:700;position:relative;z-index:1}
+.tl-dot.done{background:var(--green-light);color:var(--green)}
+.tl-dot.active{background:var(--green-dark);color:#fff}
+.tl-item::before{content:'';position:absolute;left:12px;top:26px;
+  bottom:-14px;width:2px;background:#e6eae8}
+.tl-item:last-child::before{display:none}
+.tl-body{flex:1;padding-top:2px}
+.tl-title{font-size:14px;font-weight:600;color:var(--text)}
+.tl-time{font-size:12px;color:var(--muted);margin-top:2px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:13px;font-weight:600;margin-bottom:8px;display:block}
+.form-input,.form-textarea{width:100%;padding:14px 16px;
+  border:1.5px solid var(--border);border-radius:12px;font-size:15px;
+  font-family:inherit;background:#fff;color:var(--text);transition:border .15s}
+.form-input:focus,.form-textarea:focus{outline:none;border-color:var(--green-mid)}
+.form-textarea{min-height:90px;resize:none}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{padding:8px 14px;border-radius:20px;background:#fff;
+  border:1.5px solid var(--border);font-size:13px;cursor:pointer;
+  transition:all .12s;font-family:inherit;color:var(--text)}
+.chip.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.upload-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.upload-btn{padding:18px 8px;border:1.5px dashed #d5ddd9;border-radius:12px;
+  background:#fafbfa;display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .12s}
+.upload-btn:active{border-color:var(--green-mid);background:var(--green-light)}
+.upload-btn .ui{font-size:22px}
+.login{flex:1;display:flex;flex-direction:column;padding:40px 28px 40px;
+  background:linear-gradient(180deg,#f8f6f1 0%,#e8f1ec 100%);overflow-y:auto}
+.login::-webkit-scrollbar{display:none}
+.login .logo{font-size:32px;letter-spacing:4px;justify-content:center;
+  display:flex;margin-bottom:36px}
+.login .logo .logo-mark{width:32px;height:32px;margin:0 6px;vertical-align:-5px}
+.login h2{font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;text-align:center}
+.login .sub{color:var(--muted);margin-bottom:24px;font-size:13.5px;text-align:center;line-height:1.5}
+.role-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.role-btn{padding:14px 6px;border-radius:14px;background:#fff;
+  border:1.5px solid var(--border);cursor:pointer;font-family:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all .15s;color:var(--text)}
+.role-btn .ri{font-size:24px;line-height:1}
+.role-btn .rl{font-size:11.5px;font-weight:600;text-align:center;line-height:1.2}
+.role-btn.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark);
+  box-shadow:0 8px 20px rgba(15,61,46,.25)}
+.role-btn:active{transform:scale(.97)}
+.code-input{display:flex;gap:8px;margin:16px 0 20px}
+.code-box{flex:1;height:52px;border:1.5px solid var(--border);border-radius:12px;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;color:var(--green-dark);transition:border .15s}
+.code-box.filled{border-color:var(--green-mid)}
+.code-box.active{border-color:var(--green-dark);box-shadow:0 0 0 3px var(--green-light)}
+.hint-box{background:#fff;border-radius:12px;padding:12px 14px;
+  border:1px dashed #d5ddd9;margin-top:16px;font-size:12px;color:var(--muted);line-height:1.6}
+.hint-box b{color:var(--green-dark)}
+.zone-card{background:#fff;border-radius:16px;overflow:hidden;
+  border:1px solid #eef1ef;cursor:pointer;transition:transform .15s;
+  box-shadow:0 2px 10px rgba(15,61,46,.05)}
+.zone-card:active{transform:scale(.97)}
+.zone-img{width:100%;height:100px;object-fit:cover;display:block}
+.zone-body{padding:12px}
+.zone-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.chat-row{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);
+  cursor:pointer;align-items:center}
+.chat-row:last-child{border-bottom:none}
+.chat-body{flex:1;min-width:0}
+.chat-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.chat-preview{font-size:13px;color:var(--muted);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.chat-time{font-size:11px;color:var(--muted);flex-shrink:0}
+.chat-unread{background:var(--green-dark);color:#fff;font-size:11px;
+  padding:2px 7px;border-radius:10px;font-weight:600;margin-top:4px;display:inline-block}
+.progress{height:8px;background:#eef1ef;border-radius:4px;overflow:hidden;margin:10px 0}
+.progress-bar{height:100%;background:var(--green-mid);border-radius:4px;transition:width .4s ease}
+.dot-ind{width:8px;height:8px;background:#dc2626;border-radius:50%;display:inline-block}
+.profile-head{display:flex;flex-direction:column;align-items:center;padding:12px 0 24px}
+.profile-head .avatar{width:80px;height:80px;font-size:28px;margin-bottom:14px}
+.profile-head h2{font-size:20px;font-weight:700}
+.profile-head .meta{margin-top:4px}
+.list-row{display:flex;align-items:center;gap:14px;padding:14px 0;
+  border-bottom:1px solid var(--border);cursor:pointer}
+.list-row:last-child{border-bottom:none}
+.list-row .body{flex:1}
+.list-row .title{font-size:14.5px;font-weight:500}
+.list-row .sub{font-size:12.5px;color:var(--muted);margin-top:1px}
+.list-row .arrow{color:#c4ccc9;font-size:16px}
+.toggle{width:42px;height:24px;border-radius:12px;background:#d5ddd9;
+  position:relative;transition:background .15s;flex-shrink:0;cursor:pointer}
+.toggle::after{content:'';position:absolute;left:2px;top:2px;width:20px;height:20px;
+  background:#fff;border-radius:50%;transition:transform .15s;
+  box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.toggle.on{background:var(--green-dark)}
+.toggle.on::after{transform:translateX(18px)}
+.sheet-overlay{position:absolute;inset:0;background:rgba(15,61,46,.5);
+  backdrop-filter:blur(4px);z-index:200;display:none;
+  align-items:flex-end;justify-content:center}
+.sheet-overlay.show{display:flex}
+.sheet{background:#fff;width:100%;border-radius:24px 24px 0 0;
+  padding:20px 22px 30px;max-height:85%;overflow-y:auto;
+  animation:sheetUp .25s ease;position:relative}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+.sheet::before{content:'';position:absolute;top:8px;left:50%;
+  transform:translateX(-50%);width:36px;height:4px;background:#d5ddd9;border-radius:2px}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.slot{padding:12px 6px;border-radius:10px;background:#fafbfa;
+  border:1.5px solid var(--border);text-align:center;font-size:13px;
+  cursor:pointer;transition:all .12s;font-family:inherit;color:var(--text)}
+.slot.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.slot.disabled{opacity:.35;cursor:not-allowed}
+.toast{position:absolute;top:50px;left:50%;transform:translateX(-50%);
+  background:var(--green-dark);color:#fff;padding:12px 20px;border-radius:12px;
+  font-size:14px;font-weight:500;z-index:9999;opacity:0;pointer-events:none;
+  transition:opacity .2s;white-space:nowrap;max-width:90%}
+.toast.show{opacity:1}
+.chat-wrap{flex:1;overflow-y:auto;padding:12px 16px 20px;
+  background:#f4f6f4;display:flex;flex-direction:column;gap:10px}
+.chat-wrap::-webkit-scrollbar{display:none}
+.msg{max-width:82%;padding:11px 14px;border-radius:16px;font-size:14px;
+  line-height:1.45;animation:msgIn .2s ease;word-wrap:break-word}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.ai{background:#fff;border:1px solid #eef1ef;color:var(--text);
+  border-bottom-left-radius:6px;align-self:flex-start;
+  box-shadow:0 1px 4px rgba(15,61,46,.05)}
+.msg.me{background:var(--green-dark);color:#fff;
+  border-bottom-right-radius:6px;align-self:flex-end}
+.msg.sys{background:#eef1ef;color:var(--muted);font-size:12px;
+  align-self:center;text-align:center;max-width:90%;border-radius:10px;padding:8px 12px}
+.msg .ai-label{display:flex;align-items:center;gap:6px;font-size:11px;
+  font-weight:700;color:var(--green-mid);text-transform:uppercase;
+  letter-spacing:.4px;margin-bottom:6px}
+.msg .ai-label .dot{width:6px;height:6px;border-radius:50%;
+  background:#2ec4a0;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.typing{display:flex;gap:4px;padding:12px 16px;background:#fff;
+  border-radius:16px;border-bottom-left-radius:6px;align-self:flex-start;
+  border:1px solid #eef1ef;width:60px}
+.typing span{width:7px;height:7px;border-radius:50%;background:#c4ccc9;
+  animation:typing 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.5}
+  30%{transform:translateY(-4px);opacity:1}}
+.msg-card{background:#fff;border:1px solid #eef1ef;border-radius:14px;
+  padding:12px;align-self:stretch;max-width:100%;box-shadow:0 2px 8px rgba(15,61,46,.05);
+  animation:msgIn .25s ease}
+.msg-card .mc-title{font-size:11px;font-weight:700;color:var(--green-mid);
+  text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+.msg-card .mc-row{display:flex;justify-content:space-between;padding:6px 0;
+  font-size:13px;border-bottom:1px dashed #eef1ef}
+.msg-card .mc-row:last-of-type{border-bottom:none}
+.msg-card .mc-row .k{color:var(--muted)}
+.msg-card .mc-row .v{font-weight:600;color:var(--text);text-align:right}
+.msg-card .mc-row .v.danger{color:#dc2626}
+.msg-card .mc-row .v.warn{color:#d97706}
+.msg-card .mc-row .v.ok{color:#059669}
+.qr-bar{flex-shrink:0;background:#f4f6f4;padding:6px 12px 10px;
+  display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+.qr-bar::-webkit-scrollbar{display:none}
+.qr-bar:empty{display:none}
+.qr-bar .qr{padding:8px 14px;border-radius:20px;background:#fff;
+  border:1.5px solid var(--green-mid);font-size:13px;cursor:pointer;
+  font-family:inherit;color:var(--green-dark);font-weight:600;
+  white-space:nowrap;flex-shrink:0;transition:all .12s}
+.qr-bar .qr:active{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.chat-input-bar{flex-shrink:0;padding:10px 14px 20px;
+  background:#fff;border-top:1px solid var(--border);display:flex;gap:8px;
+  align-items:center;z-index:50}
+.chat-input-bar input{flex:1;padding:11px 16px;border-radius:22px;
+  border:1.5px solid var(--border);font-size:14px;font-family:inherit;
+  background:#f4f6f4;color:var(--text);outline:none}
+.chat-input-bar input:focus{border-color:var(--green-mid)}
+.chat-input-bar .send{width:40px;height:40px;border-radius:50%;border:none;
+  background:var(--green-dark);color:#fff;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.contractor-card{background:#fff;border:1.5px solid #eef1ef;border-radius:14px;
+  padding:14px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.contractor-card.selected{border-color:var(--green-dark);box-shadow:0 0 0 2px var(--green-light)}
+.contractor-card .cc-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.contractor-card .cc-avatar{width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;
+  align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0}
+.contractor-card .cc-info{flex:1;min-width:0}
+.contractor-card .cc-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px}
+.contractor-card .cc-spec{font-size:12px;color:var(--muted)}
+.contractor-card .cc-rating{display:flex;align-items:center;gap:4px;
+  font-size:13px;font-weight:700;color:var(--text);flex-shrink:0}
+.contractor-card .cc-rating .star{color:#f59e0b}
+.contractor-card .cc-rating small{color:var(--muted);font-weight:500;font-size:11px;margin-left:2px}
+.contractor-card .cc-desc{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.contractor-card .cc-stats{display:flex;gap:10px;margin-bottom:12px;font-size:11px;flex-wrap:wrap}
+.contractor-card .cc-stat{background:#f4f6f4;border-radius:8px;padding:5px 10px;color:var(--text)}
+.contractor-card .cc-stat b{color:var(--green-dark);font-weight:700}
+.contractor-card .cc-bottom{display:flex;justify-content:space-between;
+  align-items:center;padding-top:10px;border-top:1px solid #f0f3f2}
+.contractor-card .cc-price{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.contractor-card .cc-price small{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:3px}
+.contractor-card .cc-pick{background:var(--green-dark);color:#fff;border:none;
+  padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.contractor-card.selected .cc-pick{background:var(--green-light);color:var(--green-dark)}
+.ai-fab{position:absolute;right:18px;bottom:100px;width:58px;height:58px;
+  border-radius:50%;border:none;cursor:pointer;z-index:400;
+  background:linear-gradient(135deg,#16324a 0%,#2ec4a0 100%);
+  box-shadow:0 8px 24px rgba(46,196,160,.45),0 0 0 4px rgba(46,196,160,.15);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  font-size:26px;transition:transform .2s;animation:fabPulse 3s infinite}
+.ai-fab:active{transform:scale(.92)}
+.ai-fab::after{content:'';position:absolute;top:2px;right:2px;width:12px;
+  height:12px;border-radius:50%;background:#2ec4a0;border:2px solid #fff}
+@keyframes fabPulse{0%,100%{box-shadow:0 8px 24px rgba(46,196,160,.45),0 0 0 4px rgba(46,196,160,.15)}
+  50%{box-shadow:0 8px 24px rgba(46,196,160,.45),0 0 0 10px rgba(46,196,160,.08)}}
+.contractor-badge{background:linear-gradient(135deg,#0f3d2e,#1a5a44);color:#fff;
+  padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0;font-size:12px}
+.contractor-badge .c-avatar{width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#f4a261,#e76f51);display:flex;
+  align-items:center;justify-content:center;font-weight:700;font-size:12px;
+  color:#fff;flex-shrink:0}
+.contractor-badge .c-info{flex:1;min-width:0}
+.contractor-badge .c-name{font-weight:700;font-size:13px;line-height:1.2}
+.contractor-badge .c-status{font-size:11px;opacity:.85;margin-top:2px;
+  display:flex;align-items:center;gap:4px}
+.contractor-badge .c-status .on{width:6px;height:6px;border-radius:50%;
+  background:#2ec4a0;animation:pulse 1.5s infinite}
+.chat-sys-info{background:rgba(46,196,160,.08);border:1px solid rgba(46,196,160,.2);
+  border-radius:12px;padding:10px 12px;font-size:12px;color:var(--green-dark);
+  align-self:stretch;text-align:center;line-height:1.5}
+.event-card{background:#fff;border-radius:16px;overflow:hidden;
+  border:1px solid #eef1ef;margin-bottom:12px;
+  box-shadow:0 2px 10px rgba(15,61,46,.05);cursor:pointer}
+.event-img{width:100%;height:120px;object-fit:cover;display:block}
+.event-body{padding:14px}
+.event-title{font-size:15px;font-weight:700;margin-bottom:6px;color:var(--text)}
+.event-meta{font-size:12px;color:var(--muted);display:flex;gap:10px;
+  flex-wrap:wrap;margin-bottom:10px}
+.event-promo{background:linear-gradient(135deg,#fef3c7,#fed7aa);
+  color:#92400e;padding:6px 12px;border-radius:8px;font-size:12px;
+  font-weight:700;display:inline-block}
+.event-promo b{color:#7c2d12}
+.map-wrap{position:relative;width:100%;aspect-ratio:16/12;border-radius:16px;
+  overflow:hidden;margin-bottom:8px;background:#dfe9e2;
+  box-shadow:0 2px 10px rgba(15,61,46,.08)}
+.map-wrap svg{width:100%;height:100%;display:block}
+.map-pin{position:absolute;width:32px;height:32px;border-radius:50%;
+  background:#fff;border:2px solid var(--green-mid);
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  box-shadow:0 4px 12px rgba(15,61,46,.25);cursor:pointer;
+  z-index:5;transform:translate(-50%,-50%);transition:transform .15s}
+.map-pin:active{transform:translate(-50%,-50%) scale(.92)}
+.map-pin.you{background:var(--green-dark);border-color:#fff;color:#fff;
+  width:38px;height:38px;font-size:15px;z-index:10;
+  box-shadow:0 6px 16px rgba(15,61,46,.35),0 0 0 4px rgba(46,196,160,.25)}
+.map-pin.sale{border-color:#92400e;background:#fef3c7}
+.filter-tabs{display:flex;gap:6px;background:#eef1ef;border-radius:12px;
+  padding:4px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
+.filter-tabs::-webkit-scrollbar{display:none}
+.filter-tabs button{flex:1;min-width:60px;background:transparent;border:none;
+  color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;
+  padding:8px 4px;border-radius:9px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.filter-tabs button.active{background:#fff;color:var(--green-dark);
+  box-shadow:0 2px 6px rgba(15,61,46,.08)}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+#view-uk{background:var(--uk-bg)}
+#view-uk .status-bar{color:#fff}
+#view-uk .top-bar h1{color:#fff}
+#view-uk .top-bar .action{color:var(--green)}
+#view-uk .content{background:var(--uk-bg);padding:0 16px 100px}
+#view-uk .tab-bar{background:var(--uk-card);border-top-color:var(--uk-border)}
+#view-uk .tab .ti{color:#5a6672}
+#view-uk .tab .tl{color:#5a6672}
+#view-uk .tab.active .ti{color:var(--green)}
+#view-uk .tab.active .tl{color:var(--green)}
+#view-uk .section-title{color:var(--uk-muted)}</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="domosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#16324a"/>
+      <stop offset="45%" stop-color="#0f6b6b"/>
+      <stop offset="100%" stop-color="#2ec4a0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="phone-frame">
+<div class="phone-screen" id="appRoot">
+
+<!-- LOGIN -->
+<div class="role-view active" id="view-login">
+  <div class="screen active" id="s-login">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="login">
+      <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
+      <h2>Вход в систему</h2>
+      <p class="sub">Выберите роль и введите свой код</p>
+      <div class="role-picker">
+        <button class="role-btn active" data-role="resident" onclick="pickRole(this,'resident')"><span class="ri">👤</span><span class="rl">Житель</span></button>
+        <button class="role-btn" data-role="uk" onclick="pickRole(this,'uk')"><span class="ri">🏢</span><span class="rl">УК</span></button>
+        <button class="role-btn" data-role="contractor" onclick="pickRole(this,'contractor')"><span class="ri">👷</span><span class="rl">Подрядчик</span></button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Код доступа</label>
+        <input class="form-input" type="text" id="accessCode" value="1 2 3 4" maxlength="9">
+      </div>
+      <div class="code-input">
+        <div class="code-box filled">1</div>
+        <div class="code-box filled">2</div>
+        <div class="code-box filled">3</div>
+        <div class="code-box active">4</div>
+        <div class="code-box"></div>
+        <div class="code-box"></div>
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Войти</button>
+      <div class="hint-box"><b>Демо-коды:</b><br>👤 Житель: <b>1234</b><br>🏢 УК: <b>5678</b><br>👷 Подрядчик: <b>9012</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESIDENT -->
+<div class="role-view" id="view-resident">
+
+<div class="screen active" id="s-home">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
+    <div style="flex:1"></div>
+    <button class="back" onclick="showScreen('s-notifications')" style="position:relative;margin-right:6px">🔔<span class="dot-ind" style="position:absolute;top:6px;right:6px"></span></button>
+    <button class="back" onclick="showScreen('s-profile')">👤</button>
+  </div>
+  <div class="content">
+    <div style="padding:4px 0;margin-bottom:16px">
+      <div style="font-size:13px;color:var(--muted)">Добрый день,</div>
+      <div style="font-size:22px;font-weight:700;margin-top:2px">Анна 👋</div>
+      <div class="meta small" style="margin-top:8px" data-user-address>ЖК Солнечный, корпус 1 · кв. 247</div>
+    </div>
+    <div class="section-title">Ваша заявка</div>
+    <div class="card" onclick="openRequestDetail('active')" style="cursor:pointer">
+      <div class="row between" style="margin-bottom:8px"><span class="badge warn">В работе</span><span class="meta small">№ 2487</span></div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px">Не работает свет в подъезде</div>
+      <div class="meta small" style="margin-bottom:12px">3 этаж, лампа не горит · 12 мая, 14:32</div>
+      <img class="photo" style="height:110px" src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&q=70" alt="">
+      <div class="row between" style="margin-top:12px">
+        <span class="meta small">Мастер: Сергей П.</span>
+        <span style="color:var(--green-mid);font-size:13px;font-weight:600">Подробнее →</span>
+      </div>
+    </div>
+    <div class="section-title">Новости ЖК <span class="more" onclick="showScreen('s-news')">Все</span></div>
+    <div class="card" style="cursor:pointer;border-left:3px solid #dc2626;padding:14px" onclick="showScreen('s-news')">
+      <div style="display:flex;gap:10px"><div class="icon-circle sm" style="background:#fee2e2;color:#991b1b">💧</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:600">Отключение горячей воды</div><div class="meta small">15–17 мая · весь дом</div></div></div>
+    </div>
+    <div class="card" style="cursor:pointer;padding:14px" onclick="showScreen('s-news')">
+      <div style="display:flex;gap:10px"><div class="icon-circle sm" style="background:#fef3c7;color:#92400e">🔧</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:600">Ремонт лифта во 2 подъезде</div><div class="meta small">до 25 мая</div></div></div>
+    </div>
+    <div class="section-title">Бизнесы рядом <span class="more" onclick="showScreen('s-events')">Все</span></div>
+    <div class="card" style="cursor:pointer;padding:14px" onclick="showScreen('s-events')">
+      <div style="display:flex;gap:10px"><div class="icon-circle sm" style="background:#fef3c7;color:#92400e">🎁</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:600">Кофейня «Утро» — скидка 20%</div><div class="meta small">Ср, 22 мая · <b>для жителей ЖК</b></div></div></div>
+    </div>
+    <div class="section-title">Общие зоны <span class="more" onclick="showScreen('s-zones')">Все</span></div>
+    <div class="grid-3">
+      <div class="zone-card" onclick="openZone('Коворкинг','9:00 – 21:00','3 этаж','Уютное пространство.')">
+        <img class="zone-img" style="height:70px" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&q=70" alt="">
+        <div style="padding:8px;text-align:center;font-size:11px;font-weight:600">Коворкинг</div>
+      </div>
+      <div class="zone-card" onclick="openZone('Спортзал','7:00 – 23:00','1 этаж','Тренажёры, кардио.')">
+        <img class="zone-img" style="height:70px" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&q=70" alt="">
+        <div style="padding:8px;text-align:center;font-size:11px;font-weight:600">Спортзал</div>
+      </div>
+      <div class="zone-card" onclick="openZone('Кинозал','По расписанию','2 этаж','Экран, 20 мест.')">
+        <img class="zone-img" style="height:70px" src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300&q=70" alt="">
+        <div style="padding:8px;text-align:center;font-size:11px;font-weight:600">Кинозал</div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab" onclick="switchTab(this,'s-events')"><span class="ti">📍</span><span class="tl">События</span></button>
+    <button class="tab" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Чаты</span></button>
+  </div>
+</div>
+
+<div class="screen" id="s-news">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-home')">←</button><h1>Новости ЖК</h1></div>
+  <div class="content">
+    <div class="filter-tabs" id="newsFilters">
+      <button class="active" onclick="filterNews(this,'all')">Все</button>
+      <button onclick="filterNews(this,'now')">Сейчас</button>
+      <button onclick="filterNews(this,'soon')">Скоро</button>
+      <button onclick="filterNews(this,'plan')">План</button>
+    </div>
+    <div class="card news-item" data-status="soon" style="border-left:3px solid #dc2626">
+      <div class="row between" style="margin-bottom:8px"><span class="badge danger">Скоро</span><span class="meta small">15–17 мая</span></div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">💧 Отключение горячей воды</div>
+      <div class="meta small" style="margin-bottom:8px">Весь дом. Работы теплосети.</div>
+      <div style="background:#fef3c7;border-radius:8px;padding:8px 10px;font-size:12px;color:#92400e">⏰ 15 мая 9:00 — 17 мая 18:00</div>
+    </div>
+    <div class="card news-item" data-status="now" style="border-left:3px solid #f59e0b">
+      <div class="row between" style="margin-bottom:8px"><span class="badge warn">Идёт сейчас</span><span class="meta small">до 25 мая</span></div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">🔧 Ремонт лифта во 2 подъезде</div>
+      <div class="meta small" style="margin-bottom:8px">Работает грузовой.</div>
+      <div style="background:#fef3c7;border-radius:8px;padding:8px 10px;font-size:12px;color:#92400e">⏰ Окончание — 25 мая</div>
+    </div>
+    <div class="card news-item" data-status="plan" style="border-left:3px solid #2d8b6f">
+      <div class="row between" style="margin-bottom:8px"><span class="badge">Запланировано</span><span class="meta small">28 мая</span></div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">🚧 Благоустройство двора</div>
+      <div class="meta small" style="margin-bottom:8px">Лавочки, клумбы, урны.</div>
+      <div style="background:#e8f1ec;border-radius:8px;padding:8px 10px;font-size:12px;color:#0f3d2e">⏰ 28 мая, с 10:00</div>
+    </div>
+    <div class="card news-item" data-status="soon" style="border-left:3px solid #dc2626">
+      <div class="row between" style="margin-bottom:8px"><span class="badge danger">Скоро</span><span class="meta small">20 мая</span></div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">⚡ Отключение электричества</div>
+      <div class="meta small" style="margin-bottom:8px">1 и 3 подъезды.</div>
+      <div style="background:#fef3c7;border-radius:8px;padding:8px 10px;font-size:12px;color:#92400e">⏰ 20 мая, 10:00–14:00</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-requests">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><h1>Мои заявки</h1></div>
+  <div class="content">
+    <div class="filter-tabs" id="reqFilters">
+      <button class="active" onclick="filterRequests(this,'all')">Все</button>
+      <button onclick="filterRequests(this,'active')">Активные</button>
+      <button onclick="filterRequests(this,'done')">Завершённые</button>
+    </div>
+    <div id="reqList">
+      <div class="card req-item" data-status="active" onclick="openRequestDetail('active')" style="cursor:pointer">
+        <div class="row between" style="margin-bottom:8px"><span class="badge warn">В работе</span><span class="meta small">№ 2487 · 12 мая</span></div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px">Не работает свет в подъезде</div>
+        <div class="meta small">3 этаж, лампа не горит</div>
+      </div>
+      <div class="card req-item" data-status="done" onclick="openRequestDetail('done1')" style="cursor:pointer">
+        <div class="row between" style="margin-bottom:8px"><span class="badge ok">Выполнено</span><span class="meta small">№ 2456 · 8 мая</span></div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px">Протечка крана на кухне</div>
+        <div class="meta small">Сантехник приходил, всё исправлено</div>
+        <div class="divider"></div>
+        <div class="row between"><span class="meta small">Оценка:</span><span style="font-size:14px">⭐⭐⭐⭐⭐</span></div>
+      </div>
+      <div class="card req-item" data-status="done" onclick="openRequestDetail('done2')" style="cursor:pointer">
+        <div class="row between" style="margin-bottom:8px"><span class="badge ok">Выполнено</span><span class="meta small">№ 2411 · 2 мая</span></div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px">Шум у соседей ночью</div>
+        <div class="meta small">Проведена беседа</div>
+      </div>
+      <div class="card req-item" data-status="done" onclick="openRequestDetail('done3')" style="cursor:pointer">
+        <div class="row between" style="margin-bottom:8px"><span class="badge gray">Отменена</span><span class="meta small">№ 2398 · 28 апр</span></div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px">Замена лампочки в тамбуре</div>
+        <div class="meta small">Отменена</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="showScreen('s-new-request')">＋ Создать новую заявку</button>
+  </div>
+  <div class="tab-bar">
+    <button class="tab" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab active" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab" onclick="switchTab(this,'s-events')"><span class="ti">📍</span><span class="tl">События</span></button>
+    <button class="tab" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Чаты</span></button>
+  </div>
+</div>
+
+<div class="screen" id="s-request-detail">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-requests')">←</button><h1 id="rdTitle">Заявка</h1></div>
+  <div class="content" id="rdContent"></div>
+</div>
+
+<div class="screen" id="s-new-request">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-requests')">←</button><h1>Новая заявка</h1></div>
+  <div class="content">
+    <div class="form-group"><label class="form-label">Категория</label>
+      <div class="chips" id="reqCategory">
+        <button class="chip active" data-cat="electric">⚡ Электрика</button>
+        <button class="chip" data-cat="plumbing">💧 Сантехника</button>
+        <button class="chip" data-cat="doors">🚪 Двери</button>
+        <button class="chip" data-cat="cleaning">🧹 Уборка</button>
+        <button class="chip" data-cat="other">🛠 Другое</button>
+      </div></div>
+    <div class="form-group"><label class="form-label">Что случилось?</label>
+      <textarea class="form-textarea" id="newReqText">Не работает свет в подъезде на 3 этаже.</textarea></div>
+    <div class="form-group"><label class="form-label">Прикрепите фото или видео</label>
+      <div class="upload-row">
+        <button class="upload-btn"><span class="ui">📷</span>Фото</button>
+        <button class="upload-btn"><span class="ui">🎥</span>Видео</button>
+        <button class="upload-btn"><span class="ui">🎤</span>Голос</button>
+      </div></div>
+    <div class="form-group"><label class="form-label">Где находится проблема?</label>
+      <div class="chips" id="locationChips">
+        <button class="chip active" data-loc="common">🏢 Общее место</button>
+        <button class="chip" data-loc="private">🚪 В моей квартире</button>
+      </div></div>
+    <button class="btn btn-primary" style="margin-bottom:8px" onclick="startAIChat()">Отправить заявку</button>
+    <p class="meta small" style="text-align:center">AI уточнит детали и подберёт исполнителя</p>
+  </div>
+</div>
+
+<div class="screen" id="s-ai-analyzing">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:40px 32px;text-align:center;background:linear-gradient(180deg,#f4f6f4,#e8f1ec)">
+    <div style="width:100px;height:100px;border-radius:50%;
+      background:linear-gradient(135deg,#16324a,#2ec4a0);
+      display:flex;align-items:center;justify-content:center;font-size:44px;margin-bottom:24px">🤖</div>
+    <div style="font-size:22px;font-weight:700;color:var(--green-dark);margin-bottom:10px">AI анализирует заявку...</div>
+    <div class="meta" style="margin-bottom:32px">Определяю категорию, приоритет и исполнителя</div>
+    <div style="width:100%;max-width:280px;text-align:left">
+      <div class="analyzing-step" style="display:flex;align-items:center;gap:10px;padding:10px 0;opacity:.3;transition:opacity .4s">
+        <span style="width:20px;height:20px;border-radius:50%;background:#2ec4a0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px">✓</span>
+        <span style="font-size:13px">Анализ текста и фото</span></div>
+      <div class="analyzing-step" style="display:flex;align-items:center;gap:10px;padding:10px 0;opacity:.3;transition:opacity .4s">
+        <span style="width:20px;height:20px;border-radius:50%;background:#2ec4a0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px">✓</span>
+        <span style="font-size:13px">Определение категории и приоритета</span></div>
+      <div class="analyzing-step" style="display:flex;align-items:center;gap:10px;padding:10px 0;opacity:.3;transition:opacity .4s">
+        <span style="width:20px;height:20px;border-radius:50%;background:#2ec4a0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px">✓</span>
+        <span style="font-size:13px">Подбор исполнителя</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-ai-chat">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <button class="back" onclick="showScreen('s-new-request')">←</button>
+    <h1>🤖 AI-ассистент</h1>
+    <button class="action" onclick="finishAIChatNow()">Пропустить</button>
+  </div>
+  <div class="chat-wrap" id="aiChatBody"></div>
+  <div class="qr-bar" id="aiQuickReplies"></div>
+  <div class="chat-input-bar">
+    <input type="text" id="aiChatInput" placeholder="Напишите ответ..." onkeypress="if(event.key==='Enter')aiChatSend()">
+    <button class="send" onclick="aiChatSend()">➤</button>
+  </div>
+</div>
+
+<div class="screen" id="s-contractor-picker">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <button class="back" onclick="showScreen('s-ai-chat')">←</button>
+    <h1>Выберите исполнителя</h1>
+  </div>
+  <div class="content" style="padding-bottom:120px">
+    <div class="card" style="background:#f0f9f5;border-color:#d1fae5;margin-bottom:16px">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <div style="font-size:20px">🤖</div>
+        <div style="font-size:13px;line-height:1.5;color:#0f3d2e"><b>AI подобрал 3 специалиста.</b> Все с проверенными документами.</div>
+      </div>
+    </div>
+    <div id="contractorsList"></div>
+    <button class="btn btn-primary" style="margin-top:12px" onclick="confirmContractorPick()" id="pickBtn" disabled>Выберите исполнителя</button>
+  </div>
+</div>
+
+<div class="screen" id="s-contractor-chat">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar" style="padding-bottom:8px">
+    <button class="back" onclick="showScreen('s-request-detail')">←</button>
+    <h1 id="ccTitle">Чат с исполнителем</h1>
+  </div>
+  <div class="contractor-badge">
+    <div class="c-avatar" id="ccAvatar">С</div>
+    <div class="c-info">
+      <div class="c-name" id="ccName">Сергей Петров</div>
+      <div class="c-status"><span class="on"></span><span id="ccSpec">Электрик · онлайн</span></div>
+    </div>
+  </div>
+  <div class="chat-wrap" id="ccChatBody"></div>
+  <div class="chat-input-bar">
+    <input type="text" id="ccInput" placeholder="Написать сообщение..." onkeypress="if(event.key==='Enter')ccSend()">
+    <button class="send" onclick="ccSend()">➤</button>
+  </div>
+</div>
+
+<div class="screen" id="s-zones">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><h1>Общие зоны</h1></div>
+  <div class="content">
+    <p class="meta" style="margin-bottom:16px">Забронируйте помещение — в один клик</p>
+    <div class="grid-2">
+      <div class="zone-card" onclick="openZone('Коворкинг','9:00 – 21:00','3 этаж','Уютное пространство. Wi-Fi, розетки, кофе-машина.')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=70" alt="">
+        <div class="zone-body"><div class="zone-name">Коворкинг</div><div class="meta small">9:00 – 21:00</div><span class="badge" style="margin-top:8px">Свободно</span></div>
+      </div>
+      <div class="zone-card" onclick="openZone('Спортзал','7:00 – 23:00','1 этаж','Тренажёры, зона кардио.')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=70" alt="">
+        <div class="zone-body"><div class="zone-name">Спортзал</div><div class="meta small">7:00 – 23:00</div><span class="badge warn" style="margin-top:8px">Мало мест</span></div>
+      </div>
+      <div class="zone-card" onclick="openZone('Кинозал','По расписанию','2 этаж','Большой экран, 20 мест.')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&q=70" alt="">
+        <div class="zone-body"><div class="zone-name">Кинозал</div><div class="meta small">По расписанию</div><span class="badge" style="margin-top:8px">Свободно</span></div>
+      </div>
+      <div class="zone-card" onclick="openZone('Барбекю','10:00 – 22:00','Двор','Мангалы, столы, лавочки.')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=70" alt="">
+        <div class="zone-body"><div class="zone-name">Барбекю-зона</div><div class="meta small">10:00 – 22:00</div><span class="badge" style="margin-top:8px">Свободно</span></div>
+      </div>
+      <div class="zone-card" onclick="openZone('Переговорная','9:00 – 20:00','3 этаж','Стол на 8, проектор.')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&q=70" alt="">
+        <div class="zone-body"><div class="zone-name">Переговорная</div><div class="meta small">9:00 – 20:00</div><span class="badge" style="margin-top:8px">Свободно</span></div>
+      </div>
+      <div class="zone-card" onclick="openZone('Прачечная','Круглосуточно','−1 этаж','Стиральные и сушильные.')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=400&q=70" alt="">
+        <div class="zone-body"><div class="zone-name">Прачечная</div><div class="meta small">Круглосуточно</div><span class="badge danger" style="margin-top:8px">Занято</span></div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab active" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab" onclick="switchTab(this,'s-events')"><span class="ti">📍</span><span class="tl">События</span></button>
+    <button class="tab" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Чаты</span></button>
+  </div>
+</div>
+
+<div class="screen" id="s-zone-detail">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-zones')">←</button><h1 id="zoneTitle">Коворкинг</h1></div>
+  <div class="content">
+    <img class="photo" style="height:180px;margin-bottom:16px" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=70" alt="">
+    <div class="card" style="margin-bottom:16px">
+      <div class="row between" style="margin-bottom:12px">
+        <div><div style="font-size:16px;font-weight:700" id="zoneTitle2">Коворкинг</div><div class="meta small" id="zoneSubtitle">с 9:00 до 21:00 · 3 этаж</div></div>
+        <span class="badge">Свободно</span>
+      </div>
+      <div class="meta" id="zoneDesc">Уютное пространство.</div>
+    </div>
+    <div class="section-title">Выберите дату</div>
+    <div class="chips" id="zoneDates">
+      <button class="chip active" onclick="pickZoneDate(this)">Сегодня</button>
+      <button class="chip" onclick="pickZoneDate(this)">Завтра</button>
+      <button class="chip" onclick="pickZoneDate(this)">Ср, 22</button>
+      <button class="chip" onclick="pickZoneDate(this)">Чт, 23</button>
+    </div>
+    <div class="section-title">Свободное время</div>
+    <div class="slots" id="zoneSlots">
+      <button class="slot" onclick="pickZoneSlot(this)">10:00</button>
+      <button class="slot" onclick="pickZoneSlot(this)">11:00</button>
+      <button class="slot active" onclick="pickZoneSlot(this)">12:00</button>
+      <button class="slot" onclick="pickZoneSlot(this)">13:00</button>
+      <button class="slot disabled">14:00</button>
+      <button class="slot" onclick="pickZoneSlot(this)">15:00</button>
+      <button class="slot" onclick="pickZoneSlot(this)">16:00</button>
+      <button class="slot disabled">17:00</button>
+      <button class="slot" onclick="pickZoneSlot(this)">18:00</button>
+    </div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="bookZone()" id="bookZoneBtn">Забронировать на 12:00</button>
+  </div>
+</div>
+
+<div class="screen" id="s-events">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <h1>События и место</h1>
+    <button class="action" onclick="openCreateEvent()">＋ Создать</button>
+  </div>
+  <div class="content">
+    <div class="section-title" style="margin-top:0">Карта района</div>
+    <div class="map-wrap">
+      <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="300" fill="#dfe9e2"/>
+        <path d="M0,200 Q60,160 120,210 Q80,290 0,300 Z" fill="#b8d4bb"/>
+        <path d="M280,0 Q340,20 400,0 L400,80 Q340,110 280,60 Z" fill="#b8d4bb"/>
+        <path d="M0,90 Q100,120 200,100 T400,130" stroke="#a8c8dd" stroke-width="22" fill="none" stroke-linecap="round"/>
+        <line x1="0" y1="150" x2="400" y2="150" stroke="#fff" stroke-width="16"/>
+        <line x1="200" y1="0" x2="200" y2="300" stroke="#fff" stroke-width="14"/>
+        <line x1="80" y1="0" x2="80" y2="300" stroke="#fff" stroke-width="8"/>
+        <line x1="320" y1="0" x2="320" y2="300" stroke="#fff" stroke-width="8"/>
+        <line x1="0" y1="240" x2="400" y2="240" stroke="#fff" stroke-width="10"/>
+        <rect x="130" y="50" width="70" height="55" fill="#1a5a44" rx="4"/>
+        <text x="165" y="82" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">ЖК</text>
+        <rect x="220" y="180" width="80" height="50" fill="#c7d4cc" rx="3"/>
+        <rect x="80" y="180" width="90" height="50" fill="#c7d4cc" rx="3"/>
+      </svg>
+      <div class="map-pin you" style="left:41%;top:30%">🏠</div>
+      <div class="map-pin sale" style="left:24%;top:57%" onclick="showToast('☕ Кофейня «Утро» · −20% для жителей ЖК')">☕</div>
+      <div class="map-pin" style="left:55%;top:65%" onclick="showToast('🏋️ Фитнес «Энергия» · −50% для жителей ЖК')">🏋️</div>
+      <div class="map-pin" style="left:82%;top:22%" onclick="showToast('💅 Салон «Bloom» · −15% для жителей ЖК')">💅</div>
+      <div class="map-pin" style="left:12%;top:88%" onclick="showToast('🥐 Пекарня · круассан для жителей ЖК')">🥐</div>
+      <div class="map-pin" style="left:88%;top:65%" onclick="showToast('💊 Аптека · −10% для жителей ЖК')">💊</div>
+    </div>
+    <div class="meta small" style="text-align:center;margin-bottom:16px">Нажмите на точку — увидите скидку</div>
+
+    <div class="card" style="background:linear-gradient(135deg,#f0f9f5,#e8f1ec);border-color:#d1fae5;margin-bottom:16px">
+      <div class="row between" style="margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:var(--green-dark)">🤖 Рекомендуем вам</div>
+        <div style="font-size:11px;color:var(--green-mid);font-weight:600;cursor:pointer" onclick="openQuestionnaire()">Анкета →</div>
+      </div>
+      <div id="aiRecommendations" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <div class="section-title">Бизнесы рядом · скидки жителям ЖК</div>
+    <div class="event-card">
+      <img class="event-img" src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=70" alt="">
+      <div class="event-body">
+        <div class="event-title">Кофейня «Утро»</div>
+        <div class="event-meta"><span>📍 100 м</span><span>⏰ 8:00–22:00</span></div>
+        <div class="event-promo">🎁 Скидка 20% по средам — <b>для жителей ЖК</b></div>
+      </div>
+    </div>
+    <div class="event-card">
+      <img class="event-img" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=70" alt="">
+      <div class="event-body">
+        <div class="event-title">Фитнес «Энергия»</div>
+        <div class="event-meta"><span>📍 250 м</span><span>⏰ 7:00–23:00</span></div>
+        <div class="event-promo">🎁 Первый месяц −50% — <b>для жителей ЖК</b></div>
+      </div>
+    </div>
+    <div class="event-card">
+      <img class="event-img" src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=70" alt="">
+      <div class="event-body">
+        <div class="event-title">Салон красоты «Bloom»</div>
+        <div class="event-meta"><span>📍 180 м</span><span>⏰ 9:00–21:00</span></div>
+        <div class="event-promo">🎁 Маникюр + педикюр −15% — <b>для жителей ЖК</b></div>
+      </div>
+    </div>
+
+    <div class="section-title">События жителей <span class="more" onclick="openCreateEvent()">＋ Создать</span></div>
+    <div id="userEvents">
+      <div class="card" style="border-left:3px solid #2ec4a0">
+        <div class="row between" style="margin-bottom:6px"><span class="badge">🎾 Спорт</span><span class="meta small">Сб, 18:00</span></div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px">Ищу компанию на теннис</div>
+        <div class="meta small">Корт во дворе · 2 человека</div>
+      </div>
+      <div class="card" style="border-left:3px solid #2ec4a0">
+        <div class="row between" style="margin-bottom:6px"><span class="badge">🎲 Настолки</span><span class="meta small">Пт, 19:30</span></div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:4px">Мафия в коворкинге</div>
+        <div class="meta small">Коворкинг · 8 мест · 3 свободно</div>
+      </div>
+    </div>
+
+    <div class="section-title">События в доме</div>
+    <div class="card"><div class="row"><div class="icon-circle sm" style="background:#dbeafe;color:#1e40af">🧹</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Субботник во дворе</div><div class="meta small">20 мая, 11:00</div></div></div></div>
+    <div class="card"><div class="row"><div class="icon-circle sm" style="background:#fef3c7;color:#92400e">🧘</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Йога на крыше</div><div class="meta small">Сб, 25 мая, 9:00</div></div></div></div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab active" onclick="switchTab(this,'s-events')"><span class="ti">📍</span><span class="tl">События</span></button>
+    <button class="tab" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Чаты</span></button>
+  </div>
+</div>
+
+<div class="screen" id="s-questionnaire">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-events')">←</button><h1>Ваши интересы</h1></div>
+  <div class="content">
+    <p class="meta" style="margin-bottom:16px">Отметьте, что интересно — AI подберёт события</p>
+    <div id="questionnaireBody"></div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="saveQuestionnaire()">Готово</button>
+  </div>
+</div>
+
+<div class="screen" id="s-create-event">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-events')">←</button><h1>Создать событие</h1></div>
+  <div class="content">
+    <div class="form-group"><label class="form-label">Что за событие?</label>
+      <input class="form-input" id="evTitle" value="Ищу компанию на теннис"></div>
+    <div class="form-group"><label class="form-label">Категория</label>
+      <div class="chips" id="evCategory">
+        <button class="chip active" data-cat="Спорт">🎾 Спорт</button>
+        <button class="chip" data-cat="Настолки">🎲 Настолки</button>
+        <button class="chip" data-cat="Прогулка">🚶 Прогулка</button>
+        <button class="chip" data-cat="Кофе">☕ Кофе</button>
+        <button class="chip" data-cat="Другое">✨ Другое</button>
+      </div></div>
+    <div class="form-2col">
+      <div class="form-group" style="margin-bottom:0"><label class="form-label">Дата</label>
+        <input class="form-input" id="evDate" type="date" value="2026-05-25"></div>
+      <div class="form-group" style="margin-bottom:0"><label class="form-label">Время</label>
+        <input class="form-input" id="evTime" type="time" value="18:00"></div>
+    </div>
+    <div class="form-group" style="margin-top:16px"><label class="form-label">Где?</label>
+      <input class="form-input" id="evPlace" value="Корт во дворе"></div>
+    <div class="form-group"><label class="form-label">Сколько человек?</label>
+      <div class="chips" id="evPeople">
+        <button class="chip" data-n="2">2 человека</button>
+        <button class="chip active" data-n="4">4 человека</button>
+        <button class="chip" data-n="8">8 человек</button>
+        <button class="chip" data-n="0">Без ограничений</button>
+      </div></div>
+    <div class="form-group"><label class="form-label">Описание</label>
+      <textarea class="form-textarea" id="evDesc">Хочу поиграть в теннис, ищу партнёра.</textarea></div>
+    <button class="btn btn-primary" onclick="submitUserEvent()">Опубликовать</button>
+    <p class="meta small" style="text-align:center;margin-top:8px">AI проверит адекватность</p>
+  </div>
+</div>
+
+<div class="screen" id="s-community">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><h1>Чаты</h1></div>
+  <div class="content">
+    <div class="filter-tabs" id="chatFilters">
+      <button class="active" onclick="filterChats(this,'all')">Все</button>
+      <button onclick="filterChats(this,'uk')">УК</button>
+      <button onclick="filterChats(this,'house')">Дом</button>
+      <button onclick="filterChats(this,'service')">Сервис</button>
+      <button onclick="filterChats(this,'neighbors')">Соседи</button>
+    </div>
+    <div class="card" id="chatList">
+      <div class="chat-row" data-type="uk" onclick="openUKChat()">
+        <div class="icon-circle sm" style="background:linear-gradient(135deg,#0f3d2e,#2ec4a0);color:#fff">🏢</div>
+        <div class="chat-body"><div class="chat-name">Управляющая компания</div><div class="chat-preview">Диспетчерская · за 15 минут</div></div>
+        <div style="text-align:right"><div class="chat-time">сейчас</div><span class="chat-unread" style="background:#2ec4a0">●</span></div>
+      </div>
+      <div class="chat-row" data-type="house" onclick="openNeighborChat('Общий чат дома','🏠',12)">
+        <div class="icon-circle sm" style="background:#e8f1ec;color:var(--green)">🏠</div>
+        <div class="chat-body"><div class="chat-name">Общий чат дома</div><div class="chat-preview">Анна: Кто идёт на йогу?</div></div>
+        <div style="text-align:right"><div class="chat-time">14:32</div><span class="chat-unread">3</span></div>
+      </div>
+      <div class="chat-row" data-type="neighbors" onclick="openNeighborChat('Соседи · Подъезд 1','🚪',8)">
+        <div class="icon-circle sm" style="background:#fef3c7;color:#92400e">🚪</div>
+        <div class="chat-body"><div class="chat-name">Подъезд 1 · все этажи</div><div class="chat-preview">Игорь: Кто видел сантехника?</div></div>
+        <div class="chat-time">13:05</div>
+      </div>
+      <div class="chat-row" data-type="neighbors" onclick="openNeighborChat('Соседи · 3 этаж','3️⃣',4)">
+        <div class="icon-circle sm" style="background:#dbeafe;color:#1e40af">3️⃣</div>
+        <div class="chat-body"><div class="chat-name">3 этаж</div><div class="chat-preview">Марина: Есть фонарик?</div></div>
+        <div class="chat-time">12:20</div>
+      </div>
+      <div class="chat-row" data-type="service" onclick="openServiceList()">
+        <div class="icon-circle sm" style="background:#dbeafe;color:#1e40af">🔧</div>
+        <div class="chat-body"><div class="chat-name">Сервисы и подрядчики</div><div class="chat-preview">Игорь: Электрик в 18:00</div></div>
+        <div class="chat-time">12:15</div>
+      </div>
+      <div class="chat-row" data-type="house" onclick="openNeighborChat('События и мероприятия','🎉',5)">
+        <div class="icon-circle sm" style="background:#fef3c7;color:#92400e">🎉</div>
+        <div class="chat-body"><div class="chat-name">События и мероприятия</div><div class="chat-preview">Марина: Субботник в 11:00</div></div>
+        <div class="chat-time">Вчера</div>
+      </div>
+      <div class="chat-row" data-type="neighbors" onclick="openNeighborChat('Анна Петрова','А',1)">
+        <div class="avatar" style="width:36px;height:36px;font-size:13px">А</div>
+        <div class="chat-body"><div class="chat-name">Анна Петрова</div><div class="chat-preview">кв. 245 · 3 этаж</div></div>
+        <div class="chat-time">Вчера</div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab" onclick="switchTab(this,'s-events')"><span class="ti">📍</span><span class="tl">События</span></button>
+    <button class="tab active" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Чаты</span></button>
+  </div>
+</div>
+
+<div class="screen" id="s-uk-chat">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar" style="padding-bottom:8px">
+    <button class="back" onclick="showScreen('s-community')">←</button>
+    <h1>Управляющая компания</h1>
+  </div>
+  <div class="contractor-badge" style="background:linear-gradient(135deg,#16324a,#0f3d2e)">
+    <div class="c-avatar" style="background:linear-gradient(135deg,#2ec4a0,#0f3d2e)">🏢</div>
+    <div class="c-info"><div class="c-name">Диспетчерская УК Солнечный</div><div class="c-status"><span class="on"></span>Отвечаем за 15 минут · 24/7</div></div>
+  </div>
+  <div class="chat-wrap" id="ukChatBody"></div>
+  <div class="qr-bar" style="background:#fff">
+    <button class="qr" onclick="ukQuickSend('Проблема с водой')">💧 Вода</button>
+    <button class="qr" onclick="ukQuickSend('Проблема с электричеством')">⚡ Электрика</button>
+    <button class="qr" onclick="ukQuickSend('Проблема с отоплением')">🔥 Отопление</button>
+    <button class="qr" onclick="ukQuickSend('Вопрос по счёту')">💰 Счёт</button>
+    <button class="qr" onclick="ukQuickSend('Аварийная ситуация')">🆘 Авария</button>
+  </div>
+  <div class="chat-input-bar">
+    <input type="text" id="ukInput" placeholder="Написать в УК..." onkeypress="if(event.key==='Enter')ukSend()">
+    <button class="send" onclick="ukSend()">➤</button>
+  </div>
+</div>
+
+<div class="screen" id="s-neighbor-chat">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar" style="padding-bottom:8px">
+    <button class="back" onclick="showScreen('s-community')">←</button>
+    <h1 id="ncTitle">Чат</h1>
+  </div>
+  <div class="contractor-badge">
+    <div class="c-avatar" id="ncAvatar">🏠</div>
+    <div class="c-info"><div class="c-name" id="ncName">Общий чат дома</div><div class="c-status"><span class="on"></span><span id="ncMeta">12 участников</span></div></div>
+  </div>
+  <div class="chat-wrap" id="ncChatBody"></div>
+  <div class="chat-input-bar">
+    <input type="text" id="ncInput" placeholder="Написать сообщение..." onkeypress="if(event.key==='Enter')ncSend()">
+    <button class="send" onclick="ncSend()">➤</button>
+  </div>
+</div>
+
+<div class="screen" id="s-service-list">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-community')">←</button><h1>Сервисы и подрядчики</h1></div>
+  <div class="content">
+    <div class="filter-tabs" id="serviceFilters">
+      <button class="active" onclick="filterServices(this,'active')">Активные</button>
+      <button onclick="filterServices(this,'done')">Завершённые</button>
+    </div>
+    <div id="serviceList">
+      <div class="card service-item" data-status="active" style="cursor:pointer" onclick="openServiceChat('Сергей Петров','Электрик','Свет в подъезде','В работе')">
+        <div class="row between" style="margin-bottom:8px"><span class="badge warn">В работе</span><span class="meta small">№2487</span></div>
+        <div class="row"><div class="avatar" style="width:38px;height:38px;font-size:14px;background:linear-gradient(135deg,#2d8b6f,#0f3d2e)">С</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Сергей Петров</div><div class="meta small">Свет в подъезде</div></div></div>
+      </div>
+      <div class="card service-item" data-status="done" style="cursor:pointer" onclick="openServiceChat('Сергей Петров','Электрик','Замена розетки','Выполнено')">
+        <div class="row between" style="margin-bottom:8px"><span class="badge ok">Выполнено</span><span class="meta small">№2456</span></div>
+        <div class="row"><div class="avatar" style="width:38px;height:38px;font-size:14px;background:linear-gradient(135deg,#2d8b6f,#0f3d2e)">С</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Сергей Петров</div><div class="meta small">Замена розетки</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-service-chat">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar" style="padding-bottom:8px">
+    <button class="back" onclick="showScreen('s-service-list')">←</button>
+    <h1 id="scTitle">Чат</h1>
+  </div>
+  <div class="contractor-badge">
+    <div class="c-avatar" id="scAvatar">С</div>
+    <div class="c-info"><div class="c-name" id="scName">Сергей Петров</div><div class="c-status"><span class="on"></span><span id="scSpec">Электрик · онлайн</span></div></div>
+  </div>
+  <div class="chat-wrap" id="scChatBody"></div>
+  <div class="chat-input-bar">
+    <input type="text" id="scInput" placeholder="Написать..." onkeypress="if(event.key==='Enter')scSend()">
+    <button class="send" onclick="scSend()">➤</button>
+  </div>
+</div>
+
+<div class="screen" id="s-notifications">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-home')">←</button><h1>Уведомления</h1></div>
+  <div class="content">
+    <div class="card" style="margin-bottom:8px;border-left:3px solid var(--green-mid)">
+      <div class="row between" style="margin-bottom:4px"><div style="font-size:14px;font-weight:600">Заявка №2487 в работе</div><span class="meta small">2 мин</span></div>
+      <div class="meta small">Мастер Сергей П. выехал</div>
+    </div>
+    <div class="card" style="margin-bottom:8px">
+      <div class="row between" style="margin-bottom:4px"><div style="font-size:14px;font-weight:600">Отключение горячей воды</div><span class="meta small">3 ч</span></div>
+      <div class="meta small">15–17 мая, 9:00–18:00</div>
+    </div>
+    <div class="card" style="margin-bottom:8px">
+      <div class="row between" style="margin-bottom:4px"><div style="font-size:14px;font-weight:600">Скидка 20% в кофейне</div><span class="meta small">5 ч</span></div>
+      <div class="meta small">Для жителей ЖК · каждую среду</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-profile">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><button class="back" onclick="showScreen('s-home')">←</button><h1>Профиль</h1></div>
+  <div class="content">
+    <div class="profile-head">
+      <div class="avatar">А</div>
+      <h2>Анна Иванова</h2>
+      <div class="meta" data-user-phone>+7 (999) 123-45-67</div>
+      <div class="meta small" data-user-address style="background:var(--green-light);color:var(--green-dark);padding:5px 12px;border-radius:20px;font-weight:600;margin-top:8px">ЖК Солнечный, кв. 247</div>
+    </div>
+    <div class="section-title">Приватность</div>
+    <div class="card">
+      <div class="list-row" onclick="this.querySelector('.toggle').classList.toggle('on'); togglePrivacy(this)">
+        <div class="icon-circle sm">👁</div>
+        <div class="body"><div class="title">Показывать номер и квартиру</div><div class="sub">Другие видят ваши данные</div></div>
+        <div class="toggle on"></div>
+      </div>
+    </div>
+    <div class="section-title">Мои интересы</div>
+    <div class="card">
+      <div class="list-row" onclick="openQuestionnaire()">
+        <div class="icon-circle sm">🎯</div>
+        <div class="body"><div class="title">Анкета интересов</div><div class="sub" id="interestsSummary">Спорт, Настолки, Кофе</div></div>
+        <span class="arrow">›</span>
+      </div>
+    </div>
+    <div class="section-title">Смена роли</div>
+    <div class="card">
+      <div class="list-row" onclick="switchRole('uk')">
+        <div class="icon-circle sm">🏢</div>
+        <div class="body"><div class="title">Войти как УК</div><div class="sub">Управляющая компания</div></div>
+        <span class="arrow">›</span>
+      </div>
+      <div class="list-row" onclick="switchRole('contractor')">
+        <div class="icon-circle sm">👷</div>
+        <div class="body"><div class="title">Войти как подрядчик</div><div class="sub">Мастер, исполнитель</div></div>
+        <span class="arrow">›</span>
+      </div>
+    </div>
+    <div class="section-title">Уведомления</div>
+    <div class="card">
+      <div class="list-row"><div class="icon-circle sm">🔔</div><div class="body"><div class="title">Push</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="list-row"><div class="icon-circle sm">🎁</div><div class="body"><div class="title">Скидки для жителей ЖК</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+    <button class="btn btn-outline" style="color:#dc2626;border-color:#fee2e2;margin-top:16px;margin-bottom:24px" onclick="logout()">Выйти в выбор роли</button>
+  </div>
+</div>
+
+</div><!-- /view-resident --><!-- ============ UK PANEL ============ -->
+<div class="role-view" id="view-uk">
+
+  <!-- UK 1: DASHBOARD -->
+  <div class="screen active" id="uk-dashboard">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar">
+      <div class="logo" style="color:#0f3d2e;font-size:16px;letter-spacing:2px">DOM<span class="logo-mark" style="width:16px;height:16px;margin:0 3px;vertical-align:-2px"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#fff"/></svg></span>S</div>
+      <div style="flex:1"></div>
+      <button onclick="openUKAccount()" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:inherit">УК</button>
+    </div>
+    <div class="content">
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Операционная панель</div>
+        <div style="font-size:18px;font-weight:700;color:#fff">ЖК Солнечный, корп. 1</div>
+        <div style="font-size:12px;color:var(--uk-muted);margin-top:2px">247 квартир · 12 подъездов</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border);cursor:pointer" onclick="goUKRequests('all')">
+          <div style="font-size:10px;color:var(--uk-muted);text-transform:uppercase;font-weight:600;margin-bottom:6px">В работе</div>
+          <div style="font-size:22px;font-weight:800;color:#fff;line-height:1">14</div>
+          <div style="font-size:11px;color:#2ec4a0;margin-top:4px;font-weight:600">↓ 3 за сегодня</div>
+        </div>
+        <div style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border);cursor:pointer" onclick="goUKRequests('overdue')">
+          <div style="font-size:10px;color:var(--uk-muted);text-transform:uppercase;font-weight:600;margin-bottom:6px">Просрочено</div>
+          <div style="font-size:22px;font-weight:800;color:#fff;line-height:1">2</div>
+          <div style="font-size:11px;color:#f87171;margin-top:4px;font-weight:600">внимание</div>
+        </div>
+        <div style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border);cursor:pointer" onclick="goUKAnalytics()">
+          <div style="font-size:10px;color:var(--uk-muted);text-transform:uppercase;font-weight:600;margin-bottom:6px">Ср. SLA</div>
+          <div style="font-size:22px;font-weight:800;color:#fff;line-height:1">2.4ч</div>
+          <div style="font-size:11px;color:#2ec4a0;margin-top:4px;font-weight:600">↓ 0.8 ч</div>
+        </div>
+        <div style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border)">
+          <div style="font-size:10px;color:var(--uk-muted);text-transform:uppercase;font-weight:600;margin-bottom:6px">Оценка</div>
+          <div style="font-size:22px;font-weight:800;color:#fff;line-height:1">4.7</div>
+          <div style="font-size:11px;color:#2ec4a0;margin-top:4px;font-weight:600">↑ 0.2</div>
+        </div>
+      </div>
+
+      <div style="background:var(--uk-card);border-radius:14px;padding:16px;border:1px solid var(--uk-border);margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px">🏥 Building Health Score</div>
+        <div style="display:flex;gap:14px;align-items:center">
+          <div style="width:88px;height:88px;position:relative;flex-shrink:0">
+            <svg width="88" height="88" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#222833" stroke-width="11"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="url(#domosGrad)" stroke-width="11" stroke-dasharray="264" stroke-dashoffset="34" stroke-linecap="round"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <b style="font-size:24px;color:#fff;font-weight:800;line-height:1">87</b>
+              <small style="font-size:9px;color:var(--uk-muted);margin-top:2px">из 100</small>
+            </div>
+          </div>
+          <div style="flex:1;font-size:11.5px">
+            <div style="display:flex;justify-content:space-between;padding:3px 0;color:#a0a7b2"><span>Аварии</span><b style="color:#fff">1</b></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;color:#a0a7b2"><span>Повторные</span><b style="color:#fbbf24">5</b></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;color:#a0a7b2"><span>Просрочки</span><b style="color:#f87171">2</b></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0;color:#a0a7b2"><span>Ниже SLA</span><b style="color:#f87171">2</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--uk-card);border-radius:14px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;display:flex;justify-content:space-between"><span>🤖 AI-очередь</span><span style="font-size:10px;color:#2ec4a0">2 мин</span></div>
+        <div style="background:#222833;border-radius:10px;padding:11px;border-left:3px solid #f87171;margin-bottom:8px;cursor:pointer" onclick="openUKRequestDetail('kritichno')">
+          <div style="font-size:12.5px;font-weight:600;color:#fff;margin-bottom:3px">Протечка возле электрощитовой</div>
+          <div style="font-size:10.5px;color:var(--uk-muted)">кв. 312 · 5 этаж · 14:18</div>
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <span style="background:rgba(248,113,113,.2);color:#fca5a5;padding:2px 6px;border-radius:5px;font-weight:700;font-size:10px">КРИТИЧНО</span>
+            <span style="background:#1a1f28;color:#a0a7b2;padding:2px 6px;border-radius:5px;font-size:10px">30 мин</span>
+          </div>
+        </div>
+        <div style="background:#222833;border-radius:10px;padding:11px;border-left:3px solid #fbbf24;cursor:pointer" onclick="openUKRequestDetail('light')">
+          <div style="font-size:12.5px;font-weight:600;color:#fff;margin-bottom:3px">Нет света в подъезде</div>
+          <div style="font-size:10.5px;color:var(--uk-muted)">подъезд 1 · 3 этаж · повтор №4</div>
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <span style="background:rgba(251,191,36,.2);color:#fbbf24;padding:2px 6px;border-radius:5px;font-weight:700;font-size:10px">ВЫСОКИЙ</span>
+            <span style="background:#1a1f28;color:#a0a7b2;padding:2px 6px;border-radius:5px;font-size:10px">4 часа</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--uk-card);border-radius:14px;padding:14px;border:1px solid var(--uk-border)">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;display:flex;justify-content:space-between"><span>⭐ Топ подрядчиков</span><span style="font-size:10px;color:#2ec4a0;cursor:pointer" onclick="goUKContractors()">Все →</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--uk-border);cursor:pointer" onclick="openUKContractorDetail('sp')">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:11px">СП</div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:600;color:#fff">Сергей Петров</div><div style="font-size:10px;color:var(--uk-muted)">Электрик · 42 заявки</div></div>
+          <div style="text-align:right"><div style="font-size:14px;color:#2ec4a0;font-weight:700">4.9</div><div style="font-size:10px;color:var(--uk-muted)">96%</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:7px 0;cursor:pointer" onclick="openUKContractorDetail('is')">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1e40af);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:11px">ИС</div>
+          <div style="flex:1"><div style="font-size:12px;font-weight:600;color:#fff">Игорь Смирнов</div><div style="font-size:10px;color:var(--uk-muted)">Сантехник · 31 заявка</div></div>
+          <div style="text-align:right"><div style="font-size:14px;color:#2ec4a0;font-weight:700">4.7</div><div style="font-size:10px;color:var(--uk-muted)">88%</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active" onclick="showUKTab(this,'uk-dashboard')"><span class="ti">📊</span><span class="tl">Дашборд</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-analytics')"><span class="ti">📈</span><span class="tl">Аналитика</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-contractors')"><span class="ti">👷</span><span class="tl">Мастера</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-forecast')"><span class="ti">🔮</span><span class="tl">ИИ</span></button>
+    </div>
+  </div>
+
+  <!-- UK 2: ANALYTICS -->
+  <div class="screen" id="uk-analytics">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar"><h1>Аналитика</h1></div>
+    <div class="content">
+      <div style="background:var(--uk-card);border-radius:14px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px">📊 Всего поломок</div>
+        <div style="font-size:26px;font-weight:800;color:#fff;line-height:1;margin-bottom:6px">142</div>
+        <div style="font-size:11px;color:#2ec4a0;font-weight:600">↓ 8% к прошлому месяцу</div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:8px">По категориям</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid var(--uk-border);cursor:pointer" onclick="goUKRequests('all')">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12.5px;color:#fff;font-weight:600">⚡ Электрика</span><span style="font-size:12.5px;color:#fff;font-weight:700">48 · 34%</span></div>
+        <div style="height:7px;background:#0a0e14;border-radius:4px;overflow:hidden"><div style="width:100%;height:100%;background:linear-gradient(90deg,#f87171,#991b1b);border-radius:4px"></div></div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid var(--uk-border);cursor:pointer" onclick="goUKRequests('all')">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12.5px;color:#fff;font-weight:600">💧 Сантехника</span><span style="font-size:12.5px;color:#fff;font-weight:700">40 · 28%</span></div>
+        <div style="height:7px;background:#0a0e14;border-radius:4px;overflow:hidden"><div style="width:83%;height:100%;background:linear-gradient(90deg,#60a5fa,#1e40af);border-radius:4px"></div></div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid var(--uk-border)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12.5px;color:#fff;font-weight:600">🚪 Двери</span><span style="font-size:12.5px;color:#fff;font-weight:700">26 · 18%</span></div>
+        <div style="height:7px;background:#0a0e14;border-radius:4px;overflow:hidden"><div style="width:54%;height:100%;background:linear-gradient(90deg,#fbbf24,#b45309);border-radius:4px"></div></div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid var(--uk-border)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12.5px;color:#fff;font-weight:600">🧹 Уборка</span><span style="font-size:12.5px;color:#fff;font-weight:700">17 · 12%</span></div>
+        <div style="height:7px;background:#0a0e14;border-radius:4px;overflow:hidden"><div style="width:36%;height:100%;background:linear-gradient(90deg,#a78bfa,#6d28d9);border-radius:4px"></div></div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid var(--uk-border)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12.5px;color:#fff;font-weight:600">🛠 Другое</span><span style="font-size:12.5px;color:#fff;font-weight:700">11 · 8%</span></div>
+        <div style="height:7px;background:#0a0e14;border-radius:4px;overflow:hidden"><div style="width:24%;height:100%;background:linear-gradient(90deg,#7d8894,#4b5563);border-radius:4px"></div></div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:8px">По подъездам</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border);cursor:pointer" onclick="showUKToast('Подъезд 1 · 34 заявки · 8 повторных')"><span style="font-size:12.5px;color:#fff">Подъезд 1</span><span style="font-size:12.5px;color:#f87171;font-weight:700">34</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border);cursor:pointer" onclick="showUKToast('Подъезд 3 · 26 заявок')"><span style="font-size:12.5px;color:#fff">Подъезд 3</span><span style="font-size:12.5px;color:#fbbf24;font-weight:700">26</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border);cursor:pointer" onclick="showUKToast('Подъезд 2 · 19 заявок')"><span style="font-size:12.5px;color:#fff">Подъезд 2</span><span style="font-size:12.5px;color:#60a5fa;font-weight:700">19</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;cursor:pointer" onclick="showUKToast('Подъезд 4 · 12 заявок')"><span style="font-size:12.5px;color:#fff">Подъезд 4</span><span style="font-size:12.5px;color:#2ec4a0;font-weight:700">12</span></div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:8px">Топ-5 повторных</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border)"><span style="font-size:12px;color:#fff">⚡ Электрика · под. 1</span><span style="font-size:12px;color:#f87171;font-weight:700">4×</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border)"><span style="font-size:12px;color:#fff">🔥 Отопление · под. 2</span><span style="font-size:12px;color:#fbbf24;font-weight:700">3×</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border)"><span style="font-size:12px;color:#fff">🚪 Доводчик · под. 4</span><span style="font-size:12px;color:#fbbf24;font-weight:700">3×</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border)"><span style="font-size:12px;color:#fff">💧 Протечка · кв. 312</span><span style="font-size:12px;color:#60a5fa;font-weight:700">2×</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12px;color:#fff">💡 Паркинг</span><span style="font-size:12px;color:#60a5fa;font-weight:700">2×</span></div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:8px">Стоимость · 148 200 ₽</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border)">
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border)"><span style="font-size:12px;color:#fff">Электрика</span><span style="font-size:12px;color:#fff;font-weight:700">60 000 ₽</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border)"><span style="font-size:12px;color:#fff">Сантехника</span><span style="font-size:12px;color:#fff;font-weight:700">54 000 ₽</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--uk-border)"><span style="font-size:12px;color:#fff">Отопление</span><span style="font-size:12px;color:#fff;font-weight:700">21 600 ₽</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12px;color:#fff">Прочее</span><span style="font-size:12px;color:#fff;font-weight:700">12 600 ₽</span></div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab" onclick="showUKTab(this,'uk-dashboard')"><span class="ti">📊</span><span class="tl">Дашборд</span></button>
+      <button class="tab active" onclick="showUKTab(this,'uk-analytics')"><span class="ti">📈</span><span class="tl">Аналитика</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-contractors')"><span class="ti">👷</span><span class="tl">Мастера</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-forecast')"><span class="ti">🔮</span><span class="tl">ИИ</span></button>
+    </div>
+  </div>
+
+  <!-- UK 3: REQUESTS -->
+  <div class="screen" id="uk-requests">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar"><h1>Заявки</h1></div>
+    <div class="content">
+      <div class="filter-tabs" id="ukReqFilters" style="background:var(--uk-card)">
+        <button class="active" onclick="filterUKReq(this,'all')" style="background:#222833;color:#fff">Все</button>
+        <button onclick="filterUKReq(this,'active')">Активные</button>
+        <button onclick="filterUKReq(this,'overdue')">Просрочено</button>
+        <button onclick="filterUKReq(this,'done')">Закрытые</button>
+      </div>
+      <div id="ukReqList">
+        <div class="uk-req" data-status="active" data-overdue="false" style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--uk-border);border-left:3px solid #fbbf24;cursor:pointer" onclick="openUKRequestDetail('light')">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="background:rgba(251,191,36,.2);color:#fbbf24;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">ВЫСОКИЙ</span><span style="font-size:11px;color:var(--uk-muted)">№2487 · 12 мая</span></div>
+          <div style="font-size:13.5px;font-weight:600;color:#fff;margin-bottom:4px">Не работает свет в подъезде</div>
+          <div style="font-size:11.5px;color:var(--uk-muted);margin-bottom:6px">подъезд 1 · 3 этаж</div>
+          <div style="font-size:11px;color:#a0a7b2">👷 Сергей Петров</div>
+        </div>
+        <div class="uk-req" data-status="active" data-overdue="true" style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--uk-border);border-left:3px solid #f87171;cursor:pointer" onclick="openUKRequestDetail('kritichno')">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="background:rgba(248,113,113,.2);color:#fca5a5;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">КРИТИЧНО</span><span style="font-size:11px;color:var(--uk-muted)">№2512 · 13 мая</span></div>
+          <div style="font-size:13.5px;font-weight:600;color:#fff;margin-bottom:4px">Протечка возле электрощитовой</div>
+          <div style="font-size:11.5px;color:var(--uk-muted);margin-bottom:6px">кв. 312 · 5 этаж</div>
+          <div style="font-size:11px;color:#f87171">👷 Игорь Смирнов · просрочено</div>
+        </div>
+        <div class="uk-req" data-status="active" data-overdue="false" style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--uk-border);border-left:3px solid #60a5fa;cursor:pointer" onclick="showUKToast('Заявка №2485 открывается')">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="background:rgba(96,165,250,.2);color:#93c5fd;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">СРЕДНИЙ</span><span style="font-size:11px;color:var(--uk-muted)">№2485 · 11 мая</span></div>
+          <div style="font-size:13.5px;font-weight:600;color:#fff;margin-bottom:4px">Доводчик двери</div>
+          <div style="font-size:11.5px;color:var(--uk-muted);margin-bottom:6px">подъезд 4 · 1 этаж</div>
+          <div style="font-size:11px;color:#a0a7b2">Согласование</div>
+        </div>
+        <div class="uk-req" data-status="done" data-overdue="false" style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--uk-border);border-left:3px solid #2ec4a0">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="background:rgba(46,196,160,.2);color:#5ee9c0;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">ВЫПОЛНЕНО</span><span style="font-size:11px;color:var(--uk-muted)">№2456 · 8 мая</span></div>
+          <div style="font-size:13.5px;font-weight:600;color:#fff;margin-bottom:4px">Протечка крана на кухне</div>
+          <div style="font-size:11.5px;color:var(--uk-muted);margin-bottom:6px">кв. 245</div>
+          <div style="font-size:11px;color:#a0a7b2">👷 Игорь Смирнов · 5⭐</div>
+        </div>
+        <div class="uk-req" data-status="done" data-overdue="false" style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border);border-left:3px solid #2ec4a0">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="background:rgba(46,196,160,.2);color:#5ee9c0;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">ВЫПОЛНЕНО</span><span style="font-size:11px;color:var(--uk-muted)">№2411 · 2 мая</span></div>
+          <div style="font-size:13.5px;font-weight:600;color:#fff;margin-bottom:4px">Шум у соседей ночью</div>
+          <div style="font-size:11.5px;color:var(--uk-muted);margin-bottom:6px">кв. 108</div>
+          <div style="font-size:11px;color:#a0a7b2">Администратор УК</div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab" onclick="showUKTab(this,'uk-dashboard')"><span class="ti">📊</span><span class="tl">Дашборд</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-analytics')"><span class="ti">📈</span><span class="tl">Аналитика</span></button>
+      <button class="tab active" onclick="showUKTab(this,'uk-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-contractors')"><span class="ti">👷</span><span class="tl">Мастера</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-forecast')"><span class="ti">🔮</span><span class="tl">ИИ</span></button>
+    </div>
+  </div>
+
+  <!-- UK 4: CONTRACTORS -->
+  <div class="screen" id="uk-contractors">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar"><h1>Мастера</h1></div>
+    <div class="content">
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:8px">Рейтинг · 12 активных</div>
+
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--uk-border);cursor:pointer" onclick="openUKContractorDetail('sp')">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700">СП</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#fff">Сергей Петров</div><div style="font-size:11px;color:var(--uk-muted)">Электрик · 342 работы</div></div>
+          <div style="text-align:right"><div style="font-size:15px;color:#2ec4a0;font-weight:700">4.9</div><div style="font-size:10px;color:var(--uk-muted)">96% SLA</div></div>
+        </div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--uk-border);cursor:pointer" onclick="openUKContractorDetail('is')">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1e40af);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700">ИС</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#fff">Игорь Смирнов</div><div style="font-size:11px;color:var(--uk-muted)">Сантехник · 218 работ</div></div>
+          <div style="text-align:right"><div style="font-size:15px;color:#2ec4a0;font-weight:700">4.7</div><div style="font-size:10px;color:var(--uk-muted)">88% SLA</div></div>
+        </div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--uk-border);cursor:pointer" onclick="openUKContractorDetail('me')">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700">МЭ</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#fff">МастерЭлектро</div><div style="font-size:11px;color:var(--uk-muted)">Бригада · 512 работ</div></div>
+          <div style="text-align:right"><div style="font-size:15px;color:#2ec4a0;font-weight:700">4.8</div><div style="font-size:10px;color:var(--uk-muted)">94% SLA</div></div>
+        </div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid var(--uk-border);border-left:3px solid #f87171;cursor:pointer" onclick="openUKContractorDetail('mk')">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#f87171,#991b1b);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700">МК</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#fff">Мастер-Климат</div><div style="font-size:11px;color:var(--uk-muted)">Отопление · 118 работ</div></div>
+          <div style="text-align:right"><div style="font-size:15px;color:#f87171;font-weight:700">3.8</div><div style="font-size:10px;color:#f87171">62% SLA ⚠</div></div>
+        </div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border);cursor:pointer" onclick="openUKContractorDetail('ks')">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#6d28d9);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700">КС</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600;color:#fff">Клининг-Сервис</div><div style="font-size:11px;color:var(--uk-muted)">Уборка · 89 работ</div></div>
+          <div style="text-align:right"><div style="font-size:15px;color:#2ec4a0;font-weight:700">4.6</div><div style="font-size:10px;color:var(--uk-muted)">92% SLA</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab" onclick="showUKTab(this,'uk-dashboard')"><span class="ti">📊</span><span class="tl">Дашборд</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-analytics')"><span class="ti">📈</span><span class="tl">Аналитика</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+      <button class="tab active" onclick="showUKTab(this,'uk-contractors')"><span class="ti">👷</span><span class="tl">Мастера</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-forecast')"><span class="ti">🔮</span><span class="tl">ИИ</span></button>
+    </div>
+  </div>
+
+  <!-- UK 5: FORECAST -->
+  <div class="screen" id="uk-forecast">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar"><h1>Прогнозы ИИ</h1></div>
+    <div class="content">
+      <div style="background:linear-gradient(135deg,rgba(248,113,113,.1),rgba(248,113,113,.02));border:1px solid rgba(248,113,113,.3);border-radius:12px;padding:14px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:13px;font-weight:700;color:#fff">⚠️ Риск аварии</span>
+          <span style="background:rgba(248,113,113,.2);color:#fca5a5;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">78%</span>
+        </div>
+        <div style="font-size:12.5px;color:#e8edf5;line-height:1.55;margin-bottom:10px"><b>Узел отопления, подъезд 2.</b> 9 обращений за 3 месяца. Рекомендуем диагностику.</div>
+        <button style="background:#2ec4a0;color:#0a0e14;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" onclick="showUKToast('Диагностика запланирована')">Запланировать</button>
+      </div>
+
+      <div style="background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(251,191,36,.02));border:1px solid rgba(251,191,36,.3);border-radius:12px;padding:14px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:13px;font-weight:700;color:#fff">⚠️ Повторные</span>
+          <span style="background:rgba(251,191,36,.2);color:#fbbf24;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">4×</span>
+        </div>
+        <div style="font-size:12.5px;color:#e8edf5;line-height:1.55;margin-bottom:10px"><b>Электрика, подъезд 1, 3 этаж.</b> 4 обращения за месяц. Возможна проблема в проводке.</div>
+        <button style="background:#fbbf24;color:#0a0e14;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit" onclick="showUKToast('Инженер уведомлён')">Вызвать инженера</button>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">💡 Рекомендации</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border);margin-bottom:8px;display:flex;gap:10px;cursor:pointer" onclick="showUKToast('Задача создана')">
+        <div style="font-size:20px">🔧</div>
+        <div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:#fff;margin-bottom:3px">Профилактика освещения</div><div style="font-size:11px;color:var(--uk-muted);line-height:1.5">Заменить 3 светильника.</div><div style="font-size:11px;color:#2ec4a0;font-weight:600;margin-top:4px">Экономия: ~6 200 ₽/мес</div></div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border);margin-bottom:8px;display:flex;gap:10px;cursor:pointer" onclick="showUKToast('Задача создана')">
+        <div style="font-size:20px">💧</div>
+        <div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:#fff;margin-bottom:3px">Проверка стояков</div><div style="font-size:11px;color:var(--uk-muted);line-height:1.5">Соединения 4–5 этажей.</div><div style="font-size:11px;color:#2ec4a0;font-weight:600;margin-top:4px">Экономия: ~3 400 ₽</div></div>
+      </div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:12px;border:1px solid var(--uk-border);display:flex;gap:10px;cursor:pointer" onclick="showUKToast('Задача создана')">
+        <div style="font-size:20px">🚪</div>
+        <div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:#fff;margin-bottom:3px">Смазка доводчиков</div><div style="font-size:11px;color:var(--uk-muted);line-height:1.5">12 подъездов.</div><div style="font-size:11px;color:#2ec4a0;font-weight:600;margin-top:4px">Экономия: ~2 800 ₽</div></div>
+      </div>
+
+      <div style="margin-top:16px;background:linear-gradient(135deg,#0f3d2e,#1a5a44);border-radius:12px;padding:16px;color:#fff">
+        <div style="font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:6px">💰 Экономия благодаря AI</div>
+        <div style="font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:6px">12 400 ₽</div>
+        <div style="font-size:11px;opacity:.85">за последние 30 дней</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab" onclick="showUKTab(this,'uk-dashboard')"><span class="ti">📊</span><span class="tl">Дашборд</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-analytics')"><span class="ti">📈</span><span class="tl">Аналитика</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+      <button class="tab" onclick="showUKTab(this,'uk-contractors')"><span class="ti">👷</span><span class="tl">Мастера</span></button>
+      <button class="tab active" onclick="showUKTab(this,'uk-forecast')"><span class="ti">🔮</span><span class="tl">ИИ</span></button>
+    </div>
+  </div>
+
+  <!-- UK 6: REQUEST DETAIL -->
+  <div class="screen" id="uk-request-detail">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar">
+      <button class="back" onclick="goUKRequests('all')">←</button>
+      <h1 id="ukRdTitle">Заявка</h1>
+    </div>
+    <div class="content" id="ukRdContent"></div>
+  </div>
+
+  <!-- UK 7: CONTRACTOR DETAIL -->
+  <div class="screen" id="uk-contractor-detail">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar">
+      <button class="back" onclick="goUKContractors()">←</button>
+      <h1 id="ukCdTitle">Подрядчик</h1>
+    </div>
+    <div class="content" id="ukCdContent"></div>
+  </div>
+
+  <!-- UK 8: ACCOUNT -->
+  <div class="screen" id="uk-account">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar">
+      <button class="back" onclick="showUKTab(document.querySelectorAll('#view-uk .tab')[0],'uk-dashboard')">←</button>
+      <h1>Аккаунт УК</h1>
+    </div>
+    <div class="content">
+      <div style="background:var(--uk-card);border-radius:14px;padding:20px;border:1px solid var(--uk-border);margin-bottom:12px;text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:700;margin:0 auto 12px">УК</div>
+        <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">ООО «Солнечный»</div>
+        <div style="font-size:12.5px;color:var(--uk-muted)">Управляющая компания · ЖК Солнечный</div>
+        <div style="display:inline-block;margin-top:10px;background:rgba(46,196,160,.15);color:#5ee9c0;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700">Тариф: Бизнес · активен</div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Информация</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px;font-size:12.5px">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">ИНН</span><span style="color:#fff">7712345678</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Адрес</span><span style="color:#fff;text-align:right">Москва, ул. Ленина, 10</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Телефон</span><span style="color:#fff">+7 (495) 000-00-00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--uk-muted)">Email</span><span style="color:#fff">info@sunny-uk.ru</span></div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Руководитель</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1e40af);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700">ИП</div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:600;color:#fff">Игорь Петрович Смирнов</div>
+            <div style="font-size:11.5px;color:var(--uk-muted)">Генеральный директор</div>
+          </div>
+          <button onclick="showUKToast('Открываем чат')" style="background:#222833;border:1px solid var(--uk-border);color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:14px">💬</button>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Портфель</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+        <div style="background:var(--uk-card);border-radius:10px;padding:12px;border:1px solid var(--uk-border);text-align:center"><div style="font-size:20px;font-weight:800;color:#2ec4a0">3</div><div style="font-size:10px;color:var(--uk-muted);margin-top:2px">ЖК</div></div>
+        <div style="background:var(--uk-card);border-radius:10px;padding:12px;border:1px solid var(--uk-border);text-align:center"><div style="font-size:20px;font-weight:800;color:#fff">742</div><div style="font-size:10px;color:var(--uk-muted);margin-top:2px">Квартир</div></div>
+        <div style="background:var(--uk-card);border-radius:10px;padding:12px;border:1px solid var(--uk-border);text-align:center"><div style="font-size:20px;font-weight:800;color:#fbbf24">428</div><div style="font-size:10px;color:var(--uk-muted);margin-top:2px">Заявок/мес</div></div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Подключение</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px;font-size:12.5px">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Тариф</span><span style="color:#fff">Бизнес</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Подписка до</span><span style="color:#fff">31.12.2026</span></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--uk-muted)">Подключено</span><span style="color:#fff">12.02.2025</span></div>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Команда</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:16px">
+        <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--uk-border)">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1e40af);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700">АС</div>
+          <div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:#fff">Анна Смирнова</div><div style="font-size:10.5px;color:var(--uk-muted)">Диспетчер</div></div>
+          <span style="background:rgba(46,196,160,.2);color:#5ee9c0;padding:2px 6px;border-radius:5px;font-size:10px;font-weight:700">Активна</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;padding:8px 0">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#b45309);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700">МК</div>
+          <div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:#fff">Михаил Кузнецов</div><div style="font-size:10.5px;color:var(--uk-muted)">Главный инженер</div></div>
+          <span style="background:rgba(46,196,160,.2);color:#5ee9c0;padding:2px 6px;border-radius:5px;font-size:10px;font-weight:700">Активен</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button onclick="showUKToast('Открываем настройки')" style="padding:12px;background:var(--uk-card);color:#fff;border:1px solid var(--uk-border);border-radius:12px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit">⚙️ Настройки</button>
+        <button onclick="showUKToast('Открываем поддержку')" style="padding:12px;background:var(--uk-card);color:#fff;border:1px solid var(--uk-border);border-radius:12px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit">💬 Поддержка</button>
+      </div>
+
+      <div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Смена роли</div>
+      <div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px">
+        <div style="font-size:11.5px;color:var(--uk-muted);line-height:1.5;margin-bottom:10px">Быстро переключиться на приложение жителя или подрядчика.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button onclick="switchRole('resident')" style="padding:10px;background:linear-gradient(135deg,#0f3d2e,#2ec4a0);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">👤 Житель</button>
+          <button onclick="switchRole('contractor')" style="padding:10px;background:linear-gradient(135deg,#0f3d2e,#2ec4a0);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">👷 Подрядчик</button>
+        </div>
+      </div>
+
+      <button onclick="logout()" style="width:100%;padding:14px;background:rgba(248,113,113,.12);color:#fca5a5;border:1px solid rgba(248,113,113,.3);border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:20px">Выйти в выбор роли</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONTRACTOR ============ -->
+<div class="role-view" id="view-contractor">
+
+  <div class="screen active" id="c-home">
+    <div style="background:linear-gradient(135deg,#0f3d2e,#1a5a44);color:#fff;padding:50px 20px 20px;flex-shrink:0">
+      <div class="status-bar" style="color:#fff;padding:0 2px 12px"><span>9:41</span><span class="right">📶 🔋</span></div>
+      <div style="font-size:12px;opacity:.8">Добрый день,</div>
+      <div style="font-size:20px;font-weight:700;margin-top:2px">Сергей Петров 👷</div>
+      <div style="font-size:12px;opacity:.8;margin-top:4px">Электрик · УК Солнечный</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px">
+        <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:10px;text-align:center"><b style="display:block;font-size:20px;font-weight:700;line-height:1">3</b><span style="font-size:10px;opacity:.8;margin-top:4px;display:block">Задачи</span></div>
+        <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:10px;text-align:center"><b style="display:block;font-size:20px;font-weight:700;line-height:1">1</b><span style="font-size:10px;opacity:.8;margin-top:4px;display:block">Срочная</span></div>
+        <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:10px;text-align:center"><b style="display:block;font-size:20px;font-weight:700;line-height:1">4.9</b><span style="font-size:10px;opacity:.8;margin-top:4px;display:block">Рейтинг</span></div>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:16px 18px 100px;background:#f4f6f4">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">🔴 Срочно</div>
+      <div class="card" style="border-left:4px solid #dc2626;cursor:pointer" onclick="contractorOpenTask('Протечка возле электрощитовой','кв. 312 · 5 этаж · подъезд 3','КРИТИЧНО','30 мин')">
+        <div class="row between" style="margin-bottom:8px">
+          <div style="font-size:14.5px;font-weight:700;flex:1;line-height:1.3;padding-right:8px">Протечка возле электрощитовой</div>
+          <span style="background:#fee2e2;color:#991b1b;padding:3px 8px;border-radius:6px;font-weight:700;font-size:10px;flex-shrink:0">SLA 30м</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">кв. 312 · 5 этаж</div>
+        <div style="display:flex;gap:10px;font-size:11.5px;color:var(--muted)"><span>💧 Сантехника</span><span>👤 Анна Иванова</span></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px">📋 Сегодня</div>
+      <div class="card" style="border-left:4px solid #fbbf24;cursor:pointer" onclick="contractorOpenTask('Нет света в подъезде, 3 этаж','подъезд 1 · 3 этаж','ВЫСОКИЙ','4 ч')">
+        <div class="row between" style="margin-bottom:8px">
+          <div style="font-size:14.5px;font-weight:700;flex:1;line-height:1.3;padding-right:8px">Не работает свет в подъезде</div>
+          <span style="background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:6px;font-weight:700;font-size:10px;flex-shrink:0">SLA 4ч</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">подъезд 1 · 3 этаж</div>
+        <div style="display:flex;gap:10px;font-size:11.5px;color:var(--muted)"><span>⚡ Электрика</span><span>👤 Анна Иванова</span></div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active" onclick="showCTab(this,'c-home')"><span class="ti">📋</span><span class="tl">Задачи</span></button>
+      <button class="tab" onclick="showCTab(this,'c-calendar')"><span class="ti">📅</span><span class="tl">Календарь</span></button>
+      <button class="tab" onclick="showCTab(this,'c-income')"><span class="ti">💰</span><span class="tl">Доход</span></button>
+      <button class="tab" onclick="showCTab(this,'c-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+    </div>
+  </div>
+
+  <div class="screen" id="c-calendar">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar"><h1>Календарь</h1></div>
+    <div class="content">
+      <div class="card" style="background:linear-gradient(135deg,#0f3d2e,#1a5a44);color:#fff;margin-bottom:16px">
+        <div style="font-size:11px;opacity:.85;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:6px">Сегодня · 14 мая</div>
+        <div style="font-size:22px;font-weight:800;margin-bottom:4px">3 задачи</div>
+        <div style="font-size:12px;opacity:.85">1 срочная · 2 обычных</div>
+      </div>
+      <div class="card" style="border-left:3px solid #dc2626;margin-bottom:10px">
+        <div class="row between" style="margin-bottom:6px"><span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:6px;font-weight:700;font-size:10px">10:00–10:30</span><span class="badge danger" style="font-size:10px">Срочно</span></div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Протечка · кв. 312</div>
+        <div class="meta small">подъезд 3 · 5 этаж</div>
+      </div>
+      <div class="card" style="border-left:3px solid #fbbf24;margin-bottom:10px">
+        <div class="row between" style="margin-bottom:6px"><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:6px;font-weight:700;font-size:10px">12:00–14:00</span><span class="badge warn" style="font-size:10px">Высокий</span></div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Свет в подъезде</div>
+        <div class="meta small">подъезд 1 · 3 этаж</div>
+      </div>
+      <div class="card" style="border-left:3px solid #2ec4a0">
+        <div class="row between" style="margin-bottom:6px"><span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:6px;font-weight:700;font-size:10px">16:00–17:00</span><span class="badge ok" style="font-size:10px">Обычный</span></div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Доводчик · подъезд 4</div>
+        <div class="meta small">1 этаж</div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab" onclick="showCTab(this,'c-home')"><span class="ti">📋</span><span class="tl">Задачи</span></button>
+      <button class="tab active" onclick="showCTab(this,'c-calendar')"><span class="ti">📅</span><span class="tl">Календарь</span></button>
+      <button class="tab" onclick="showCTab(this,'c-income')"><span class="ti">💰</span><span class="tl">Доход</span></button>
+      <button class="tab" onclick="showCTab(this,'c-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+    </div>
+  </div>
+
+  <div class="screen" id="c-income">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar"><h1>Доход</h1></div>
+    <div class="content">
+      <div class="card" style="background:linear-gradient(135deg,#0f3d2e,#1a5a44);color:#fff;margin-bottom:16px">
+        <div style="font-size:11px;opacity:.85;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:6px">Заработано в мае</div>
+        <div style="font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1;margin-bottom:8px">42 600 ₽</div>
+        <div style="font-size:12px;opacity:.85">↑ 18% к апрелю</div>
+      </div>
+      <div class="section-title">По категориям</div>
+      <div class="card">
+        <div class="row between" style="padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px">⚡ Электрика</span><span style="font-weight:700">22 400 ₽</span></div>
+        <div class="row between" style="padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px">🚪 Двери</span><span style="font-weight:700">8 200 ₽</span></div>
+        <div class="row between" style="padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:13px">💡 Освещение</span><span style="font-weight:700">7 800 ₽</span></div>
+        <div class="row between" style="padding:8px 0"><span style="font-size:13px">🛠 Прочее</span><span style="font-weight:700">4 200 ₽</span></div>
+      </div>
+      <div class="section-title">История выплат</div>
+      <div class="card" style="margin-bottom:8px">
+        <div class="row between"><div><div style="font-size:14px;font-weight:600">Выплата за неделю</div><div class="meta small">8–14 мая</div></div><div style="font-size:16px;font-weight:700;color:var(--green-dark)">11 200 ₽</div></div>
+      </div>
+      <div class="card">
+        <div class="row between"><div><div style="font-size:14px;font-weight:600">Выплата за неделю</div><div class="meta small">1–7 мая</div></div><div style="font-size:16px;font-weight:700;color:var(--green-dark)">10 400 ₽</div></div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab" onclick="showCTab(this,'c-home')"><span class="ti">📋</span><span class="tl">Задачи</span></button>
+      <button class="tab" onclick="showCTab(this,'c-calendar')"><span class="ti">📅</span><span class="tl">Календарь</span></button>
+      <button class="tab active" onclick="showCTab(this,'c-income')"><span class="ti">💰</span><span class="tl">Доход</span></button>
+      <button class="tab" onclick="showCTab(this,'c-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+    </div>
+  </div>
+
+  <div class="screen" id="c-profile">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar"><h1>Профиль</h1></div>
+    <div class="content">
+      <div class="profile-head">
+        <div class="avatar" style="background:linear-gradient(135deg,#2d8b6f,#0f3d2e)">С</div>
+        <h2>Сергей Петров</h2>
+        <div class="meta">Электрик · 12 лет опыта</div>
+        <div style="display:flex;gap:20px;margin-top:14px">
+          <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green-dark)">4.9</div><div class="meta small">Рейтинг</div></div>
+          <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green-dark)">96%</div><div class="meta small">SLA</div></div>
+          <div style="text-align:center"><div style="font-size:20px;font-weight:700;color:var(--green-dark)">342</div><div class="meta small">Работ</div></div>
+        </div>
+      </div>
+      <div class="section-title">Документы</div>
+      <div class="card">
+        <div class="list-row"><div class="icon-circle sm">📋</div><div class="body"><div class="title">Паспорт и ИНН</div><div class="sub">Проверено ✓</div></div><span class="badge ok">Активно</span></div>
+        <div class="list-row"><div class="icon-circle sm">🎓</div><div class="body"><div class="title">Сертификат электрика</div><div class="sub">до 12.2027</div></div><span class="badge ok">ОК</span></div>
+        <div class="list-row"><div class="icon-circle sm">🛡</div><div class="body"><div class="title">Страховка</div><div class="sub">Покрытие 1 000 000 ₽</div></div><span class="badge ok">ОК</span></div>
+      </div>
+      <div class="section-title">Смена роли</div>
+      <div class="card">
+        <div class="list-row" onclick="switchRole('resident')">
+          <div class="icon-circle sm">👤</div>
+          <div class="body"><div class="title">Войти как житель</div><div class="sub">Приложение жителя</div></div>
+          <span class="arrow">›</span>
+        </div>
+        <div class="list-row" onclick="switchRole('uk')">
+          <div class="icon-circle sm">🏢</div>
+          <div class="body"><div class="title">Войти как УК</div><div class="sub">Панель управляющей компании</div></div>
+          <span class="arrow">›</span>
+        </div>
+      </div>
+      <button class="btn btn-outline" style="color:#dc2626;border-color:#fee2e2;margin-top:16px;margin-bottom:24px" onclick="logout()">Выйти в выбор роли</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab" onclick="showCTab(this,'c-home')"><span class="ti">📋</span><span class="tl">Задачи</span></button>
+      <button class="tab" onclick="showCTab(this,'c-calendar')"><span class="ti">📅</span><span class="tl">Календарь</span></button>
+      <button class="tab" onclick="showCTab(this,'c-income')"><span class="ti">💰</span><span class="tl">Доход</span></button>
+      <button class="tab active" onclick="showCTab(this,'c-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+    </div>
+  </div>
+
+  <div class="screen" id="c-task">
+    <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+    <div class="top-bar">
+      <button class="back" onclick="showCTab(document.querySelectorAll('#view-contractor .tab')[0],'c-home')">←</button>
+      <h1>Задача</h1>
+    </div>
+    <div class="content" style="padding-bottom:120px">
+      <div class="card" style="margin-bottom:16px">
+        <div class="row between" style="margin-bottom:12px">
+          <span class="badge danger" id="taskPriority">КРИТИЧНО</span>
+          <span class="meta small" id="taskSla">SLA 30 мин</span>
+        </div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:8px" id="taskTitle">Протечка возле электрощитовой</div>
+        <div class="meta" style="margin-bottom:12px" id="taskAddr">кв. 312 · 5 этаж</div>
+        <img class="photo" style="height:150px" src="https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=70" alt="">
+      </div>
+      <div class="card" style="background:#f0f9f5;border-color:#d1fae5;margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--green-dark);margin-bottom:8px">🤖 AI-подсказка</div>
+        <div style="font-size:13px;line-height:1.55;color:#0f3d2e">Похожая заявка была 14 апреля. Возьмите хомуты и уплотнитель.</div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">📷 Фото результата</div>
+        <div class="upload-row" style="margin-bottom:0">
+          <button class="upload-btn"><span class="ui">📷</span>Фото</button>
+          <button class="upload-btn"><span class="ui">🎥</span>Видео</button>
+          <button class="upload-btn"><span class="ui">🎤</span>Голос</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" onclick="showToast('Задача отложена')">Отложить</button>
+        <button class="btn btn-primary" onclick="contractorComplete()">Завершить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="ai-fab" id="aiFab" onclick="openAIAssistant()" title="AI-ассистент">🤖</button>
+
+<div class="sheet-overlay" id="aiAssistantOverlay" onclick="if(event.target===this)closeAIAssistant()">
+  <div class="sheet" style="max-height:85%;padding:0;overflow:hidden;display:flex;flex-direction:column;border-radius:24px 24px 0 0">
+    <div style="padding:20px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#16324a,#2ec4a0);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px">🤖</div>
+      <div style="flex:1">
+        <div style="font-size:15px;font-weight:700" id="aiTitle">AI-ассистент</div>
+        <div style="font-size:11px;color:var(--muted)" id="aiSub">Онлайн · отвечает мгновенно</div>
+      </div>
+      <button class="back" style="width:30px;height:30px;font-size:14px" onclick="closeAIAssistant()">✕</button>
+    </div>
+    <div class="chat-wrap" id="assistantBody" style="padding-bottom:16px">
+      <div class="msg ai"><div class="ai-label"><span class="dot"></span>AI-ассистент</div>Здравствуйте! Чем могу помочь?</div>
+    </div>
+    <div class="qr-bar" id="assistantQuick" style="background:#fff;border-top:1px solid var(--border)"></div>
+    <div class="chat-input-bar" style="padding:10px 14px 14px;border-top:none">
+      <input type="text" id="assistantInput" placeholder="Задайте вопрос..." onkeypress="if(event.key==='Enter')assistantSend()">
+      <button class="send" onclick="assistantSend()">➤</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div><script>
+/* ============ ROLE SWITCHING ============ */
+var currentRole = 'resident';
+var privacyVisible = true;
+
+function pickRole(btn, role){
+  document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentRole = role;
+  var codes = {resident:'1 2 3 4', uk:'5 6 7 8', contractor:'9 0 1 2'};
+  document.getElementById('accessCode').value = codes[role];
+  updateCodeBoxes(codes[role]);
+}
+
+function updateCodeBoxes(val){
+  var digits = (val || '').replace(/\s/g,'').split('');
+  var boxes = document.querySelectorAll('#s-login .code-box');
+  boxes.forEach(function(b,i){
+    b.textContent = digits[i] || '';
+    b.classList.remove('filled','active');
+    if(digits[i]) b.classList.add('filled');
+  });
+  if(digits.length < 6 && boxes[digits.length]) boxes[digits.length].classList.add('active');
+}
+
+function doLogin(){
+  var target = 'view-' + currentRole;
+  document.querySelectorAll('.role-view').forEach(function(v){ v.classList.remove('active'); });
+  var el = document.getElementById(target);
+  if(el){
+    el.classList.add('active');
+    var first = el.querySelector('.screen');
+    if(first){
+      el.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+      first.classList.add('active');
+    }
+  }
+  var fab = document.getElementById('aiFab');
+  if(fab) fab.style.display = 'flex';
+  if(currentRole === 'resident') renderRecommendations();
+  showToast('Вы вошли как ' + roleName(currentRole));
+}
+
+function roleName(r){ return {resident:'Житель', uk:'УК', contractor:'Подрядчик'}[r] || r; }
+
+function logout(){
+  document.querySelectorAll('.role-view').forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById('view-login').classList.add('active');
+  var fab = document.getElementById('aiFab');
+  if(fab) fab.style.display = 'none';
+  showToast('Вы вышли в выбор роли');
+}
+
+function switchRole(role){
+  currentRole = role;
+  document.querySelectorAll('.role-view').forEach(function(v){ v.classList.remove('active'); });
+  var el = document.getElementById('view-' + role);
+  if(el){
+    el.classList.add('active');
+    var first = el.querySelector('.screen');
+    if(first){
+      el.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+      first.classList.add('active');
+    }
+  }
+  if(role === 'resident') renderRecommendations();
+  showToast('Переключено на ' + roleName(role));
+}
+
+/* ============ SCREEN SWITCHING ============ */
+function showScreen(id, roleView){
+  var scope = roleView ? document.getElementById(roleView) : document.querySelector('.role-view.active');
+  if(!scope) return;
+  scope.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  var el = document.getElementById(id);
+  if(el){
+    el.classList.add('active');
+    var c = el.querySelector('.content, .chat-wrap');
+    if(c) c.scrollTop = 0;
+  }
+}
+
+function switchTab(btn, id){
+  var parent = btn.closest('.role-view');
+  if(parent) parent.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  showScreen(id);
+}
+
+function showToast(text){
+  var t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+
+/* ============ PRIVACY ============ */
+function togglePrivacy(row){
+  var toggle = row.querySelector('.toggle');
+  privacyVisible = toggle.classList.contains('on');
+  document.querySelectorAll('[data-user-address]').forEach(function(el){
+    el.style.display = privacyVisible ? '' : 'none';
+  });
+  document.querySelectorAll('[data-user-phone]').forEach(function(el){
+    el.style.display = privacyVisible ? '' : 'none';
+  });
+  showToast(privacyVisible ? 'Данные видны другим' : 'Данные скрыты');
+}
+
+/* ============ FILTERS ============ */
+function filterRequests(btn, status){
+  document.querySelectorAll('#reqFilters button').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('#reqList .req-item').forEach(function(item){
+    item.style.display = ((status === 'all') || (item.getAttribute('data-status') === status)) ? '' : 'none';
+  });
+}
+function filterServices(btn, status){
+  document.querySelectorAll('#serviceFilters button').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('#serviceList .service-item').forEach(function(item){
+    item.style.display = (item.getAttribute('data-status') === status) ? '' : 'none';
+  });
+}
+function filterNews(btn, status){
+  document.querySelectorAll('#newsFilters button').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.news-item').forEach(function(item){
+    item.style.display = ((status === 'all') || (item.getAttribute('data-status') === status)) ? '' : 'none';
+  });
+}
+function filterChats(btn, type){
+  document.querySelectorAll('#chatFilters button').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('#chatList .chat-row').forEach(function(row){
+    var t = row.getAttribute('data-type');
+    row.style.display = (type === 'all' || t === type) ? '' : 'none';
+  });
+}
+
+/* ============ UK PANEL ============ */
+function showUKTab(btn, id){
+  var scope = document.getElementById('view-uk');
+  if(!scope) return;
+  scope.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  var el = document.getElementById(id);
+  if(el){
+    el.classList.add('active');
+    var c = el.querySelector('.content');
+    if(c) c.scrollTop = 0;
+  }
+  scope.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  if(btn && btn.classList) btn.classList.add('active');
+}
+
+function openUKAccount(){
+  showUKTab(null, 'uk-account');
+}
+
+function showUKToast(text){ showToast(text); }
+
+function goUKRequests(status){
+  var tabs = document.querySelectorAll('#view-uk .tab');
+  showUKTab(tabs[2], 'uk-requests');
+  if(status === 'overdue'){
+    setTimeout(function(){
+      var btn = document.querySelectorAll('#ukReqFilters button')[2];
+      if(btn) filterUKReq(btn, 'overdue');
+    }, 100);
+  } else if(status === 'active'){
+    setTimeout(function(){
+      var btn = document.querySelectorAll('#ukReqFilters button')[1];
+      if(btn) filterUKReq(btn, 'active');
+    }, 100);
+  }
+}
+
+function goUKAnalytics(){
+  var tabs = document.querySelectorAll('#view-uk .tab');
+  showUKTab(tabs[1], 'uk-analytics');
+}
+
+function goUKContractors(){
+  var tabs = document.querySelectorAll('#view-uk .tab');
+  showUKTab(tabs[3], 'uk-contractors');
+}
+
+function filterUKReq(btn, status){
+  var parent = btn.parentNode;
+  parent.querySelectorAll('button').forEach(function(b){
+    b.classList.remove('active');
+    b.style.background = 'transparent';
+    b.style.color = '';
+  });
+  btn.classList.add('active');
+  btn.style.background = '#222833';
+  btn.style.color = '#fff';
+  document.querySelectorAll('#ukReqList .uk-req').forEach(function(item){
+    var s = item.getAttribute('data-status');
+    var o = item.getAttribute('data-overdue') === 'true';
+    var show = false;
+    if(status === 'all') show = true;
+    else if(status === 'active') show = (s === 'active');
+    else if(status === 'done') show = (s === 'done');
+    else if(status === 'overdue') show = o;
+    item.style.display = show ? '' : 'none';
+  });
+}
+
+/* ============ UK: REQUEST DETAIL ============ */
+var UK_REQUESTS = {
+  kritichno: {
+    num:'№2512', title:'Протечка возле электрощитовой', priority:'КРИТИЧНО', priorityClass:'danger',
+    addr:'кв. 312 · 5 этаж · подъезд 3', created:'13 мая, 14:18', sla:'30 мин',
+    category:'💧 Сантехника', resident:'Анна Иванова · +7 (999) 123-45-67',
+    master:'Игорь Смирнов', masterSla:'88%', masterTime:'22 мин',
+    desc:'Житель сообщает: вода капает с потолка возле электрощитовой. Есть риск замыкания. Заявка просрочена на 12 минут.',
+    recommendations:['Позвонить мастеру и уточнить статус','Уведомить жителя о задержке','При риске замыкания — вызвать аварийную службу'],
+    risk:'Замыкание электрощитовой · затопление соседей'
+  },
+  light: {
+    num:'№2487', title:'Не работает свет в подъезде', priority:'ВЫСОКИЙ', priorityClass:'warn',
+    addr:'подъезд 1 · 3 этаж', created:'12 мая, 14:32', sla:'4 часа',
+    category:'⚡ Электрика', resident:'Анна Иванова · +7 (999) 123-45-67',
+    master:'Сергей Петров', masterSla:'96%', masterTime:'18 мин',
+    desc:'Не работает освещение на 3 этаже 1 подъезда. Повторное обращение №4 за месяц — возможна проблема в проводке, а не в лампе.',
+    recommendations:['Направить электрика с диагностическим оборудованием','Проверить всю линию освещения','Запланировать замену 3 светильников'],
+    risk:'Повторное обращение · возможна неисправность проводки'
+  }
+};
+
+function openUKRequestDetail(key){
+  var d = UK_REQUESTS[key];
+  if(!d){ showUKToast('Открываем заявку...'); return; }
+  document.getElementById('ukRdTitle').textContent = 'Заявка ' + d.num;
+
+  var html = '';
+  html += '<div style="background:var(--uk-card);border-radius:14px;padding:16px;border:1px solid var(--uk-border);margin-bottom:12px;border-left:3px solid ' + (d.priorityClass === 'danger' ? '#f87171' : '#fbbf24') + '">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+  html += '<span style="background:' + (d.priorityClass === 'danger' ? 'rgba(248,113,113,.2);color:#fca5a5' : 'rgba(251,191,36,.2);color:#fbbf24') + ';padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700">' + d.priority + '</span>';
+  html += '<span style="font-size:12px;color:var(--uk-muted)">SLA ' + d.sla + '</span>';
+  html += '</div>';
+  html += '<div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:6px">' + d.title + '</div>';
+  html += '<div style="font-size:12.5px;color:var(--uk-muted);margin-bottom:12px">' + d.addr + '</div>';
+  html += '<div style="font-size:13px;color:#e8edf5;line-height:1.55">' + d.desc + '</div>';
+  html += '</div>';
+
+  html += '<div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Детали</div>';
+  html += '<div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px;font-size:12.5px">';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Категория</span><span style="color:#fff">' + d.category + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Создана</span><span style="color:#fff">' + d.created + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--uk-muted)">Житель</span><span style="color:#fff;text-align:right">' + d.resident + '</span></div>';
+  html += '</div>';
+
+  html += '<div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Исполнитель</div>';
+  html += '<div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px">';
+  html += '<div style="display:flex;gap:12px;align-items:center">';
+  html += '<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700">' + d.master.substring(0,1) + '</div>';
+  html += '<div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:#fff">' + d.master + '</div>';
+  html += '<div style="font-size:11px;color:var(--uk-muted)">SLA ' + d.masterSla + ' · отклик ' + d.masterTime + '</div></div>';
+  html += '</div></div>';
+
+  html += '<div style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:12px;padding:12px;margin-bottom:12px">';
+  html += '<div style="font-size:11px;color:#fca5a5;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:6px">⚠️ Риск</div>';
+  html += '<div style="font-size:12.5px;color:#fecaca;line-height:1.5">' + d.risk + '</div>';
+  html += '</div>';
+
+  html += '<div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">🤖 Рекомендации AI</div>';
+  html += '<div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:16px">';
+  d.recommendations.forEach(function(r){
+    html += '<div style="display:flex;gap:8px;padding:6px 0"><span style="color:#2ec4a0;flex-shrink:0">→</span><span style="font-size:12.5px;color:#e8edf5;line-height:1.5">' + r + '</span></div>';
+  });
+  html += '</div>';
+
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">';
+  html += '<button onclick="showUKToast(\'Статус: принято в работу\')" style="padding:12px;background:linear-gradient(135deg,#0f3d2e,#2ec4a0);color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Принять</button>';
+  html += '<button onclick="showUKToast(\'Мастер уведомлён\')" style="padding:12px;background:var(--uk-card);color:#fff;border:1px solid var(--uk-border);border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Мастеру</button>';
+  html += '</div>';
+  html += '<div style="height:40px"></div>';
+
+  document.getElementById('ukRdContent').innerHTML = html;
+  showUKTab(null, 'uk-request-detail');
+}
+
+/* ============ UK: CONTRACTOR DETAIL ============ */
+var UK_CONTRACTORS = {
+  sp: {name:'Сергей Петров', spec:'Электрик · 12 лет опыта', rating:'4.9', sla:'96%', jobs:'342', time:'18 мин', phone:'+7 (999) 111-22-33', active:'42', income:'22 400 ₽', history:[
+    {date:'13 мая', task:'Доводчик в 4 подъезде', status:'Выполнено', stars:5},
+    {date:'12 мая', task:'Свет в подъезде №1', status:'В работе', stars:0},
+    {date:'10 мая', task:'Розетка в кв. 245', status:'Выполнено', stars:5}
+  ]},
+  is: {name:'Игорь Смирнов', spec:'Сантехник · 8 лет опыта', rating:'4.7', sla:'88%', jobs:'218', time:'22 мин', phone:'+7 (999) 444-55-66', active:'31', income:'14 800 ₽', history:[
+    {date:'13 мая', task:'Протечка · кв. 312', status:'Просрочено', stars:0},
+    {date:'8 мая', task:'Кран на кухне', status:'Выполнено', stars:5}
+  ]},
+  me: {name:'МастерЭлектро', spec:'Бригада · электрика', rating:'4.8', sla:'94%', jobs:'512', time:'35 мин', phone:'+7 (495) 111-11-11', active:'18', income:'35 200 ₽', history:[
+    {date:'12 мая', task:'Замена щитка', status:'Выполнено', stars:5}
+  ]},
+  mk: {name:'Мастер-Климат', spec:'Отопление · 6 лет', rating:'3.8', sla:'62%', jobs:'118', time:'45 мин', phone:'+7 (999) 777-88-99', active:'8', income:'9 600 ₽', history:[
+    {date:'11 мая', task:'Радиатор · кв. 178', status:'Просрочено', stars:2}
+  ]},
+  ks: {name:'Клининг-Сервис', spec:'Уборка · компания', rating:'4.6', sla:'92%', jobs:'89', time:'30 мин', phone:'+7 (495) 999-00-11', active:'15', income:'11 200 ₽', history:[
+    {date:'10 мая', task:'Паркинг −1', status:'Выполнено', stars:5}
+  ]}
+};
+
+function openUKContractorDetail(key){
+  var c = UK_CONTRACTORS[key];
+  if(!c){ showUKToast('Открываем карточку'); return; }
+  document.getElementById('ukCdTitle').textContent = c.name;
+  var slaColor = c.sla === '62%' ? '#f87171' : c.sla === '88%' ? '#fbbf24' : '#2ec4a0';
+
+  var html = '';
+  html += '<div style="background:var(--uk-card);border-radius:14px;padding:20px;border:1px solid var(--uk-border);margin-bottom:12px;text-align:center">';
+  html += '<div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;margin:0 auto 12px">' + c.name.substring(0,1) + '</div>';
+  html += '<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">' + c.name + '</div>';
+  html += '<div style="font-size:12.5px;color:var(--uk-muted)">' + c.spec + '</div>';
+  html += '</div>';
+
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">';
+  html += '<div style="background:var(--uk-card);border-radius:10px;padding:10px;border:1px solid var(--uk-border);text-align:center"><div style="font-size:18px;font-weight:800;color:#2ec4a0">' + c.rating + '</div><div style="font-size:10px;color:var(--uk-muted);margin-top:2px">Оценка</div></div>';
+  html += '<div style="background:var(--uk-card);border-radius:10px;padding:10px;border:1px solid var(--uk-border);text-align:center"><div style="font-size:18px;font-weight:800;color:' + slaColor + '">' + c.sla + '</div><div style="font-size:10px;color:var(--uk-muted);margin-top:2px">SLA</div></div>';
+  html += '<div style="background:var(--uk-card);border-radius:10px;padding:10px;border:1px solid var(--uk-border);text-align:center"><div style="font-size:18px;font-weight:800;color:#fff">' + c.jobs + '</div><div style="font-size:10px;color:var(--uk-muted);margin-top:2px">Работ</div></div>';
+  html += '</div>';
+
+  html += '<div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">Показатели</div>';
+  html += '<div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:12px;font-size:12.5px">';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Ср. отклик</span><span style="color:#fff">' + c.time + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Активных заявок</span><span style="color:#fff">' + c.active + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--uk-border)"><span style="color:var(--uk-muted)">Заработал в мае</span><span style="color:#fff">' + c.income + '</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--uk-muted)">Телефон</span><span style="color:#fff">' + c.phone + '</span></div>';
+  html += '</div>';
+
+  html += '<div style="font-size:11px;color:var(--uk-muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin:16px 0 8px">История</div>';
+  html += '<div style="background:var(--uk-card);border-radius:12px;padding:14px;border:1px solid var(--uk-border);margin-bottom:16px">';
+  c.history.forEach(function(h){
+    var stColor = h.status === 'Выполнено' ? '#2ec4a0' : h.status === 'Просрочено' ? '#f87171' : '#fbbf24';
+    html += '<div style="padding:8px 0;border-bottom:1px solid var(--uk-border)">';
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:3px">';
+    html += '<span style="font-size:12.5px;color:#fff;font-weight:600">' + h.task + '</span>';
+    html += '<span style="font-size:10px;color:var(--uk-muted)">' + h.date + '</span>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:' + stColor + ';font-weight:600">' + h.status + (h.stars ? ' · ' + '⭐'.repeat(h.stars) : '') + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">';
+  html += '<button onclick="showUKToast(\'Открываем чат с ' + c.name + '\')" style="padding:12px;background:linear-gradient(135deg,#0f3d2e,#2ec4a0);color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Написать</button>';
+  html += '<button onclick="showUKToast(\'Задача назначена ' + c.name + '\')" style="padding:12px;background:var(--uk-card);color:#fff;border:1px solid var(--uk-border);border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Назначить</button>';
+  html += '</div>';
+  html += '<div style="height:40px"></div>';
+
+  document.getElementById('ukCdContent').innerHTML = html;
+  showUKTab(null, 'uk-contractor-detail');
+}
+
+/* ============ REQUEST DETAIL (RESIDENT) ============ */
+var REQUEST_DATA = {
+  active: {
+    num:'№2487', title:'Не работает свет в подъезде', status:'В работе', statusClass:'warn',
+    priority:'Срочный', priorityClass:'danger',
+    desc:'3 этаж, лампа не горит. Уже второй день никого нет — темно, страшно выходить вечером.',
+    photo:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&q=70',
+    master:{name:'Сергей Петров', role:'Электрик · УК Солнечный', initial:'С'},
+    timeline:[
+      {dot:'done', title:'Заявка создана', time:'12 мая, 14:32'},
+      {dot:'done', title:'AI классифицировал: электрика', time:'12 мая, 14:32'},
+      {dot:'done', title:'Назначен исполнитель: Сергей П.', time:'12 мая, 15:00'},
+      {dot:'active', title:'Работы выполняются', time:'Ожидаемое завершение: до 18:00'},
+      {dot:'', title:'Завершение и оценка', time:'Ожидается'}
+    ]
+  },
+  done1: {
+    num:'№2456', title:'Протечка крана на кухне', status:'Выполнено', statusClass:'ok',
+    priority:'Обычный', priorityClass:'',
+    desc:'Кран на кухне подтекал. Сантехник приехал в течение часа, заменил прокладку.',
+    photo:'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=600&q=70',
+    master:{name:'Игорь Смирнов', role:'Сантехник · УК Солнечный', initial:'И'},
+    timeline:[
+      {dot:'done', title:'Заявка создана', time:'8 мая, 10:15'},
+      {dot:'done', title:'Назначен исполнитель: Игорь С.', time:'8 мая, 10:30'},
+      {dot:'done', title:'Работа выполнена', time:'8 мая, 12:40'},
+      {dot:'done', title:'Оценено на 5 звёзд ✓', time:'8 мая, 13:00'}
+    ]
+  },
+  done2: {
+    num:'№2411', title:'Шум у соседей ночью', status:'Выполнено', statusClass:'ok',
+    priority:'Низкий', priorityClass:'',
+    desc:'Жалоба на шум. Проведена беседа администратором УК.',
+    photo:'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=70',
+    master:{name:'Администратор УК', role:'УК Солнечный', initial:'А'},
+    timeline:[
+      {dot:'done', title:'Заявка создана', time:'2 мая, 23:47'},
+      {dot:'done', title:'Передано администратору', time:'3 мая, 09:00'},
+      {dot:'done', title:'Беседа проведена', time:'3 мая, 14:00'},
+      {dot:'done', title:'Заявка закрыта', time:'3 мая, 15:00'}
+    ]
+  },
+  done3: {
+    num:'№2398', title:'Замена лампочки в тамбуре', status:'Отменена', statusClass:'gray',
+    priority:'Низкий', priorityClass:'',
+    desc:'Заявка отменена — проблема решилась самостоятельно.',
+    photo:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&q=70',
+    master:null,
+    timeline:[
+      {dot:'done', title:'Заявка создана', time:'28 апр, 18:20'},
+      {dot:'', title:'Отменена пользователем', time:'28 апр, 18:45'}
+    ]
+  }
+};
+
+function openRequestDetail(key){
+  var d = REQUEST_DATA[key];
+  if(!d) return;
+  document.getElementById('rdTitle').textContent = 'Заявка ' + d.num;
+
+  var html = '<div class="card" style="margin-bottom:16px">';
+  html += '<div class="row between" style="margin-bottom:12px">';
+  html += '<span class="badge ' + d.statusClass + '">' + d.status + '</span>';
+  if(d.priority) html += '<span class="badge ' + d.priorityClass + '">' + d.priority + '</span>';
+  html += '</div>';
+  html += '<div style="font-size:18px;font-weight:700;margin-bottom:8px">' + d.title + '</div>';
+  html += '<div class="meta" style="margin-bottom:12px">' + d.desc + '</div>';
+  if(d.photo) html += '<img class="photo" style="height:150px" src="' + d.photo + '" alt="">';
+  html += '</div>';
+
+  html += '<div class="section-title">Ход выполнения</div>';
+  html += '<div class="card"><div class="timeline">';
+  d.timeline.forEach(function(t){
+    html += '<div class="tl-item"><div class="tl-dot ' + t.dot + '">' +
+      (t.dot === 'done' ? '✓' : t.dot === 'active' ? '●' : '○') + '</div>' +
+      '<div class="tl-body"><div class="tl-title">' + t.title + '</div>' +
+      '<div class="tl-time">' + t.time + '</div></div></div>';
+  });
+  html += '</div></div>';
+
+  if(d.master){
+    html += '<div class="section-title">Исполнитель</div>';
+    html += '<div class="card"><div class="row">';
+    html += '<div class="avatar" style="background:linear-gradient(135deg,#2d8b6f,#0f3d2e)">' + d.master.initial + '</div>';
+    html += '<div style="flex:1"><div style="font-size:14px;font-weight:600">' + d.master.name + '</div>';
+    html += '<div class="meta small">' + d.master.role + '</div></div>';
+    html += '<button class="btn btn-soft btn-sm" onclick="openContractorChat(\'' + d.master.name + '\',\'' + d.master.role + '\')">💬</button>';
+    html += '</div></div>';
+  }
+
+  if(d.status === 'В работе'){
+    html += '<div style="display:flex;gap:8px;margin-top:16px">';
+    html += '<button class="btn btn-outline" onclick="showToast(\'Заявка отменена\')">Отменить</button>';
+    html += '<button class="btn btn-primary" onclick="openContractorChat(\'' + d.master.name + '\',\'' + d.master.role + '\')">Написать</button>';
+    html += '</div>';
+  } else if(d.status === 'Выполнено'){
+    html += '<div class="card" style="margin-top:16px;background:#f0f9f5;border-color:#d1fae5">';
+    html += '<div style="font-size:13px;font-weight:700;color:var(--green-dark);margin-bottom:8px">Ваша оценка</div>';
+    html += '<div style="font-size:20px">⭐⭐⭐⭐⭐</div>';
+    html += '</div>';
+  }
+
+  html += '<div style="height:20px"></div>';
+  document.getElementById('rdContent').innerHTML = html;
+  showScreen('s-request-detail');
+}
+
+/* ============ AI CHAT ============ */
+var aiChatState = { step:0, isPrivate:false, category:'electric' };
+var CATEGORY_FLOW = {
+  electric: {label:'Электрика', questions:[
+    {q:'Здравствуйте! Уточните: <b>свет не горит только на 3 этаже или во всём подъезде?</b>', replies:['Только на 3 этаже','Во всём подъезде','Мигает']},
+    {q:'Поняла. <b>Проверяли щиток?</b>', replies:['Да, всё в порядке','Нет, не проверял','Не знаю, где он']},
+    {q:'Спасибо! <b>Когда это началось?</b>', replies:['Только сегодня','2–3 дня','Больше недели']}
+  ], priority:{common:'Высокий', private:'Средний'}, sla:{common:'4 часа', private:'24 часа'}, summary:'⚡ Электрика → освещение'},
+  plumbing: {label:'Сантехника', questions:[
+    {q:'Здравствуйте! <b>Где проблема?</b>', replies:['Кран / смеситель','Труба','Унитаз','Засор']},
+    {q:'Поняла. <b>Вода течёт постоянно или когда открываете?</b>', replies:['Постоянно капает','Только при использовании','Прорвало']},
+    {q:'Спасибо. <b>Перекрыли воду?</b>', replies:['Да, перекрыл','Нет, не знаю как','Уже не течёт']}
+  ], priority:{common:'Средний', private:'Высокий'}, sla:{common:'8 часов', private:'2 часа'}, summary:'💧 Сантехника → протечка'},
+  doors: {label:'Двери', questions:[
+    {q:'Здравствуйте! <b>Что с дверью?</b>', replies:['Не закрывается','Скрипит','Доводчик сломан','Замок']},
+    {q:'Поняла. <b>Дверь подъездная или в квартиру?</b>', replies:['Подъездная','В квартиру','В тамбуре']},
+    {q:'Спасибо! <b>Сейчас закрыта или открыта?</b>', replies:['Закрыта','Открыта','Хлопает']}
+  ], priority:{common:'Средний', private:'Низкий'}, sla:{common:'24 часа', private:'48 часов'}, summary:'🚪 Двери → доводчик / замок'},
+  cleaning: {label:'Уборка', questions:[
+    {q:'Здравствуйте! <b>Что нужно убрать?</b>', replies:['Подъезд','Двор','Паркинг','Мусор']},
+    {q:'Поняла. <b>Как давно это там?</b>', replies:['Сегодня','2–3 дня','Больше недели']},
+    {q:'Спасибо! <b>Обычная уборка?</b>', replies:['Обычная','Разлили что-то','Сильно грязно']}
+  ], priority:{common:'Низкий', private:'Низкий'}, sla:{common:'48 часов', private:'48 часов'}, summary:'🧹 Уборка → общие зоны'},
+  other: {label:'Другое', questions:[
+    {q:'Здравствуйте! <b>Опишите, что случилось?</b>', replies:['Проблема в квартире','В подъезде','На улице','Другое']},
+    {q:'Поняла. <b>Как срочно?</b>', replies:['Срочно','В течение недели','Не срочно']},
+    {q:'Спасибо! <b>Есть угроза безопасности?</b>', replies:['Да','Нет','Не уверен']}
+  ], priority:{common:'Средний', private:'Средний'}, sla:{common:'12 часов', private:'12 часов'}, summary:'🛠 Другое → общий запрос'}
+};
+
+function startAIChat(){
+  var text = (document.getElementById('newReqText').value || '').trim();
+  var locChip = document.querySelector('#locationChips .chip.active');
+  var catChip = document.querySelector('#reqCategory .chip.active');
+  var loc = locChip ? locChip.getAttribute('data-loc') : 'common';
+  var cat = catChip ? catChip.getAttribute('data-cat') : 'electric';
+  aiChatState = { step:0, isPrivate:(loc === 'private'), category:cat, answers:{problem:text} };
+
+  showScreen('s-ai-analyzing');
+  var steps = document.querySelectorAll('.analyzing-step');
+  steps.forEach(function(s){ s.style.opacity = '.3'; });
+  setTimeout(function(){ if(steps[0]) steps[0].style.opacity = '1'; }, 400);
+  setTimeout(function(){ if(steps[1]) steps[1].style.opacity = '1'; }, 900);
+  setTimeout(function(){ if(steps[2]) steps[2].style.opacity = '1'; }, 1400);
+  setTimeout(function(){
+    var body = document.getElementById('aiChatBody');
+    body.innerHTML = '';
+    addMsg('sys', 'Заявка отправлена. AI анализирует...');
+    showScreen('s-ai-chat');
+    setTimeout(function(){
+      var flow = CATEGORY_FLOW[cat] || CATEGORY_FLOW.other;
+      addMsg('ai', flow.questions[0].q);
+      setQuickReplies(flow.questions[0].replies);
+    }, 600);
+  }, 2200);
+}
+
+function addMsg(type, html){
+  var body = document.getElementById('aiChatBody');
+  if(!body) return;
+  var div = document.createElement('div');
+  div.className = 'msg ' + type;
+  if(type === 'ai') div.innerHTML = '<div class="ai-label"><span class="dot"></span>AI-ассистент</div>' + html;
+  else div.innerHTML = html;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
+
+function addTyping(){
+  var body = document.getElementById('aiChatBody');
+  if(!body) return;
+  var t = document.createElement('div');
+  t.className = 'typing';
+  t.id = 'aiTyping';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  body.appendChild(t);
+  body.scrollTop = body.scrollHeight;
+}
+
+function removeTyping(){ var t = document.getElementById('aiTyping'); if(t) t.remove(); }
+
+function setQuickReplies(arr){
+  var box = document.getElementById('aiQuickReplies');
+  if(!box) return;
+  box.innerHTML = '';
+  if(!arr || !arr.length) return;
+  arr.forEach(function(txt){
+    var b = document.createElement('button');
+    b.className = 'qr';
+    b.textContent = txt;
+    b.onclick = function(){ aiChatSend(txt); };
+    box.appendChild(b);
+  });
+}
+
+function aiChatSend(predefined){
+  var input = document.getElementById('aiChatInput');
+  var text = predefined || (input.value || '').trim();
+  if(!text) return;
+  if(!predefined) input.value = '';
+  addMsg('me', text);
+  setQuickReplies([]);
+  aiChatState.answers['answer' + aiChatState.step] = text;
+  addTyping();
+  setTimeout(function(){ removeTyping(); aiChatState.step++; advanceAIChat(); }, 900);
+}
+
+function advanceAIChat(){
+  var s = aiChatState.step;
+  var flow = CATEGORY_FLOW[aiChatState.category] || CATEGORY_FLOW.other;
+  if(s < flow.questions.length){
+    addMsg('ai', flow.questions[s].q);
+    setQuickReplies(flow.questions[s].replies);
+    return;
+  }
+  finishAIChat();
+}
+
+function finishAIChat(){
+  addTyping();
+  setTimeout(function(){
+    removeTyping();
+    var flow = CATEGORY_FLOW[aiChatState.category] || CATEGORY_FLOW.other;
+    var isPriv = aiChatState.isPrivate;
+    var priority = isPriv ? flow.priority.private : flow.priority.common;
+    var sla = isPriv ? flow.sla.private : flow.sla.common;
+    var priorityClass = priority === 'Высокий' ? 'danger' : priority === 'Средний' ? 'warn' : 'ok';
+    var priorityEmoji = priority === 'Высокий' ? '🟠' : priority === 'Средний' ? '🟡' : '🟢';
+
+    var wrap = document.createElement('div');
+    wrap.style.alignSelf = 'stretch';
+    wrap.innerHTML =
+      '<div class="msg-card">' +
+        '<div class="mc-title">🤖 AI-классификация</div>' +
+        '<div class="mc-row"><span class="k">Категория</span><span class="v">' + flow.summary + '</span></div>' +
+        '<div class="mc-row"><span class="k">Приоритет</span><span class="v ' + priorityClass + '">' + priorityEmoji + ' ' + priority + '</span></div>' +
+        '<div class="mc-row"><span class="k">SLA</span><span class="v">' + sla + '</span></div>' +
+        '<div class="mc-row"><span class="k">Тип</span><span class="v">' + (isPriv ? 'Личная' : 'Общедомовая') + '</span></div>' +
+      '</div>';
+    var body = document.getElementById('aiChatBody');
+    body.appendChild(wrap);
+    body.scrollTop = body.scrollHeight;
+
+    if(isPriv){
+      setTimeout(function(){
+        addMsg('ai', 'Это <b>личная заявка</b> — работа в квартире. Подобрала 3 специалиста.');
+        setTimeout(function(){ openContractorPicker(); }, 1800);
+      }, 900);
+    } else {
+      setTimeout(function(){
+        addMsg('ai', 'Это <b>общедомовая заявка</b>. Назначаю: <b>Сергей Петров</b> — 96% SLA.');
+        setTimeout(function(){ openContractorChat('Сергей Петров', flow.label); }, 2600);
+      }, 900);
+    }
+  }, 1400);
+}
+
+function finishAIChatNow(){ finishAIChat(); }
+
+/* ============ CONTRACTOR PICKER ============ */
+var CONTRACTORS_DATA = [
+  {id:'sp',name:'Сергей Петров',spec:'Электрик · 12 лет',rating:4.9,jobs:342,sla:96,desc:'Гарантия 6 месяцев.',price:45,badge:'⭐ Лучший',badgeColor:'#059669'},
+  {id:'is',name:'Иван Соколов',spec:'Электрик · 8 лет',rating:4.7,jobs:218,sla:88,desc:'Аварийные вызовы.',price:35,badge:'💰 Дешевле',badgeColor:'#d97706'},
+  {id:'mk',name:'МастерЭлектро',spec:'Бригада',rating:4.8,jobs:512,sla:94,desc:'С договором и чеком.',price:60,badge:'✓ Гарантия',badgeColor:'#16324a'}
+];
+var selectedContractor = null;
+
+function openContractorPicker(){
+  var list = document.getElementById('contractorsList');
+  if(!list) return;
+  list.innerHTML = '';
+  selectedContractor = null;
+  CONTRACTORS_DATA.forEach(function(c){
+    var initials = c.name.split(' ').map(function(w){ return w[0]; }).join('').substring(0,2).toUpperCase();
+    var el = document.createElement('div');
+    el.className = 'contractor-card';
+    el.id = 'cc-' + c.id;
+    el.onclick = function(){ pickContractorCard(c.id); };
+    el.innerHTML =
+      '<div class="cc-head"><div class="cc-avatar">' + initials + '</div>' +
+        '<div class="cc-info"><div class="cc-name">' + c.name + '</div>' +
+          '<div class="cc-spec">' + c.spec + '</div>' +
+          '<span style="display:inline-block;margin-top:6px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:' + c.badgeColor + '15;color:' + c.badgeColor + '">' + c.badge + '</span>' +
+        '</div>' +
+        '<div class="cc-rating"><span class="star">★</span>' + c.rating + '<small>' + c.jobs + '</small></div>' +
+      '</div>' +
+      '<div class="cc-desc">' + c.desc + '</div>' +
+      '<div class="cc-stats">' +
+        '<span class="cc-stat">SLA: <b>' + c.sla + '%</b></span>' +
+        '<span class="cc-stat">Работ: <b>' + c.jobs + '</b></span>' +
+        '<span class="cc-stat">Рейтинг: <b>' + c.rating + '</b></span>' +
+      '</div>' +
+      '<div class="cc-bottom"><div class="cc-price">' + c.price + ' BYN<small>· выезд</small></div>' +
+        '<button class="cc-pick">Выбрать</button></div>';
+    list.appendChild(el);
+  });
+  showScreen('s-contractor-picker');
+}
+
+function pickContractorCard(id){
+  document.querySelectorAll('.contractor-card').forEach(function(el){ el.classList.remove('selected'); });
+  var el = document.getElementById('cc-' + id);
+  if(el) el.classList.add('selected');
+  selectedContractor = CONTRACTORS_DATA.find(function(c){ return c.id === id; });
+  var btn = document.getElementById('pickBtn');
+  if(btn && selectedContractor){
+    btn.disabled = false;
+    btn.textContent = 'Выбрать: ' + selectedContractor.name + ' · ' + selectedContractor.price + ' BYN';
+  }
+}
+
+function confirmContractorPick(){
+  if(!selectedContractor) return;
+  showToast('Вы выбрали: ' + selectedContractor.name);
+  setTimeout(function(){
+    openContractorChat(selectedContractor.name, selectedContractor.spec, selectedContractor.price);
+  }, 900);
+}
+
+/* ============ CONTRACTOR CHAT ============ */
+function openContractorChat(name, spec, price){
+  document.getElementById('ccName').textContent = name || 'Исполнитель';
+  document.getElementById('ccSpec').textContent = (spec || 'Специалист') + ' · онлайн';
+  document.getElementById('ccAvatar').textContent = (name || 'И').substring(0,1).toUpperCase();
+  var body = document.getElementById('ccChatBody');
+  body.innerHTML = '';
+  var sys = document.createElement('div');
+  sys.className = 'chat-sys-info';
+  sys.innerHTML = '📋 <b>Заявка №2487</b> · создана<br>Приоритет и SLA уточнены AI' +
+    (price ? '<br>Стоимость: <b>' + price + ' BYN</b>' : '');
+  body.appendChild(sys);
+  setTimeout(function(){
+    var m = document.createElement('div');
+    m.className = 'msg ai';
+    m.textContent = 'Здравствуйте! Принял заявку, выезжаю. Буду через 25 минут.';
+    body.appendChild(m);
+    body.scrollTop = body.scrollHeight;
+  }, 800);
+  showScreen('s-contractor-chat');
+}
+
+function ccSend(){
+  var input = document.getElementById('ccInput');
+  var text = (input.value || '').trim();
+  if(!text) return;
+  var body = document.getElementById('ccChatBody');
+  var me = document.createElement('div');
+  me.className = 'msg me';
+  me.textContent = text;
+  body.appendChild(me);
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+  setTimeout(function(){
+    var reply = document.createElement('div');
+    reply.className = 'msg ai';
+    reply.textContent = 'Понял, спасибо. Буду на месте через 25 минут.';
+    body.appendChild(reply);
+    body.scrollTop = body.scrollHeight;
+  }, 1400);
+}
+
+/* ============ UK CHAT ============ */
+function openUKChat(){
+  var body = document.getElementById('ukChatBody');
+  body.innerHTML = '';
+  var sys = document.createElement('div');
+  sys.className = 'chat-sys-info';
+  sys.innerHTML = '🏢 <b>Диспетчерская УК</b><br>Круглосуточно · ответ за 15 мин';
+  body.appendChild(sys);
+  [{who:'ai', text:'Здравствуйте! Диспетчерская УК на связи.'},
+   {who:'me', text:'Хочу уточнить по отключению горячей воды'},
+   {who:'ai', text:'Отключение плановое, 15–17 мая.'}].forEach(function(m, i){
+    setTimeout(function(){
+      var el = document.createElement('div');
+      el.className = 'msg ' + m.who;
+      el.textContent = m.text;
+      body.appendChild(el);
+      body.scrollTop = body.scrollHeight;
+    }, i * 300);
+  });
+  showScreen('s-uk-chat');
+}
+
+function ukQuickSend(text){
+  document.getElementById('ukInput').value = text;
+  ukSend();
+}
+
+function ukSend(){
+  var input = document.getElementById('ukInput');
+  var text = (input.value || '').trim();
+  if(!text) return;
+  var body = document.getElementById('ukChatBody');
+  var me = document.createElement('div');
+  me.className = 'msg me';
+  me.textContent = text;
+  body.appendChild(me);
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+  var t = document.createElement('div');
+  t.className = 'typing';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  body.appendChild(t);
+  body.scrollTop = body.scrollHeight;
+  setTimeout(function(){
+    if(t.parentNode) t.remove();
+    var reply = document.createElement('div');
+    reply.className = 'msg ai';
+    reply.innerHTML = '<div class="ai-label"><span class="dot"></span>Диспетчер УК</div>' + ukAnswer(text);
+    body.appendChild(reply);
+    body.scrollTop = body.scrollHeight;
+  }, 1200);
+}
+
+function ukAnswer(text){
+  var s = text.toLowerCase();
+  if(s.indexOf('вод') >= 0) return 'По воде: отключение 15–17 мая.';
+  if(s.indexOf('электр') >= 0 || s.indexOf('свет') >= 0) return 'По электрике: Сергей Петров. Реакция 4 часа.';
+  if(s.indexOf('отоплен') >= 0) return 'По отоплению: инженер приедет.';
+  if(s.indexOf('счёт') >= 0 || s.indexOf('плат') >= 0) return 'По счетам: показания до 25 числа.';
+  if(s.indexOf('авар') >= 0 || s.indexOf('срочн') >= 0) return '🆘 Аварийная: +7 (495) 000-00-00';
+  return 'Принял вопрос. Ответим за 15 минут.';
+}
+
+/* ============ NEIGHBOR CHAT ============ */
+function openNeighborChat(name, avatar, count){
+  document.getElementById('ncName').textContent = name;
+  document.getElementById('ncAvatar').textContent = avatar;
+  document.getElementById('ncMeta').textContent = (count || 12) + ' участников';
+  var body = document.getElementById('ncChatBody');
+  body.innerHTML = '';
+  var msgs;
+  if(name.indexOf('3 этаж') >= 0) msgs = [{who:'other', name:'Марина К.', text:'Есть фонарик?'},{who:'me', text:'Спасибо!'}];
+  else if(name.indexOf('Подъезд') >= 0) msgs = [{who:'other', name:'Игорь С.', text:'Видел сантехника?'},{who:'me', text:'Он на 3 этаже'}];
+  else if(name.indexOf('События') >= 0) msgs = [{who:'other', name:'Марина К.', text:'Субботник в 11:00'},{who:'me', text:'Приду!'}];
+  else if(name.indexOf('Анна') >= 0) msgs = [{who:'other', name:'Анна', text:'Идёшь на йогу?'},{who:'me', text:'Да, в субботу'}];
+  else msgs = [{who:'other', name:'Анна Петрова', text:'Кто идёт на йогу?'},{who:'other', name:'Игорь', text:'Я в деле!'},{who:'me', text:'Я тоже приду!'}];
+
+  msgs.forEach(function(m, i){
+    setTimeout(function(){
+      var el = document.createElement('div');
+      el.className = 'msg ' + (m.who === 'me' ? 'me' : 'ai');
+      if(m.who === 'me') el.textContent = m.text;
+      else el.innerHTML = '<div class="ai-label"><span class="dot"></span>' + m.name + '</div>' + m.text;
+      body.appendChild(el);
+      body.scrollTop = body.scrollHeight;
+    }, i * 250);
+  });
+  showScreen('s-neighbor-chat');
+}
+
+function ncSend(){
+  var input = document.getElementById('ncInput');
+  var text = (input.value || '').trim();
+  if(!text) return;
+  var body = document.getElementById('ncChatBody');
+  var me = document.createElement('div');
+  me.className = 'msg me';
+  me.textContent = text;
+  body.appendChild(me);
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+  setTimeout(function(){
+    var reply = document.createElement('div');
+    reply.className = 'msg ai';
+    reply.innerHTML = '<div class="ai-label"><span class="dot"></span>Анна Петрова</div>Ок 👍';
+    body.appendChild(reply);
+    body.scrollTop = body.scrollHeight;
+  }, 1500);
+}
+
+/* ============ SERVICE ============ */
+function openServiceList(){ showScreen('s-service-list'); }
+function openServiceChat(name, spec, topic, status){
+  document.getElementById('scName').textContent = name;
+  document.getElementById('scSpec').textContent = spec + ' · онлайн';
+  document.getElementById('scAvatar').textContent = name.substring(0,1).toUpperCase();
+  document.getElementById('scTitle').textContent = 'Чат · ' + topic;
+  var body = document.getElementById('scChatBody');
+  body.innerHTML = '';
+  var sys = document.createElement('div');
+  sys.className = 'chat-sys-info';
+  sys.innerHTML = '📋 <b>' + topic + '</b><br>Статус: ' + status;
+  body.appendChild(sys);
+  [{who:'ai', text:'Здравствуйте! Работаю по заявке.'},
+   {who:'me', text:'Когда будете?'},
+   {who:'ai', text:'Минут через 20.'}].forEach(function(m, i){
+    setTimeout(function(){
+      var el = document.createElement('div');
+      el.className = 'msg ' + m.who;
+      el.textContent = m.text;
+      body.appendChild(el);
+      body.scrollTop = body.scrollHeight;
+    }, i * 250);
+  });
+  showScreen('s-service-chat');
+}
+
+function scSend(){
+  var input = document.getElementById('scInput');
+  var text = (input.value || '').trim();
+  if(!text) return;
+  var body = document.getElementById('scChatBody');
+  var me = document.createElement('div');
+  me.className = 'msg me';
+  me.textContent = text;
+  body.appendChild(me);
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+  setTimeout(function(){
+    var reply = document.createElement('div');
+    reply.className = 'msg ai';
+    reply.textContent = 'Понял, спасибо.';
+    body.appendChild(reply);
+    body.scrollTop = body.scrollHeight;
+  }, 1400);
+}
+
+/* ============ ZONES ============ */
+var currentZone = {name:'Коворкинг', slot:'12:00'};
+function openZone(name, time, place, desc){
+  var t = document.getElementById('zoneTitle');
+  var t2 = document.getElementById('zoneTitle2');
+  var sub = document.getElementById('zoneSubtitle');
+  var d = document.getElementById('zoneDesc');
+  if(t) t.textContent = name;
+  if(t2) t2.textContent = name;
+  if(sub) sub.textContent = 'с ' + (time || '9:00 – 21:00') + ' · ' + (place || '3 этаж');
+  if(d) d.textContent = desc || 'Уютное пространство.';
+  currentZone = {name:name, slot:'12:00'};
+  document.querySelectorAll('#zoneSlots .slot').forEach(function(s){
+    s.classList.remove('active');
+    if(s.textContent.trim() === '12:00') s.classList.add('active');
+  });
+  document.querySelectorAll('#zoneDates .chip').forEach(function(c,i){
+    c.classList.toggle('active', i === 0);
+  });
+  var btn = document.getElementById('bookZoneBtn');
+  if(btn) btn.textContent = 'Забронировать на 12:00';
+  showScreen('s-zone-detail');
+}
+
+function pickZoneDate(btn){
+  document.querySelectorAll('#zoneDates .chip').forEach(function(c){ c.classList.remove('active'); });
+  btn.classList.add('active');
+}
+function pickZoneSlot(btn){
+  if(btn.classList.contains('disabled')) return;
+  document.querySelectorAll('#zoneSlots .slot').forEach(function(s){ s.classList.remove('active'); });
+  btn.classList.add('active');
+  currentZone.slot = btn.textContent.trim();
+  var b = document.getElementById('bookZoneBtn');
+  if(b) b.textContent = 'Забронировать на ' + currentZone.slot;
+}
+function bookZone(){
+  showToast('Забронировано: ' + currentZone.name + ' на ' + currentZone.slot + ' ✓');
+  setTimeout(function(){ showScreen('s-zones'); }, 1300);
+}
+
+/* ============ QUESTIONNAIRE ============ */
+var QUESTIONNAIRE = [
+  {title:'Спорт', options:[{emoji:'🎾', label:'Теннис'},{emoji:'🏋️', label:'Фитнес'},{emoji:'🧘', label:'Йога'},{emoji:'🏃', label:'Бег'},{emoji:'⚽', label:'Футбол'}]},
+  {title:'Настолки', options:[{emoji:'🎲', label:'Мафия'},{emoji:'♟', label:'Шахматы'},{emoji:'🃏', label:'Карты'},{emoji:'🎯', label:'Настолки'},{emoji:'🎮', label:'Видеоигры'}]},
+  {title:'Еда', options:[{emoji:'☕', label:'Кофе'},{emoji:'🍷', label:'Вино'},{emoji:'🍕', label:'Пицца'},{emoji:'🍣', label:'Суши'}]},
+  {title:'Другое', options:[{emoji:'📚', label:'Книги'},{emoji:'🎬', label:'Кино'},{emoji:'🎨', label:'Творчество'},{emoji:'🚶', label:'Прогулки'},{emoji:'🐕', label:'Собаки'}]}
+];
+var userInterests = ['Спорт','Настолки','Кофе'];
+
+function openQuestionnaire(){
+  var body = document.getElementById('questionnaireBody');
+  body.innerHTML = '';
+  QUESTIONNAIRE.forEach(function(cat){
+    var html = '<div class="form-group"><label class="form-label">' + cat.title + '</label><div class="chips">';
+    cat.options.forEach(function(opt){
+      var active = userInterests.indexOf(opt.label) >= 0;
+      html += '<button class="chip' + (active ? ' active' : '') + '" data-label="' + opt.label + '">' + opt.emoji + ' ' + opt.label + '</button>';
+    });
+    html += '</div></div>';
+    body.innerHTML += html;
+  });
+  body.querySelectorAll('.chips').forEach(function(group){
+    group.querySelectorAll('.chip').forEach(function(chip){
+      chip.onclick = function(e){ e.preventDefault(); chip.classList.toggle('active'); };
+    });
+  });
+  showScreen('s-questionnaire');
+}
+
+function saveQuestionnaire(){
+  var selected = [];
+  document.querySelectorAll('#questionnaireBody .chip.active').forEach(function(c){
+    selected.push(c.getAttribute('data-label'));
+  });
+  userInterests = selected;
+  var sum = document.getElementById('interestsSummary');
+  if(sum) sum.textContent = selected.length ? selected.join(', ') : 'Не выбрано';
+  renderRecommendations();
+  showToast('Сохранено! AI обновит рекомендации');
+  setTimeout(function(){ showScreen('s-events'); }, 800);
+}
+
+function renderRecommendations(){
+  var box = document.getElementById('aiRecommendations');
+  if(!box) return;
+  var recs = [];
+  if(userInterests.indexOf('Теннис') >= 0) recs.push({e:'🎾', t:'Партнёр по теннису', d:'Максим из кв. 108 тоже ищет'});
+  if(userInterests.indexOf('Кофе') >= 0) recs.push({e:'☕', t:'Кофейня «Утро» −20%', d:'Каждую среду для жителей ЖК'});
+  if(userInterests.indexOf('Йога') >= 0) recs.push({e:'🧘', t:'Йога на крыше', d:'Суббота 9:00'});
+  if(userInterests.indexOf('Мафия') >= 0 || userInterests.indexOf('Настолки') >= 0) recs.push({e:'🎲', t:'Мафия в коворкинге', d:'Пятница 19:30'});
+  if(userInterests.indexOf('Кино') >= 0) recs.push({e:'🎬', t:'Кинопоказ', d:'Пт 20:00'});
+  if(userInterests.indexOf('Фитнес') >= 0) recs.push({e:'🏋️', t:'Фитнес −50%', d:'Первый месяц для жителей ЖК'});
+  if(recs.length === 0) recs.push({e:'🎯', t:'Заполните анкету', d:'AI подберёт события'});
+
+  box.innerHTML = recs.slice(0,3).map(function(r){
+    return '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed #c7dbd0">' +
+           '<div style="font-size:20px">' + r.e + '</div>' +
+           '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--green-dark)">' + r.t + '</div>' +
+           '<div style="font-size:11.5px;color:var(--muted);margin-top:2px">' + r.d + '</div></div></div>';
+  }).join('');
+}
+
+/* ============ CREATE EVENT ============ */
+function openCreateEvent(){ showScreen('s-create-event'); }
+function submitUserEvent(){
+  var title = (document.getElementById('evTitle').value || '').trim();
+  var place = (document.getElementById('evPlace').value || '').trim();
+  var time = document.getElementById('evTime').value;
+  var date = document.getElementById('evDate').value;
+  var catChip = document.querySelector('#evCategory .chip.active');
+  var cat = catChip ? catChip.getAttribute('data-cat') : 'Другое';
+  var peopleChip = document.querySelector('#evPeople .chip.active');
+  var people = peopleChip ? peopleChip.getAttribute('data-n') : '0';
+
+  if(!title){ showToast('Введите название'); return; }
+  showToast('🤖 AI проверяет событие...');
+  setTimeout(function(){
+    var newEvent = document.createElement('div');
+    newEvent.className = 'card';
+    newEvent.style.borderLeft = '3px solid #2ec4a0';
+    newEvent.style.animation = 'msgIn .3s ease';
+    newEvent.innerHTML =
+      '<div class="row between" style="margin-bottom:6px"><span class="badge">' + cat + '</span>' +
+        '<span class="meta small">' + date + ' · ' + time + '</span></div>' +
+      '<div style="font-size:15px;font-weight:600;margin-bottom:4px">' + title + '</div>' +
+      '<div class="meta small">' + place + (people !== '0' ? ' · ' + people + ' человека' : '') + '</div>';
+    var list = document.getElementById('userEvents');
+    if(list) list.insertBefore(newEvent, list.firstChild);
+    showToast('✓ AI одобрил. Опубликовано!');
+    setTimeout(function(){ showScreen('s-events'); }, 1200);
+  }, 2000);
+}
+
+/* ============ AI ASSISTANT ============ */
+function openAIAssistant(){
+  var title = document.getElementById('aiTitle');
+  var sub = document.getElementById('aiSub');
+  var quickBox = document.getElementById('assistantQuick');
+  var body = document.getElementById('assistantBody');
+
+  if(currentRole === 'resident'){
+    title.textContent = 'AI-ассистент жителя';
+    sub.textContent = 'Помощь с заявками, скидками, УК';
+    quickBox.innerHTML =
+      '<button class="qr" onclick="assistantQuick(\'Как подать заявку?\')">Как подать заявку?</button>' +
+      '<button class="qr" onclick="assistantQuick(\'Какие скидки рядом?\')">Скидки рядом</button>' +
+      '<button class="qr" onclick="assistantQuick(\'Как связаться с УК?\')">Связаться с УК</button>';
+    body.innerHTML = '<div class="msg ai"><div class="ai-label"><span class="dot"></span>AI-ассистент</div>Здравствуйте! Помогу с заявкой, скидками, УК, событиями.</div>';
+  } else if(currentRole === 'uk'){
+    title.textContent = 'AI-ассистент УК';
+    sub.textContent = 'Аналитика, прогнозы, подсказки';
+    quickBox.innerHTML =
+      '<button class="qr" onclick="assistantQuick(\'Что требует внимания?\')">Что требует внимания?</button>' +
+      '<button class="qr" onclick="assistantQuick(\'Прогноз на неделю\')">Прогноз</button>' +
+      '<button class="qr" onclick="assistantQuick(\'Проблемные мастера?\')">Проблемные мастера</button>' +
+      '<button class="qr" onclick="assistantQuick(\'Где сэкономить?\')">Экономия</button>';
+    body.innerHTML = '<div class="msg ai"><div class="ai-label"><span class="dot"></span>AI-ассистент</div>Здравствуйте! Могу показать проблемные зоны, прогнозы, советы по экономии.</div>';
+  } else {
+    title.textContent = 'AI-ассистент подрядчика';
+    sub.textContent = 'Задачи, доход, советы';
+    quickBox.innerHTML =
+      '<button class="qr" onclick="assistantQuick(\'Что у меня сегодня?\')">Что сегодня?</button>' +
+      '<button class="qr" onclick="assistantQuick(\'Сколько я заработал?\')">Доход</button>' +
+      '<button class="qr" onclick="assistantQuick(\'Как повысить рейтинг?\')">Как повысить рейтинг</button>';
+    body.innerHTML = '<div class="msg ai"><div class="ai-label"><span class="dot"></span>AI-ассистент</div>Здравствуйте! Помогу с задачами, доходом и рейтингом.</div>';
+  }
+  document.getElementById('aiAssistantOverlay').classList.add('show');
+}
+function closeAIAssistant(){ document.getElementById('aiAssistantOverlay').classList.remove('show'); }
+function assistantQuick(text){ document.getElementById('assistantInput').value = text; assistantSend(); }
+
+function assistantSend(){
+  var input = document.getElementById('assistantInput');
+  var text = (input.value || '').trim();
+  if(!text) return;
+  input.value = '';
+  var body = document.getElementById('assistantBody');
+  var me = document.createElement('div');
+  me.className = 'msg me';
+  me.textContent = text;
+  body.appendChild(me);
+  body.scrollTop = body.scrollHeight;
+  var t = document.createElement('div');
+  t.className = 'typing';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  body.appendChild(t);
+  body.scrollTop = body.scrollHeight;
+  setTimeout(function(){
+    if(t.parentNode) t.remove();
+    var reply = document.createElement('div');
+    reply.className = 'msg ai';
+    var answer = currentRole === 'resident' ? answerResident(text) :
+                 currentRole === 'uk' ? answerUK(text) : answerContractor(text);
+    reply.innerHTML = '<div class="ai-label"><span class="dot"></span>AI-ассистент</div>' + answer;
+    body.appendChild(reply);
+    body.scrollTop = body.scrollHeight;
+  }, 1000);
+}
+
+function answerResident(q){
+  var s = q.toLowerCase();
+  if(s.indexOf('заявк') >= 0 || s.indexOf('подать') >= 0) return 'Подать заявку: <b>Главная → «Создать новую заявку»</b>.';
+  if(s.indexOf('скидк') >= 0 || s.indexOf('акци') >= 0) return 'Скидки для жителей ЖК → раздел <b>«События»</b>: кофейня −20%, фитнес −50%, салон −15%.';
+  if(s.indexOf('ук') >= 0 || s.indexOf('связаться') >= 0) return 'С УК: <b>«Чаты» → «Управляющая компания»</b>. 24/7.';
+  if(s.indexOf('событ') >= 0 || s.indexOf('компани') >= 0) return 'События → вкладка <b>«События»</b>: теннис, мафия, прогулки.';
+  return 'Могу помочь: заявка, скидки рядом, связь с УК, события.';
+}
+
+function answerUK(q){
+  var s = q.toLowerCase();
+  if(s.indexOf('вниман') >= 0 || s.indexOf('срочн') >= 0) return '<b>Требует внимания:</b><br>• 2 просроченные заявки<br>• Протечка кв. 312 (критично)<br>• Мастер-Климат ниже SLA (62%)';
+  if(s.indexOf('прогноз') >= 0 || s.indexOf('недел') >= 0) return '<b>Прогноз:</b><br>• Риск аварии: узел отопления 78%<br>• Вероятно 12–15 новых заявок<br>• Рекомендую диагностику узла';
+  if(s.indexOf('мастер') >= 0 || s.indexOf('подрядчик') >= 0) return '<b>Проблемные мастера:</b><br>• Мастер-Климат — 62% SLA, 3.8⭐<br>• Рекомендую беседу или замену';
+  if(s.indexOf('эконом') >= 0 || s.indexOf('сэконом') >= 0) return '<b>Где сэкономить:</b><br>• Профилактика освещения ~6 200 ₽/мес<br>• Проверка стояков ~3 400 ₽<br>• Смазка доводчиков ~2 800 ₽';
+  return 'Спросите про: внимание, прогноз, мастеров, экономию.';
+}
+
+function answerContractor(q){
+  var s = q.toLowerCase();
+  if(s.indexOf('сегодня') >= 0 || s.indexOf('задач') >= 0) return '<b>Сегодня 3 задачи:</b><br>• 10:00 — Протечка кв. 312 (срочно)<br>• 12:00 — Свет в подъезде<br>• 16:00 — Доводчик подъезд 4';
+  if(s.indexOf('заработ') >= 0 || s.indexOf('доход') >= 0) return '<b>Доход в мае:</b> 42 600 ₽. ↑ 18% к апрелю. Топ-категория: электрика (22 400 ₽).';
+  if(s.indexOf('рейтинг') >= 0 || s.indexOf('повыс') >= 0) return '<b>Как повысить рейтинг:</b><br>• Сократить отклик до 15 мин<br>• Закрывать SLA 100%<br>• Добавить фото до/после<br>• Вежливое общение';
+  return 'Спросите про: задачи на сегодня, доход, рейтинг.';
+}
+
+/* ============ CONTRACTOR APP ============ */
+function showCTab(btn, id){
+  var scope = document.getElementById('view-contractor');
+  if(!scope) return;
+  scope.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  var el = document.getElementById(id);
+  if(el){
+    el.classList.add('active');
+    var c = el.querySelector('.content');
+    if(c) c.scrollTop = 0;
+  }
+  scope.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+}
+
+function contractorOpenTask(title, addr, priority, sla){
+  document.getElementById('taskTitle').textContent = title;
+  document.getElementById('taskAddr').textContent = addr;
+  document.getElementById('taskPriority').textContent = priority;
+  document.getElementById('taskSla').textContent = 'SLA ' + sla;
+  var badge = document.getElementById('taskPriority');
+  badge.className = 'badge ' + (priority === 'КРИТИЧНО' ? 'danger' : priority === 'ВЫСОКИЙ' ? 'warn' : 'ok');
+  showScreen('c-task', 'view-contractor');
+}
+
+function contractorComplete(){
+  showToast('Работа завершена ✓');
+  setTimeout(function(){ showToast('Житель получил уведомление'); }, 1800);
+  setTimeout(function(){ showCTab(document.querySelectorAll('#view-contractor .tab')[0],'c-home'); }, 3500);
+}
+
+/* ============ INIT ============ */
+document.addEventListener('DOMContentLoaded', function(){
+  var input = document.getElementById('accessCode');
+  if(input) input.addEventListener('input', function(){ updateCodeBoxes(this.value); });
+  updateCodeBoxes('1 2 3 4');
+
+  var fab = document.getElementById('aiFab');
+  if(fab) fab.style.display = 'none';
+
+  document.querySelectorAll('.chips').forEach(function(group){
+    if(group.closest('#questionnaireBody')) return;
+    if(group.id === 'zoneDates') return;
+    group.querySelectorAll('.chip').forEach(function(chip){
+      chip.addEventListener('click', function(e){
+        e.preventDefault();
+        group.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+      });
+    });
+  });
+
+  renderRecommendations();
+});
+</script>
+
+</body>
+</html>
