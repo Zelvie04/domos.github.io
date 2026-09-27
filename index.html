@@ -74,7 +74,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   display:none;width:44px;height:44px;border-radius:12px;
   align-items:center;justify-content:center;flex-direction:column;gap:5px;
   border:1px solid var(--border);background:#fff;flex-shrink:0;
+  transition:transform .2s,box-shadow .2s;
+  position:relative;z-index:101;
 }
+.burger:active{transform:scale(.94)}
 .burger span{display:block;width:20px;height:2px;background:var(--green-dark);
   border-radius:2px;transition:transform .25s,opacity .25s}
 .burger.active span:nth-child(1){transform:translateY(7px) rotate(45deg)}
@@ -89,20 +92,31 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   padding:100px 32px 40px;
   flex-direction:column;gap:8px;
   opacity:0;pointer-events:none;transition:opacity .3s;
+  overflow-y:auto;
 }
 .mobile-menu.open{opacity:1;pointer-events:auto}
-.mobile-menu a{
+
+/* Пункты меню (только ссылки навигации) */
+.mobile-menu a:not(.btn){
   display:block;padding:16px 0;font-size:20px;font-weight:600;
   color:var(--green-dark);border-bottom:1px solid var(--border);
   cursor:pointer;
+  opacity:0;transform:translateY(12px);
+  transition:opacity .4s ease,transform .4s ease;
 }
-.mobile-menu .btn{margin-top:24px;justify-content:center}
+.mobile-menu.open a:not(.btn){opacity:1;transform:translateY(0)}
+.mobile-menu.open a:not(.btn):nth-child(1){transition-delay:.05s}
+.mobile-menu.open a:not(.btn):nth-child(2){transition-delay:.1s}
+.mobile-menu.open a:not(.btn):nth-child(3){transition-delay:.15s}
+.mobile-menu.open a:not(.btn):nth-child(4){transition-delay:.2s}
+.mobile-menu.open a:not(.btn):nth-child(5){transition-delay:.25s}
 
 /* ============ КНОПКИ ============ */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
   padding:14px 26px;border-radius:12px;font-size:15px;font-weight:600;
   transition:all .2s ease;cursor:pointer;white-space:nowrap;
   min-height:48px;text-align:center}
+.btn:active{transform:scale(.97)}
 .btn-primary{background:var(--green-dark);color:#fff;
   box-shadow:0 4px 14px rgba(15,61,46,.15)}
 .btn-primary:hover{background:var(--green);
@@ -117,6 +131,24 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .btn-lg{padding:17px 32px;font-size:16px;border-radius:14px}
 .btn-sm{padding:10px 18px;font-size:14px;border-radius:10px;min-height:40px}
 .btn-block{width:100%;justify-content:center}
+
+/* Кнопка CTA внутри мобильного меню – жёстко задаём белый цвет текста */
+.mobile-menu .btn-mobile-cta{
+  margin-top:28px;
+  background:linear-gradient(135deg,var(--navy),var(--green-bright));
+  color:#fff !important;
+  font-size:17px;
+  padding:18px 24px;
+  border-radius:14px;
+  box-shadow:0 12px 28px rgba(46,196,160,.4);
+  letter-spacing:.3px;
+  opacity:0;transform:translateY(12px);
+  transition:opacity .4s ease .3s,transform .4s ease .3s,box-shadow .2s;
+  display:flex;align-items:center;justify-content:center;
+}
+.mobile-menu.open .btn-mobile-cta{opacity:1;transform:translateY(0)}
+.mobile-menu .btn-mobile-cta:active{transform:scale(.97)}
+.mobile-menu .btn-mobile-cta:hover{box-shadow:0 16px 36px rgba(46,196,160,.55)}
 
 /* ============ HERO ============ */
 .hero{
@@ -135,6 +167,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   padding:8px 16px;border-radius:100px;font-size:13px;font-weight:600;
   color:var(--green-dark);margin-bottom:28px;
   box-shadow:0 2px 10px rgba(15,61,46,.05);
+  animation:fadeUp .6s ease both;
 }
 .hero-badge .dot{
   width:8px;height:8px;border-radius:50%;background:var(--green-bright);
@@ -144,9 +177,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   0%,100%{box-shadow:0 0 0 0 rgba(46,196,160,.5)}
   50%{box-shadow:0 0 0 8px rgba(46,196,160,0)}
 }
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
 .hero h1{
   font-size:60px;line-height:1.05;font-weight:800;color:var(--green-dark);
   letter-spacing:-1.5px;margin-bottom:24px;
+  animation:fadeUp .7s ease .1s both;
 }
 .hero h1 .accent{
   background:linear-gradient(135deg,var(--navy),var(--green-bright));
@@ -155,11 +193,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .hero p.lead{
   font-size:19px;color:var(--muted);line-height:1.55;
   margin-bottom:40px;max-width:560px;
+  animation:fadeUp .7s ease .2s both;
 }
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px;
+  animation:fadeUp .7s ease .3s both}
 .hero-stats{
   display:flex;gap:40px;flex-wrap:wrap;
   padding-top:32px;border-top:1px solid var(--border);
+  animation:fadeUp .7s ease .4s both;
 }
 .hero-stat b{
   display:block;font-size:32px;font-weight:800;color:var(--green-dark);
@@ -219,6 +260,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .phone-card{
   background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;
   border:1px solid #eef1ef;box-shadow:0 2px 8px rgba(15,61,46,.04);
+  animation:fadeUp .6s ease .5s both;
 }
 .phone-badge{
   display:inline-block;padding:3px 9px;border-radius:20px;
@@ -232,6 +274,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .phone-chat{
   background:linear-gradient(135deg,var(--green-dark),var(--green));
   color:#fff;border-radius:14px;padding:14px;
+  animation:fadeUp .6s ease .65s both;
 }
 .phone-chat-title{font-size:12px;font-weight:700;margin-bottom:6px;
   display:flex;align-items:center;gap:6px}
@@ -249,6 +292,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   font-size:13px;font-weight:600;color:var(--green-dark);
   display:flex;align-items:center;gap:10px;
   animation:float 6s ease-in-out infinite;
+  z-index:5;
 }
 .float-badge .icon{
   width:32px;height:32px;border-radius:9px;
@@ -307,7 +351,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   width:52px;height:52px;border-radius:14px;background:#fef2f2;
   display:flex;align-items:center;justify-content:center;font-size:24px;
   margin-bottom:20px;
+  transition:transform .3s ease;
 }
+.problem-card:hover .problem-icon{transform:scale(1.1) rotate(-5deg)}
 .problem-card h3{
   font-size:19px;font-weight:700;color:var(--green-dark);
   margin-bottom:10px;line-height:1.3;
@@ -356,7 +402,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:rgba(46,196,160,.15);color:var(--green-bright);
   display:flex;align-items:center;justify-content:center;font-size:22px;
   flex-shrink:0;
+  transition:transform .3s ease;
 }
+.solution-feature:hover .icon{transform:scale(1.1) rotate(-5deg)}
 .solution-feature h4{
   font-size:17px;font-weight:700;margin-bottom:6px;color:#fff;
 }
@@ -500,20 +548,34 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   background:linear-gradient(180deg,#fff,#f0f9f5);
   border-color:var(--green-mid);
 }
-.role-card.featured::before{
-  content:'Для УК · рекомендуем';
-  position:absolute;top:20px;right:-32px;
+
+/* Ленточка */
+.role-ribbon{
+  position:absolute;top:18px;right:18px;
+  display:inline-flex;align-items:center;gap:6px;
   background:linear-gradient(135deg,var(--green-dark),var(--green-bright));
   color:#fff;font-size:11px;font-weight:700;
-  padding:5px 40px;transform:rotate(45deg);
-  letter-spacing:.4px;
+  padding:6px 12px;border-radius:100px;
+  letter-spacing:.3px;
+  box-shadow:0 4px 12px rgba(46,196,160,.35);
+  animation:ribbonPulse 2.5s ease-in-out infinite;
 }
+.role-ribbon::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:#fff;
+}
+@keyframes ribbonPulse{
+  0%,100%{box-shadow:0 4px 12px rgba(46,196,160,.35)}
+  50%{box-shadow:0 4px 20px rgba(46,196,160,.65)}
+}
+
 .role-icon{
   width:64px;height:64px;border-radius:16px;
   background:var(--green-light);color:var(--green);
   display:flex;align-items:center;justify-content:center;
   font-size:28px;margin-bottom:24px;
+  transition:transform .4s ease;
 }
+.role-card:hover .role-icon{transform:scale(1.08) rotate(-6deg)}
 .role-card h3{
   font-size:22px;font-weight:700;color:var(--green-dark);
   margin-bottom:12px;
@@ -547,11 +609,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;
   background:radial-gradient(circle,rgba(46,196,160,.3),transparent 70%);
   border-radius:50%;pointer-events:none;
+  animation:orbFloat 12s ease-in-out infinite;
 }
 .cta-block::after{
   content:'';position:absolute;bottom:-50%;left:-20%;width:500px;height:500px;
   background:radial-gradient(circle,rgba(22,50,74,.4),transparent 70%);
   border-radius:50%;pointer-events:none;
+  animation:orbFloat 14s ease-in-out infinite reverse;
+}
+@keyframes orbFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(-30px,30px) scale(1.1)}
 }
 .cta-block h2{
   font-size:44px;font-weight:800;letter-spacing:-1px;
@@ -587,9 +655,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .footer-col a{
   display:block;color:#a8c4b6;font-size:14px;padding:6px 0;
-  transition:color .15s;cursor:pointer;
+  transition:color .15s,transform .15s;cursor:pointer;
 }
-.footer-col a:hover{color:#fff}
+.footer-col a:hover{color:#fff;transform:translateX(4px)}
 .footer-bottom{
   padding-top:28px;display:flex;justify-content:space-between;
   align-items:center;font-size:13px;color:#a8c4b6;flex-wrap:wrap;gap:12px;
@@ -651,7 +719,63 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .problem-grid,
   .roles-grid,
   .how-grid{grid-template-columns:1fr}
-  .hero-visual{display:none}
+
+  .hero-visual{
+    order:-1;
+    display:flex;
+    justify-content:center;
+    padding:0 12px;
+  }
+  .phone-mockup{
+    width:240px;height:480px;border-radius:36px;padding:10px;
+  }
+  .phone-mockup::before{width:70px;height:18px;top:16px}
+  .phone-screen{border-radius:28px}
+  .phone-status{padding:10px 18px 4px;font-size:11px}
+  .phone-header{padding:8px 16px 12px}
+  .phone-logo{font-size:13px;letter-spacing:1.5px}
+  .phone-avatar{width:24px;height:24px;font-size:11px}
+  .phone-greet{font-size:11px}
+  .phone-name{font-size:17px;margin-bottom:14px}
+  .phone-card{padding:12px;border-radius:12px}
+  .phone-title{font-size:12px}
+  .phone-meta{font-size:10px}
+  .phone-chat{padding:12px;border-radius:12px}
+  .phone-chat-title{font-size:11px}
+  .phone-chat-text{font-size:10.5px}
+
+  .float-badge{
+    display:flex;
+    padding:8px 12px;font-size:11px;border-radius:11px;gap:8px;
+    box-shadow:0 8px 20px rgba(15,61,46,.15);
+  }
+  .float-badge .icon{width:26px;height:26px;font-size:13px;border-radius:8px}
+  .float-badge.ai{top:8%;left:-8px}
+  .float-badge.sla{top:48%;right:-8px}
+  .float-badge.rating{bottom:8%;left:-4px}
+
+  .problem-card:active,
+  .role-card:active,
+  .how-step:active{
+    transform:translateY(-4px);
+    box-shadow:0 16px 32px rgba(15,61,46,.1);
+  }
+  .problem-card:active .problem-icon,
+  .role-card:active .role-icon{transform:scale(1.1) rotate(-5deg)}
+  .how-step:active .how-circle{
+    background:linear-gradient(135deg,var(--green-dark),var(--green));
+    border-color:var(--green-dark);color:#fff;transform:scale(1.05);
+  }
+  .solution-feature:active{
+    background:rgba(46,196,160,.08);
+    border-color:rgba(46,196,160,.3);
+  }
+
+  .role-ribbon{
+    top:14px;right:14px;
+    font-size:10px;padding:5px 10px;
+  }
+
   .compare-table th,
   .compare-table td{padding:14px 16px;font-size:13px}
   .killer-quote{padding:28px 24px}
@@ -662,31 +786,51 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   .footer{padding:60px 0 24px}
   .footer-inner{grid-template-columns:1fr;gap:32px}
   .footer-bottom{flex-direction:column;align-items:flex-start}
-  .role-card{padding:28px 24px}
-  .role-card.featured::before{display:none}
+  .role-card{padding:28px 24px;padding-top:56px}
   .hero-actions{flex-direction:column;width:100%}
   .hero-actions .btn{width:100%;justify-content:center}
   .btn-lg{padding:15px 24px;font-size:15px}
   .problem-card{padding:24px}
+
+  /* Мобильное меню – кнопка на всю ширину, крупнее и с гарантированно белым текстом */
+  .mobile-menu{
+    padding:90px 24px 32px;
+  }
+  .mobile-menu a:not(.btn){
+    font-size:19px;
+    padding:15px 0;
+  }
+  .mobile-menu .btn-mobile-cta{
+    font-size:16px;
+    padding:17px 20px;
+    width:100%;
+    margin-top:24px;
+  }
 }
 
 @media (max-width:400px){
   .hero h1{font-size:28px}
   .section-title{font-size:24px}
   .how-circle{width:72px;height:72px;font-size:28px}
+  .phone-mockup{width:210px;height:420px}
+  .float-badge{font-size:10px;padding:6px 10px}
+  .float-badge .icon{width:22px;height:22px;font-size:11px}
+  .float-badge.ai{top:4%;left:-4px}
+  .float-badge.sla{top:50%;right:-4px}
+  .float-badge.rating{bottom:4%;left:0}
 }
 
-/* Отключаем тяжёлые анимации для пользователей с prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce){
-  *{animation:none !important;transition:none !important}
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:.01ms !important}
   html{scroll-behavior:auto}
   .reveal{opacity:1;transform:none}
+  .flow-item{opacity:1}
 }
 </style>
 </head>
 <body>
 
-<!-- SVG-градиент для логотипа -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <linearGradient id="domosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -729,7 +873,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   <a data-scroll="how">Как работает</a>
   <a data-scroll="why">Отличие</a>
   <a data-scroll="roles">Прототипы</a>
-  <a href="uk.html" target="_blank" rel="noopener" class="btn btn-primary">Открыть прототип</a>
+  <a href="uk.html" target="_blank" rel="noopener" class="btn-mobile-cta">Открыть прототип</a>
 </div>
 
 <!-- ============ HERO ============ -->
@@ -775,14 +919,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
         </div>
       </div>
 
-      <!-- Мини-демо телефон -->
       <div class="hero-visual">
         <div class="float-badge ai">
           <div class="icon">🤖</div>
           <div>
             AI классифицировал
             <div style="font-weight:400;color:#7a8781;font-size:11px;margin-top:2px">
-              Электрика · Высокий приоритет
+              Электрика · Высокий
             </div>
           </div>
         </div>
@@ -1064,7 +1207,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   </div>
 </section>
 
-<!-- ============ ОТЛИЧИЕ / СРАВНЕНИЕ ============ -->
+<!-- ============ ОТЛИЧИЕ ============ -->
 <section class="section section-dark" id="why">
   <div class="container">
     <div class="reveal">
@@ -1156,7 +1299,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   </div>
 </section>
 
-<!-- ============ РОЛИ / ПРОТОТИПЫ ============ -->
+<!-- ============ РОЛИ ============ -->
 <section class="section" id="roles">
   <div class="container">
     <div class="reveal" style="text-align:center">
@@ -1190,6 +1333,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
       </div>
 
       <div class="role-card featured reveal reveal-delay-1">
+        <div class="role-ribbon">Для УК · рекомендуем</div>
         <div class="role-icon">🏢</div>
         <h3>Панель УК</h3>
         <p class="role-desc">
@@ -1284,7 +1428,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 </footer>
 
 <script>
-/* ============ ПЛАВНЫЙ СКРОЛЛ (безопасный, с учётом шапки) ============ */
 function smoothScrollTo(id){
   var el = document.getElementById(id);
   if(!el) return;
@@ -1294,7 +1437,6 @@ function smoothScrollTo(id){
   window.scrollTo({top: top, behavior:'smooth'});
 }
 
-/* ============ ВСЕ ЭЛЕМЕНТЫ С data-scroll ============ */
 document.querySelectorAll('[data-scroll]').forEach(function(el){
   el.addEventListener('click', function(e){
     e.preventDefault();
@@ -1304,7 +1446,6 @@ document.querySelectorAll('[data-scroll]').forEach(function(el){
   });
 });
 
-/* ============ ШАПКА ПРИ СКРОЛЛЕ ============ */
 window.addEventListener('scroll', function(){
   var header = document.getElementById('header');
   if(header){
@@ -1313,7 +1454,6 @@ window.addEventListener('scroll', function(){
   }
 }, {passive:true});
 
-/* ============ БУРГЕР-МЕНЮ ============ */
 var burger = document.getElementById('burger');
 var mobileMenu = document.getElementById('mobileMenu');
 
@@ -1337,12 +1477,10 @@ if(burger){
     else openMobileMenu();
   });
 }
-/* Закрытие по Escape */
 document.addEventListener('keydown', function(e){
   if(e.key === 'Escape') closeMobileMenu();
 });
 
-/* ============ ПОЯВЛЕНИЕ БЛОКОВ ПРИ СКРОЛЛЕ ============ */
 document.addEventListener('DOMContentLoaded', function(){
   var revealElements = document.querySelectorAll('.reveal');
   if('IntersectionObserver' in window){
@@ -1359,7 +1497,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
     revealElements.forEach(function(el){ observer.observe(el); });
   } else {
-    /* Фолбэк: показываем всё сразу */
     revealElements.forEach(function(el){ el.classList.add('visible'); });
   }
 });

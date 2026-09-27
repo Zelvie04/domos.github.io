@@ -387,7 +387,67 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
 #view-uk .tab .tl{color:#5a6672}
 #view-uk .tab.active .ti{color:var(--green)}
 #view-uk .tab.active .tl{color:var(--green)}
-#view-uk .section-title{color:var(--uk-muted)}</style>
+#view-uk .section-title{color:var(--uk-muted)}
+
+/* ============================================
+   ФИКС: убираем светлую полоску сверху в UK
+   и делаем весь текст в шапке белым
+   ============================================ */
+
+/* 1. У всех экранов UK тёмный фон (убирает светлую полосу поверху) */
+#view-uk .screen,
+#view-uk .role-view{
+  background:var(--uk-bg) !important;
+}
+
+/* 2. Статус-бар и топ-бар – прозрачные, без рамок и теней */
+#view-uk .status-bar,
+#view-uk .status-bar span,
+#view-uk .status-bar .right{
+  background:transparent !important;
+  color:#ffffff !important;
+  box-shadow:none !important;
+  border:none !important;
+}
+#view-uk .top-bar{
+  background:transparent !important;
+  box-shadow:none !important;
+  border-bottom:none !important;
+}
+
+/* 3. Весь текст в шапке UK – белый */
+#view-uk .top-bar h1,
+#view-uk .top-bar .action,
+#view-uk .top-bar .logo,
+#view-uk .top-bar .logo *,
+#view-uk .top-bar p,
+#view-uk .top-bar small,
+#view-uk .top-bar span{
+  color:#ffffff !important;
+}
+
+/* 4. Кнопка «назад» – полупрозрачная белая, не белая заливка */
+#view-uk .top-bar .back{
+  background:rgba(255,255,255,.08) !important;
+  color:#ffffff !important;
+  box-shadow:none !important;
+}
+#view-uk .top-bar .back:active{
+  background:rgba(255,255,255,.16) !important;
+}
+
+/* 5. SVG-иконка логотипа – белая заливка */
+#view-uk .top-bar .logo svg path[fill="#ffffff"],
+#view-uk .top-bar .logo svg path[fill="#fff"]{
+  fill:#ffffff !important;
+}
+
+/* 6. Контент UK – без верхней границы и без своего светлого фона */
+#view-uk .content{
+  background:var(--uk-bg) !important;
+  border-top:none !important;
+}
+</style>
 </head>
 <body>
 
@@ -475,7 +535,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
     <div class="section-title">Бизнесы рядом <span class="more" onclick="showScreen('s-events')">Все</span></div>
     <div class="card" style="cursor:pointer;padding:14px" onclick="showScreen('s-events')">
       <div style="display:flex;gap:10px"><div class="icon-circle sm" style="background:#fef3c7;color:#92400e">🎁</div>
-      <div style="flex:1"><div style="font-size:14px;font-weight:600">Кофейня «Утро» — скидка 20%</div><div class="meta small">Ср, 22 мая · <b>для жителей ЖК</b></div></div></div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:600">Кофейня «Утро» – скидка 20%</div><div class="meta small">Ср, 22 мая · <b>для жителей ЖК</b></div></div></div>
     </div>
     <div class="section-title">Общие зоны <span class="more" onclick="showScreen('s-zones')">Все</span></div>
     <div class="grid-3">
@@ -517,13 +577,13 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
       <div class="row between" style="margin-bottom:8px"><span class="badge danger">Скоро</span><span class="meta small">15–17 мая</span></div>
       <div style="font-size:15px;font-weight:700;margin-bottom:6px">💧 Отключение горячей воды</div>
       <div class="meta small" style="margin-bottom:8px">Весь дом. Работы теплосети.</div>
-      <div style="background:#fef3c7;border-radius:8px;padding:8px 10px;font-size:12px;color:#92400e">⏰ 15 мая 9:00 — 17 мая 18:00</div>
+      <div style="background:#fef3c7;border-radius:8px;padding:8px 10px;font-size:12px;color:#92400e">⏰ 15 мая 9:00 – 17 мая 18:00</div>
     </div>
     <div class="card news-item" data-status="now" style="border-left:3px solid #f59e0b">
       <div class="row between" style="margin-bottom:8px"><span class="badge warn">Идёт сейчас</span><span class="meta small">до 25 мая</span></div>
       <div style="font-size:15px;font-weight:700;margin-bottom:6px">🔧 Ремонт лифта во 2 подъезде</div>
       <div class="meta small" style="margin-bottom:8px">Работает грузовой.</div>
-      <div style="background:#fef3c7;border-radius:8px;padding:8px 10px;font-size:12px;color:#92400e">⏰ Окончание — 25 мая</div>
+      <div style="background:#fef3c7;border-radius:8px;padding:8px 10px;font-size:12px;color:#92400e">⏰ Окончание – 25 мая</div>
     </div>
     <div class="card news-item" data-status="plan" style="border-left:3px solid #2d8b6f">
       <div class="row between" style="margin-bottom:8px"><span class="badge">Запланировано</span><span class="meta small">28 мая</span></div>
@@ -700,7 +760,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
   <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
   <div class="top-bar"><h1>Общие зоны</h1></div>
   <div class="content">
-    <p class="meta" style="margin-bottom:16px">Забронируйте помещение — в один клик</p>
+    <p class="meta" style="margin-bottom:16px">Забронируйте помещение – в один клик</p>
     <div class="grid-2">
       <div class="zone-card" onclick="openZone('Коворкинг','9:00 – 21:00','3 этаж','Уютное пространство. Wi-Fi, розетки, кофе-машина.')">
         <img class="zone-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=70" alt="">
@@ -804,7 +864,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
       <div class="map-pin" style="left:12%;top:88%" onclick="showToast('🥐 Пекарня · круассан для жителей ЖК')">🥐</div>
       <div class="map-pin" style="left:88%;top:65%" onclick="showToast('💊 Аптека · −10% для жителей ЖК')">💊</div>
     </div>
-    <div class="meta small" style="text-align:center;margin-bottom:16px">Нажмите на точку — увидите скидку</div>
+    <div class="meta small" style="text-align:center;margin-bottom:16px">Нажмите на точку – увидите скидку</div>
 
     <div class="card" style="background:linear-gradient(135deg,#f0f9f5,#e8f1ec);border-color:#d1fae5;margin-bottom:16px">
       <div class="row between" style="margin-bottom:10px">
@@ -820,7 +880,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
       <div class="event-body">
         <div class="event-title">Кофейня «Утро»</div>
         <div class="event-meta"><span>📍 100 м</span><span>⏰ 8:00–22:00</span></div>
-        <div class="event-promo">🎁 Скидка 20% по средам — <b>для жителей ЖК</b></div>
+        <div class="event-promo">🎁 Скидка 20% по средам – <b>для жителей ЖК</b></div>
       </div>
     </div>
     <div class="event-card">
@@ -828,7 +888,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
       <div class="event-body">
         <div class="event-title">Фитнес «Энергия»</div>
         <div class="event-meta"><span>📍 250 м</span><span>⏰ 7:00–23:00</span></div>
-        <div class="event-promo">🎁 Первый месяц −50% — <b>для жителей ЖК</b></div>
+        <div class="event-promo">🎁 Первый месяц −50% – <b>для жителей ЖК</b></div>
       </div>
     </div>
     <div class="event-card">
@@ -836,7 +896,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
       <div class="event-body">
         <div class="event-title">Салон красоты «Bloom»</div>
         <div class="event-meta"><span>📍 180 м</span><span>⏰ 9:00–21:00</span></div>
-        <div class="event-promo">🎁 Маникюр + педикюр −15% — <b>для жителей ЖК</b></div>
+        <div class="event-promo">🎁 Маникюр + педикюр −15% – <b>для жителей ЖК</b></div>
       </div>
     </div>
 
@@ -872,7 +932,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
   <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
   <div class="top-bar"><button class="back" onclick="showScreen('s-events')">←</button><h1>Ваши интересы</h1></div>
   <div class="content">
-    <p class="meta" style="margin-bottom:16px">Отметьте, что интересно — AI подберёт события</p>
+    <p class="meta" style="margin-bottom:16px">Отметьте, что интересно – AI подберёт события</p>
     <div id="questionnaireBody"></div>
     <button class="btn btn-primary" style="margin-top:16px" onclick="saveQuestionnaire()">Готово</button>
   </div>
@@ -1128,7 +1188,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans
   <div class="screen active" id="uk-dashboard">
     <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
     <div class="top-bar">
-      <div class="logo" style="color:#0f3d2e;font-size:16px;letter-spacing:2px">DOM<span class="logo-mark" style="width:16px;height:16px;margin:0 3px;vertical-align:-2px"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#fff"/></svg></span>S</div>
+      <div class="logo" style="color:#ffffff;font-size:16px;letter-spacing:2px">DOM<span class="logo-mark" style="width:16px;height:16px;margin:0 3px;vertical-align:-2px"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
       <div style="flex:1"></div>
       <button onclick="openUKAccount()" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#2ec4a0,#0f3d2e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:inherit">УК</button>
     </div>
@@ -1982,7 +2042,7 @@ var UK_REQUESTS = {
     category:'💧 Сантехника', resident:'Анна Иванова · +7 (999) 123-45-67',
     master:'Игорь Смирнов', masterSla:'88%', masterTime:'22 мин',
     desc:'Житель сообщает: вода капает с потолка возле электрощитовой. Есть риск замыкания. Заявка просрочена на 12 минут.',
-    recommendations:['Позвонить мастеру и уточнить статус','Уведомить жителя о задержке','При риске замыкания — вызвать аварийную службу'],
+    recommendations:['Позвонить мастеру и уточнить статус','Уведомить жителя о задержке','При риске замыкания – вызвать аварийную службу'],
     risk:'Замыкание электрощитовой · затопление соседей'
   },
   light: {
@@ -1990,7 +2050,7 @@ var UK_REQUESTS = {
     addr:'подъезд 1 · 3 этаж', created:'12 мая, 14:32', sla:'4 часа',
     category:'⚡ Электрика', resident:'Анна Иванова · +7 (999) 123-45-67',
     master:'Сергей Петров', masterSla:'96%', masterTime:'18 мин',
-    desc:'Не работает освещение на 3 этаже 1 подъезда. Повторное обращение №4 за месяц — возможна проблема в проводке, а не в лампе.',
+    desc:'Не работает освещение на 3 этаже 1 подъезда. Повторное обращение №4 за месяц – возможна проблема в проводке, а не в лампе.',
     recommendations:['Направить электрика с диагностическим оборудованием','Проверить всю линию освещения','Запланировать замену 3 светильников'],
     risk:'Повторное обращение · возможна неисправность проводки'
   }
@@ -2127,7 +2187,7 @@ var REQUEST_DATA = {
   active: {
     num:'№2487', title:'Не работает свет в подъезде', status:'В работе', statusClass:'warn',
     priority:'Срочный', priorityClass:'danger',
-    desc:'3 этаж, лампа не горит. Уже второй день никого нет — темно, страшно выходить вечером.',
+    desc:'3 этаж, лампа не горит. Уже второй день никого нет – темно, страшно выходить вечером.',
     photo:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&q=70',
     master:{name:'Сергей Петров', role:'Электрик · УК Солнечный', initial:'С'},
     timeline:[
@@ -2167,7 +2227,7 @@ var REQUEST_DATA = {
   done3: {
     num:'№2398', title:'Замена лампочки в тамбуре', status:'Отменена', statusClass:'gray',
     priority:'Низкий', priorityClass:'',
-    desc:'Заявка отменена — проблема решилась самостоятельно.',
+    desc:'Заявка отменена – проблема решилась самостоятельно.',
     photo:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&q=70',
     master:null,
     timeline:[
@@ -2374,12 +2434,12 @@ function finishAIChat(){
 
     if(isPriv){
       setTimeout(function(){
-        addMsg('ai', 'Это <b>личная заявка</b> — работа в квартире. Подобрала 3 специалиста.');
+        addMsg('ai', 'Это <b>личная заявка</b> – работа в квартире. Подобрала 3 специалиста.');
         setTimeout(function(){ openContractorPicker(); }, 1800);
       }, 900);
     } else {
       setTimeout(function(){
-        addMsg('ai', 'Это <b>общедомовая заявка</b>. Назначаю: <b>Сергей Петров</b> — 96% SLA.');
+        addMsg('ai', 'Это <b>общедомовая заявка</b>. Назначаю: <b>Сергей Петров</b> – 96% SLA.');
         setTimeout(function(){ openContractorChat('Сергей Петров', flow.label); }, 2600);
       }, 900);
     }
@@ -2860,14 +2920,14 @@ function answerUK(q){
   var s = q.toLowerCase();
   if(s.indexOf('вниман') >= 0 || s.indexOf('срочн') >= 0) return '<b>Требует внимания:</b><br>• 2 просроченные заявки<br>• Протечка кв. 312 (критично)<br>• Мастер-Климат ниже SLA (62%)';
   if(s.indexOf('прогноз') >= 0 || s.indexOf('недел') >= 0) return '<b>Прогноз:</b><br>• Риск аварии: узел отопления 78%<br>• Вероятно 12–15 новых заявок<br>• Рекомендую диагностику узла';
-  if(s.indexOf('мастер') >= 0 || s.indexOf('подрядчик') >= 0) return '<b>Проблемные мастера:</b><br>• Мастер-Климат — 62% SLA, 3.8⭐<br>• Рекомендую беседу или замену';
+  if(s.indexOf('мастер') >= 0 || s.indexOf('подрядчик') >= 0) return '<b>Проблемные мастера:</b><br>• Мастер-Климат – 62% SLA, 3.8⭐<br>• Рекомендую беседу или замену';
   if(s.indexOf('эконом') >= 0 || s.indexOf('сэконом') >= 0) return '<b>Где сэкономить:</b><br>• Профилактика освещения ~6 200 ₽/мес<br>• Проверка стояков ~3 400 ₽<br>• Смазка доводчиков ~2 800 ₽';
   return 'Спросите про: внимание, прогноз, мастеров, экономию.';
 }
 
 function answerContractor(q){
   var s = q.toLowerCase();
-  if(s.indexOf('сегодня') >= 0 || s.indexOf('задач') >= 0) return '<b>Сегодня 3 задачи:</b><br>• 10:00 — Протечка кв. 312 (срочно)<br>• 12:00 — Свет в подъезде<br>• 16:00 — Доводчик подъезд 4';
+  if(s.indexOf('сегодня') >= 0 || s.indexOf('задач') >= 0) return '<b>Сегодня 3 задачи:</b><br>• 10:00 – Протечка кв. 312 (срочно)<br>• 12:00 – Свет в подъезде<br>• 16:00 – Доводчик подъезд 4';
   if(s.indexOf('заработ') >= 0 || s.indexOf('доход') >= 0) return '<b>Доход в мае:</b> 42 600 ₽. ↑ 18% к апрелю. Топ-категория: электрика (22 400 ₽).';
   if(s.indexOf('рейтинг') >= 0 || s.indexOf('повыс') >= 0) return '<b>Как повысить рейтинг:</b><br>• Сократить отклик до 15 мин<br>• Закрывать SLA 100%<br>• Добавить фото до/после<br>• Вежливое общение';
   return 'Спросите про: задачи на сегодня, доход, рейтинг.';
