@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f3d2e">
+<title>DOMOS — приложение</title>
+<style>
+:root{
+  --green-dark:#0f3d2e;--green:#1a5a44;--green-mid:#2d8b6f;
+  --green-light:#e8f1ec;--bg:#f4f6f4;--card:#fff;
+  --text:#1a2b24;--muted:#7a8781;--border:#e6eae8;
+  --navy:#16324a;
+  --warn:#f59e0b;--danger:#dc2626;--ok:#059669;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:#0a0a0a;color:var(--text);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;overflow:hidden}
+
+/* ---- Phone frame (desktop) ---- */
+@media (min-width:560px){
+  body{display:flex;align-items:center;justify-content:center;min-height:100vh;
+    background:radial-gradient(circle at 50% 0%,#1a3a2e 0%,#0a0a0a 70%)}
+  .phone-frame{width:390px;height:820px;background:#000;border-radius:44px;
+    padding:12px;box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 2px #333;
+    position:relative}
+  .phone-frame::after{content:'';position:absolute;top:22px;left:50%;
+    transform:translateX(-50%);width:110px;height:26px;background:#000;
+    border-radius:0 0 16px 16px;z-index:100}
+  .phone-screen{width:100%;height:100%;background:var(--bg);border-radius:34px;
+    overflow:hidden;position:relative}
+}
+@media (max-width:559px){
+  .phone-frame{width:100%;height:100dvh}
+  .phone-screen{width:100%;height:100%;background:var(--bg);
+    overflow:hidden;position:relative}
+}
+
+/* ---- Screen system ---- */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;
+  background:var(--bg);overflow:hidden}
+.screen.active{display:flex;animation:slideIn .22s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+
+.status-bar{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 22px 6px;font-size:13px;font-weight:600;color:var(--text);
+  flex-shrink:0;position:relative;z-index:10}
+.status-bar .right{display:flex;gap:4px;font-size:12px}
+
+.top-bar{display:flex;align-items:center;gap:12px;padding:6px 18px 14px;
+  flex-shrink:0;background:transparent}
+.top-bar .back{width:34px;height:34px;border-radius:50%;background:#fff;
+  border:none;display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);
+  color:var(--text);flex-shrink:0}
+.top-bar .back:active{transform:scale(.94)}
+.top-bar h1{font-size:19px;font-weight:700;letter-spacing:-.3px;flex:1}
+.top-bar .action{font-size:14px;color:var(--green-mid);font-weight:600;
+  background:none;border:none;cursor:pointer}
+
+.content{flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:0 18px 100px;-webkit-overflow-scrolling:touch}
+.content::-webkit-scrollbar{display:none}
+
+/* ---- Bottom nav ---- */
+.tab-bar{position:absolute;bottom:0;left:0;right:0;background:#fff;
+  border-top:1px solid var(--border);display:flex;justify-content:space-around;
+  padding:8px 0 22px;z-index:50;
+  box-shadow:0 -2px 12px rgba(0,0,0,.03)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 12px;border-radius:10px;cursor:pointer;flex:1;
+  transition:transform .12s;background:none;border:none;font-family:inherit}
+.tab:active{transform:scale(.92)}
+.tab .ti{font-size:20px;line-height:1;color:#9aa39f;transition:color .15s}
+.tab .tl{font-size:10px;font-weight:500;color:#9aa39f;letter-spacing:.1px}
+.tab.active .ti{color:var(--green-dark)}
+.tab.active .tl{color:var(--green-dark);font-weight:600}
+
+/* ---- Logo ---- */
+.logo{display:inline-flex;align-items:center;font-size:22px;font-weight:700;
+  letter-spacing:2px;color:var(--navy);line-height:1}
+.logo-mark{display:inline-block;width:22px;height:22px;margin:0 4px;
+  vertical-align:-3px;flex-shrink:0}
+.logo-mark svg{width:100%;height:100%;display:block}
+.logo.light{color:#fff}
+
+/* ---- Components ---- */
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;
+  box-shadow:0 2px 10px rgba(15,61,46,.05);border:1px solid #eef1ef}
+.card.plain{box-shadow:none;border:none;background:transparent;padding:0;margin:0}
+
+.section-title{font-size:12px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px;
+  display:flex;justify-content:space-between;align-items:center}
+.section-title:first-child{margin-top:4px}
+.section-title .more{color:var(--green-mid);font-size:13px;text-transform:none;
+  letter-spacing:0;cursor:pointer;font-weight:500}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;background:var(--green-light);color:var(--green)}
+.badge.warn{background:#fef3c7;color:#92400e}
+.badge.danger{background:#fee2e2;color:#991b1b}
+.badge.ok{background:#d1fae5;color:#065f46}
+.badge.gray{background:#f1f3f2;color:#5a6b64}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 22px;border-radius:14px;border:none;font-size:15px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:all .12s;text-decoration:none;
+  width:100%}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--green-dark);color:#fff}
+.btn-primary:active{background:var(--green)}
+.btn-outline{background:#fff;color:var(--green-dark);border:1.5px solid #d5ddd9}
+.btn-soft{background:var(--green-light);color:var(--green-dark)}
+.btn-sm{padding:9px 14px;font-size:13px;border-radius:10px;width:auto}
+
+.row{display:flex;align-items:center;gap:10px}
+.row.between{justify-content:space-between}
+.row.center{justify-content:center}
+
+.meta{font-size:13px;color:var(--muted);line-height:1.5}
+.meta.small{font-size:12px}
+
+.photo{width:100%;border-radius:12px;object-fit:cover;display:block}
+
+.icon-circle{width:44px;height:44px;border-radius:50%;background:var(--green-light);
+  color:var(--green);display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0}
+.icon-circle.sm{width:36px;height:36px;font-size:16px}
+
+.avatar{width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,#f4a261,#e76f51);display:flex;align-items:center;
+  justify-content:center;color:#fff;font-size:16px;font-weight:700;flex-shrink:0}
+
+.divider{height:1px;background:var(--border);margin:12px 0}
+
+/* ---- Timeline ---- */
+.timeline{display:flex;flex-direction:column;gap:14px;padding:4px 0}
+.tl-item{display:flex;gap:12px;align-items:flex-start;position:relative}
+.tl-dot{width:26px;height:26px;border-radius:50%;background:#f1f3f2;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  flex-shrink:0;color:#9aa39f;font-weight:700;position:relative;z-index:1}
+.tl-dot.done{background:var(--green-light);color:var(--green)}
+.tl-dot.active{background:var(--green-dark);color:#fff}
+.tl-item::before{content:'';position:absolute;left:12px;top:26px;
+  bottom:-14px;width:2px;background:#e6eae8}
+.tl-item:last-child::before{display:none}
+.tl-body{flex:1;padding-top:2px}
+.tl-title{font-size:14px;font-weight:600;color:var(--text)}
+.tl-time{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* ---- Grids ---- */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+
+/* ---- Bottom sheet / new request form ---- */
+.form-group{margin-bottom:16px}
+.form-label{font-size:13px;font-weight:600;margin-bottom:8px;display:block}
+.form-input,.form-textarea,.form-select{width:100%;padding:14px 16px;
+  border:1.5px solid var(--border);border-radius:12px;font-size:15px;
+  font-family:inherit;background:#fff;color:var(--text);transition:border .15s}
+.form-input:focus,.form-textarea:focus,.form-select:focus{outline:none;
+  border-color:var(--green-mid)}
+.form-textarea{min-height:90px;resize:none}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{padding:8px 14px;border-radius:20px;background:#fff;
+  border:1.5px solid var(--border);font-size:13px;cursor:pointer;
+  transition:all .12s;font-family:inherit;color:var(--text)}
+.chip.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+
+.upload-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.upload-btn{padding:18px 8px;border:1.5px dashed #d5ddd9;border-radius:12px;
+  background:#fafbfa;display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit;
+  transition:all .12s}
+.upload-btn:active{border-color:var(--green-mid);background:var(--green-light)}
+.upload-btn .ui{font-size:22px}
+
+/* ---- Login ---- */
+.login{flex:1;display:flex;flex-direction:column;padding:60px 32px 40px;
+  background:linear-gradient(180deg,#f8f6f1 0%,#e8f1ec 100%)}
+.login .logo{font-size:34px;letter-spacing:4px;justify-content:center;
+  display:flex;margin-bottom:60px}
+.login .logo .logo-mark{width:34px;height:34px;margin:0 6px;vertical-align:-5px}
+.login h2{font-size:24px;font-weight:700;margin-bottom:8px;letter-spacing:-.3px}
+.login .sub{color:var(--muted);margin-bottom:32px;font-size:14px}
+.code-input{display:flex;gap:8px;margin:20px 0 24px}
+.code-box{flex:1;height:52px;border:1.5px solid var(--border);border-radius:12px;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;color:var(--green-dark);transition:border .15s}
+.code-box.filled{border-color:var(--green-mid)}
+.code-box.active{border-color:var(--green-dark);box-shadow:0 0 0 3px var(--green-light)}
+
+/* ---- Zones card ---- */
+.zone-card{background:#fff;border-radius:16px;overflow:hidden;
+  border:1px solid #eef1ef;cursor:pointer;transition:transform .15s;
+  box-shadow:0 2px 10px rgba(15,61,46,.05)}
+.zone-card:active{transform:scale(.97)}
+.zone-img{width:100%;height:100px;object-fit:cover;display:block}
+.zone-body{padding:12px}
+.zone-name{font-size:14px;font-weight:600;margin-bottom:2px}
+
+/* ---- Chat list ---- */
+.chat-row{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);
+  cursor:pointer;align-items:center}
+.chat-row:last-child{border-bottom:none}
+.chat-row:active{background:#fafbfa}
+.chat-body{flex:1;min-width:0}
+.chat-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.chat-preview{font-size:13px;color:var(--muted);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.chat-time{font-size:11px;color:var(--muted);flex-shrink:0}
+.chat-unread{background:var(--green-dark);color:#fff;font-size:11px;
+  padding:2px 7px;border-radius:10px;font-weight:600;margin-top:4px;
+  display:inline-block}
+
+/* ---- Progress ---- */
+.progress{height:8px;background:#eef1ef;border-radius:4px;overflow:hidden;
+  margin:10px 0}
+.progress-bar{height:100%;background:var(--green-mid);border-radius:4px;
+  transition:width .4s ease}
+
+/* ---- Notification dot ---- */
+.dot-ind{width:8px;height:8px;background:#dc2626;border-radius:50%;
+  display:inline-block}
+
+/* ---- Profile ---- */
+.profile-head{display:flex;flex-direction:column;align-items:center;
+  padding:12px 0 24px}
+.profile-head .avatar{width:80px;height:80px;font-size:28px;margin-bottom:14px}
+.profile-head h2{font-size:20px;font-weight:700}
+.profile-head .meta{margin-top:4px}
+
+.list-row{display:flex;align-items:center;gap:14px;padding:14px 0;
+  border-bottom:1px solid var(--border);cursor:pointer}
+.list-row:last-child{border-bottom:none}
+.list-row:active{background:#fafbfa}
+.list-row .body{flex:1}
+.list-row .title{font-size:14.5px;font-weight:500}
+.list-row .sub{font-size:12.5px;color:var(--muted);margin-top:1px}
+.list-row .arrow{color:#c4ccc9;font-size:16px}
+.toggle{width:42px;height:24px;border-radius:12px;background:#d5ddd9;
+  position:relative;transition:background .15s;flex-shrink:0;cursor:pointer}
+.toggle::after{content:'';position:absolute;left:2px;top:2px;width:20px;height:20px;
+  background:#fff;border-radius:50%;transition:transform .15s;
+  box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.toggle.on{background:var(--green-dark)}
+.toggle.on::after{transform:translateX(18px)}
+
+/* ---- Bottom sheet ---- */
+.sheet-overlay{position:absolute;inset:0;background:rgba(15,61,46,.5);
+  backdrop-filter:blur(4px);z-index:200;display:none;
+  align-items:flex-end;justify-content:center}
+.sheet-overlay.show{display:flex}
+.sheet{background:#fff;width:100%;border-radius:24px 24px 0 0;
+  padding:20px 22px 30px;max-height:80%;overflow-y:auto;
+  animation:sheetUp .25s ease;position:relative}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+.sheet::before{content:'';position:absolute;top:8px;left:50%;
+  transform:translateX(-50%);width:36px;height:4px;background:#d5ddd9;border-radius:2px}
+.sheet h3{font-size:19px;font-weight:700;margin-bottom:6px}
+.sheet .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.slot{padding:12px 6px;border-radius:10px;background:#fafbfa;
+  border:1.5px solid var(--border);text-align:center;font-size:13px;
+  cursor:pointer;transition:all .12s;font-family:inherit;color:var(--text)}
+.slot.active{background:var(--green-dark);color:#fff;border-color:var(--green-dark)}
+.slot.disabled{opacity:.35;cursor:not-allowed}
+
+/* ---- Toast ---- */
+.toast{position:absolute;top:50px;left:50%;transform:translateX(-50%);
+  background:var(--green-dark);color:#fff;padding:12px 20px;border-radius:12px;
+  font-size:14px;font-weight:500;z-index:999;opacity:0;pointer-events:none;
+  transition:opacity .2s;white-space:nowrap;max-width:90%}
+.toast.show{opacity:1}
+
+/* ---- Utility ---- */
+.mb-0{margin-bottom:0}.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}
+.mb-16{margin-bottom:16px}.mb-24{margin-bottom:24px}
+.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}
+.text-center{text-align:center}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<!-- Общий SVG-градиент для логотипа -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="domosGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#16324a"/>
+      <stop offset="45%" stop-color="#0f6b6b"/>
+      <stop offset="100%" stop-color="#2ec4a0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="phone-frame">
+<div class="phone-screen" id="appRoot">
+
+<!-- ============ SCREEN: LOGIN ============ -->
+<div class="screen active" id="s-login">
+  <div class="status-bar">
+    <span>9:41</span>
+    <span class="right">📶 🔋</span>
+  </div>
+  <div class="login">
+    <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
+    <h2>Добро пожаловать</h2>
+    <p class="sub">Введите номер телефона — мы отправим код</p>
+    <div class="form-group">
+      <label class="form-label">Телефон</label>
+      <input class="form-input" type="tel" value="+7 (999) 123-45-67">
+    </div>
+    <div class="code-input" id="codeInput">
+      <div class="code-box filled">1</div>
+      <div class="code-box filled">2</div>
+      <div class="code-box filled">3</div>
+      <div class="code-box active">4</div>
+      <div class="code-box"></div>
+      <div class="code-box"></div>
+    </div>
+    <button class="btn btn-primary" onclick="showScreen('s-home')">Войти</button>
+    <p class="meta small text-center mt-16">Продолжая, вы соглашаетесь с условиями сервиса</p>
+  </div>
+</div>
+
+<!-- ============ SCREEN: HOME ============ -->
+<div class="screen" id="s-home">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <div class="logo">DOM<span class="logo-mark"><svg viewBox="0 0 100 100"><path d="M50 4 L90 28 Q97 32 97 40 L97 84 Q97 96 85 96 L15 96 Q3 96 3 84 L3 40 Q3 32 10 28 Z" fill="url(#domosGrad)"/><path d="M50 30 L76 48 Q78 50 78 53 L78 74 Q78 78 74 78 L62 78 L62 62 L38 62 L38 78 L26 78 Q22 78 22 74 L22 53 Q22 50 24 48 Z" fill="#ffffff"/></svg></span>S</div>
+    <div style="flex:1"></div>
+    <button class="back" onclick="showScreen('s-notifications')" style="position:relative">
+      🔔<span class="dot-ind" style="position:absolute;top:6px;right:6px"></span>
+    </button>
+  </div>
+  <div class="content">
+    <div class="mb-16" style="padding:4px 0">
+      <div style="font-size:13px;color:var(--muted)">Добрый день,</div>
+      <div style="font-size:22px;font-weight:700;margin-top:2px">Анна 👋</div>
+      <div class="meta small mt-8">ЖК Солнечный, корпус 1 · кв. 247</div>
+    </div>
+
+    <div class="section-title">Ваша заявка</div>
+    <div class="card" onclick="showScreen('s-request-detail')" style="cursor:pointer">
+      <div class="row between mb-8">
+        <span class="badge warn">В работе</span>
+        <span class="meta small">№ 2487</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px">Не работает свет в подъезде</div>
+      <div class="meta small mb-12">3 этаж, лампа не горит · 12 мая, 14:32</div>
+      <img class="photo" style="height:110px" src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&q=70" alt="">
+      <div class="row between mt-12">
+        <span class="meta small">Мастер: Сергей П.</span>
+        <span style="color:var(--green-mid);font-size:13px;font-weight:600">Подробнее →</span>
+      </div>
+    </div>
+
+    <div class="section-title">Новости и события <span class="more" onclick="showScreen('s-notifications')">Все</span></div>
+    <div class="card" style="cursor:pointer">
+      <div class="row">
+        <div class="icon-circle sm" style="background:#fee2e2;color:#991b1b">💧</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600">Отключение горячей воды</div>
+          <div class="meta small">15–17 мая, 9:00–18:00</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer">
+      <div class="row">
+        <div class="icon-circle sm" style="background:#dbeafe;color:#1e40af">🎉</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600">Субботник во дворе</div>
+          <div class="meta small">20 мая, 11:00 · сбор у 1 подъезда</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Общие зоны <span class="more" onclick="showScreen('s-zones')">Забронировать</span></div>
+    <div class="grid-3">
+      <div class="zone-card" onclick="openZone('Коворкинг')">
+        <img class="zone-img" style="height:70px" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&q=70" alt="">
+        <div style="padding:8px;text-align:center;font-size:11px;font-weight:600">Коворкинг</div>
+      </div>
+      <div class="zone-card" onclick="openZone('Спортзал')">
+        <img class="zone-img" style="height:70px" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&q=70" alt="">
+        <div style="padding:8px;text-align:center;font-size:11px;font-weight:600">Спортзал</div>
+      </div>
+      <div class="zone-card" onclick="openZone('Кинозал')">
+        <img class="zone-img" style="height:70px" src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300&q=70" alt="">
+        <div style="padding:8px;text-align:center;font-size:11px;font-weight:600">Кинозал</div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Сообщество</span></button>
+    <button class="tab" onclick="switchTab(this,'s-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+  </div>
+</div>
+
+<!-- ============ SCREEN: REQUESTS LIST ============ -->
+<div class="screen" id="s-requests">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <h1>Мои заявки</h1>
+  </div>
+  <div class="content">
+    <div class="chips">
+      <button class="chip active">Все</button>
+      <button class="chip">Активные</button>
+      <button class="chip">Завершённые</button>
+    </div>
+
+    <div class="card" onclick="showScreen('s-request-detail')" style="cursor:pointer">
+      <div class="row between mb-8">
+        <span class="badge warn">В работе</span>
+        <span class="meta small">№ 2487 · 12 мая</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:4px">Не работает свет в подъезде</div>
+      <div class="meta small">3 этаж, лампа не горит</div>
+    </div>
+
+    <div class="card" style="cursor:pointer">
+      <div class="row between mb-8">
+        <span class="badge ok">Выполнено</span>
+        <span class="meta small">№ 2456 · 8 мая</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:4px">Протечка крана на кухне</div>
+      <div class="meta small">Сантехник приходил, всё исправлено</div>
+      <div class="divider"></div>
+      <div class="row between">
+        <span class="meta small">Оценка:</span>
+        <span style="font-size:14px">⭐⭐⭐⭐⭐</span>
+      </div>
+    </div>
+
+    <div class="card" style="cursor:pointer">
+      <div class="row between mb-8">
+        <span class="badge ok">Выполнено</span>
+        <span class="meta small">№ 2411 · 2 мая</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:4px">Шум у соседей ночью</div>
+      <div class="meta small">Проведена беседа с соседями</div>
+    </div>
+
+    <div class="card" style="cursor:pointer">
+      <div class="row between mb-8">
+        <span class="badge gray">Отменена</span>
+        <span class="meta small">№ 2398 · 28 апр</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:4px">Замена лампочки в тамбуре</div>
+      <div class="meta small">Отменена пользователем</div>
+    </div>
+
+    <button class="btn btn-primary mt-16" onclick="showScreen('s-new-request')">
+      ＋ Создать новую заявку
+    </button>
+  </div>
+  <div class="tab-bar">
+    <button class="tab" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab active" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Сообщество</span></button>
+    <button class="tab" onclick="switchTab(this,'s-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+  </div>
+</div>
+
+<!-- ============ SCREEN: REQUEST DETAIL ============ -->
+<div class="screen" id="s-request-detail">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <button class="back" onclick="showScreen('s-requests')">←</button>
+    <h1>Заявка №2487</h1>
+  </div>
+  <div class="content">
+    <div class="card mb-16">
+      <div class="row between mb-12">
+        <span class="badge warn">В работе</span>
+        <span class="badge danger">Срочный</span>
+      </div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px">Не работает свет в подъезде</div>
+      <div class="meta mb-12">3 этаж, лампа не горит. Уже второй день никого нет — темно, страшно выходить вечером.</div>
+      <img class="photo" style="height:150px" src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=600&q=70" alt="">
+    </div>
+
+    <div class="section-title">Ход выполнения</div>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot done">✓</div>
+          <div class="tl-body">
+            <div class="tl-title">Заявка создана</div>
+            <div class="tl-time">12 мая, 14:32</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot done">✓</div>
+          <div class="tl-body">
+            <div class="tl-title">AI классифицировал: электрика</div>
+            <div class="tl-time">12 мая, 14:32</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot done">✓</div>
+          <div class="tl-body">
+            <div class="tl-title">Назначен исполнитель: Сергей П.</div>
+            <div class="tl-time">12 мая, 15:00</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot active">●</div>
+          <div class="tl-body">
+            <div class="tl-title">Работы выполняются</div>
+            <div class="tl-time">Ожидаемое завершение: сегодня до 18:00</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">○</div>
+          <div class="tl-body">
+            <div class="tl-title">Завершение и оценка</div>
+            <div class="tl-time">Ожидается</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Исполнитель</div>
+    <div class="card">
+      <div class="row">
+        <div class="avatar" style="background:linear-gradient(135deg,#2d8b6f,#0f3d2e)">С</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600">Сергей Петров</div>
+          <div class="meta small">Электрик · УК Солнечный</div>
+        </div>
+        <button class="btn btn-soft btn-sm">📞</button>
+      </div>
+    </div>
+
+    <div class="mt-16" style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="showToast('Заявка отменена')">Отменить</button>
+      <button class="btn btn-primary" onclick="showToast('Сообщение отправлено')">Написать</button>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN: NEW REQUEST ============ -->
+<div class="screen" id="s-new-request">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <button class="back" onclick="showScreen('s-requests')">←</button>
+    <h1>Новая заявка</h1>
+  </div>
+  <div class="content">
+    <div class="form-group">
+      <label class="form-label">Категория</label>
+      <div class="chips">
+        <button class="chip active">⚡ Электрика</button>
+        <button class="chip">💧 Сантехника</button>
+        <button class="chip">🚪 Двери</button>
+        <button class="chip">🧹 Уборка</button>
+        <button class="chip">🛠 Другое</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Что случилось?</label>
+      <textarea class="form-textarea" placeholder="Опишите проблему: где, что, как давно...">Не работает свет в подъезде на 3 этаже. Уже второй день темно.</textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Прикрепите фото или видео</label>
+      <div class="upload-row">
+        <button class="upload-btn"><span class="ui">📷</span>Фото</button>
+        <button class="upload-btn"><span class="ui">🎥</span>Видео</button>
+        <button class="upload-btn"><span class="ui">🎤</span>Голос</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Срочность</label>
+      <div class="chips">
+        <button class="chip">Обычная</button>
+        <button class="chip active">Срочная</button>
+        <button class="chip">Аварийная</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary mb-8" onclick="submitRequest()">
+      Отправить заявку
+    </button>
+    <p class="meta small text-center">AI автоматически определит исполнителя и сроки</p>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN: ZONES ============ -->
+<div class="screen" id="s-zones">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><h1>Общие зоны</h1></div>
+  <div class="content">
+    <p class="meta mb-16">Забронируйте любое помещение в вашем доме — в один клик</p>
+
+    <div class="grid-2">
+      <div class="zone-card" onclick="openZone('Коворкинг')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=70" alt="">
+        <div class="zone-body">
+          <div class="zone-name">Коворкинг</div>
+          <div class="meta small">9:00 – 21:00</div>
+          <span class="badge" style="margin-top:8px">Свободно</span>
+        </div>
+      </div>
+      <div class="zone-card" onclick="openZone('Спортзал')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=70" alt="">
+        <div class="zone-body">
+          <div class="zone-name">Спортзал</div>
+          <div class="meta small">7:00 – 23:00</div>
+          <span class="badge warn" style="margin-top:8px">Мало мест</span>
+        </div>
+      </div>
+      <div class="zone-card" onclick="openZone('Кинозал')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&q=70" alt="">
+        <div class="zone-body">
+          <div class="zone-name">Кинозал</div>
+          <div class="meta small">По расписанию</div>
+          <span class="badge" style="margin-top:8px">Свободно</span>
+        </div>
+      </div>
+      <div class="zone-card" onclick="openZone('Барбекю')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=70" alt="">
+        <div class="zone-body">
+          <div class="zone-name">Барбекю-зона</div>
+          <div class="meta small">10:00 – 22:00</div>
+          <span class="badge" style="margin-top:8px">Свободно</span>
+        </div>
+      </div>
+      <div class="zone-card" onclick="openZone('Переговорная')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&q=70" alt="">
+        <div class="zone-body">
+          <div class="zone-name">Переговорная</div>
+          <div class="meta small">9:00 – 20:00</div>
+          <span class="badge" style="margin-top:8px">Свободно</span>
+        </div>
+      </div>
+      <div class="zone-card" onclick="openZone('Прачечная')">
+        <img class="zone-img" src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=400&q=70" alt="">
+        <div class="zone-body">
+          <div class="zone-name">Прачечная</div>
+          <div class="meta small">Круглосуточно</div>
+          <span class="badge danger" style="margin-top:8px">Занято</span>
+        </div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab active" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Сообщество</span></button>
+    <button class="tab" onclick="switchTab(this,'s-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+  </div>
+</div>
+
+<!-- ============ SCREEN: ZONE DETAIL ============ -->
+<div class="screen" id="s-zone-detail">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <button class="back" onclick="showScreen('s-zones')">←</button>
+    <h1 id="zoneTitle">Коворкинг</h1>
+  </div>
+  <div class="content">
+    <img class="photo mb-16" style="height:180px" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=70" alt="">
+    <div class="card mb-16">
+      <div class="row between mb-12">
+        <div>
+          <div style="font-size:16px;font-weight:700" id="zoneTitle2">Коворкинг</div>
+          <div class="meta small">с 9:00 до 21:00 · 3 этаж</div>
+        </div>
+        <span class="badge">Свободно</span>
+      </div>
+      <div class="meta">Уютное пространство для работы и встреч. Wi-Fi, розетки, кофе-машина. Вместимость: до 8 человек.</div>
+    </div>
+
+    <div class="section-title">Выберите дату</div>
+    <div class="chips mb-16">
+      <button class="chip active">Сегодня</button>
+      <button class="chip">Завтра</button>
+      <button class="chip">Ср, 22</button>
+      <button class="chip">Чт, 23</button>
+    </div>
+
+    <div class="section-title">Свободное время</div>
+    <div class="slots">
+      <button class="slot">10:00</button>
+      <button class="slot">11:00</button>
+      <button class="slot active">12:00</button>
+      <button class="slot">13:00</button>
+      <button class="slot disabled">14:00</button>
+      <button class="slot">15:00</button>
+      <button class="slot">16:00</button>
+      <button class="slot disabled">17:00</button>
+      <button class="slot">18:00</button>
+    </div>
+
+    <button class="btn btn-primary mt-16" onclick="bookZone()">Забронировать на 12:00</button>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN: COMMUNITY ============ -->
+<div class="screen" id="s-community">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><h1>Сообщество</h1></div>
+  <div class="content">
+    <div class="chips">
+      <button class="chip active">Чаты</button>
+      <button class="chip" onclick="showScreen('s-votes')">Голосования</button>
+      <button class="chip">Соседи</button>
+    </div>
+
+    <div class="card">
+      <div class="chat-row" onclick="showToast('Чат дома')">
+        <div class="icon-circle sm" style="background:#e8f1ec;color:var(--green)">🏠</div>
+        <div class="chat-body">
+          <div class="chat-name">Общий чат дома</div>
+          <div class="chat-preview">Анна: Кто идёт на йогу в субботу?</div>
+        </div>
+        <div style="text-align:right">
+          <div class="chat-time">14:32</div>
+          <span class="chat-unread">3</span>
+        </div>
+      </div>
+      <div class="chat-row">
+        <div class="icon-circle sm" style="background:#dbeafe;color:#1e40af">🔧</div>
+        <div class="chat-body">
+          <div class="chat-name">Сервис и подрядчики</div>
+          <div class="chat-preview">Игорь: Электрик придёт в 18:00</div>
+        </div>
+        <div class="chat-time">12:15</div>
+      </div>
+      <div class="chat-row">
+        <div class="icon-circle sm" style="background:#fef3c7;color:#92400e">🎉</div>
+        <div class="chat-body">
+          <div class="chat-name">События и мероприятия</div>
+          <div class="chat-preview">Марина: Субботник в 11:00, сбор у 1 подъезда</div>
+        </div>
+        <div class="chat-time">Вчера</div>
+      </div>
+      <div class="chat-row">
+        <div class="icon-circle sm" style="background:#fee2e2;color:#991b1b">🚗</div>
+        <div class="chat-body">
+          <div class="chat-name">Парковка</div>
+          <div class="chat-preview">Сергей: Кто оставил на моём месте?</div>
+        </div>
+        <div class="chat-time">Вчера</div>
+      </div>
+    </div>
+
+    <div class="section-title" onclick="showScreen('s-votes')">
+      Активное голосование <span class="more">Все →</span>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="showScreen('s-votes')">
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px">Установить шлагбаум во дворе?</div>
+      <div class="meta small mb-12">До окончания: 3 дня</div>
+      <div class="progress"><div class="progress-bar" style="width:62%"></div></div>
+      <div class="row between mt-8">
+        <span class="meta small">Проголосовало 42 из 68</span>
+        <span style="color:var(--green-mid);font-size:13px;font-weight:600">Голосовать →</span>
+      </div>
+    </div>
+
+    <div class="section-title">Соседи</div>
+    <div class="card">
+      <div class="row" style="margin-bottom:12px">
+        <div class="avatar" style="width:38px;height:38px;font-size:14px">А</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Анна Петрова</div>
+          <div class="meta small">кв. 245 · 3 этаж</div>
+        </div>
+      </div>
+      <div class="row" style="margin-bottom:12px">
+        <div class="avatar" style="width:38px;height:38px;font-size:14px;background:linear-gradient(135deg,#3b82f6,#1e40af)">И</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Игорь Смирнов</div>
+          <div class="meta small">кв. 312 · 5 этаж</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="avatar" style="width:38px;height:38px;font-size:14px;background:linear-gradient(135deg,#a855f7,#6d28d9)">М</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">Марина Ковалёва</div>
+          <div class="meta small">кв. 108 · 1 этаж</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab active" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Сообщество</span></button>
+    <button class="tab" onclick="switchTab(this,'s-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+  </div>
+</div>
+
+<!-- ============ SCREEN: VOTES ============ -->
+<div class="screen" id="s-votes">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <button class="back" onclick="showScreen('s-community')">←</button>
+    <h1>Голосования</h1>
+  </div>
+  <div class="content">
+    <div class="card mb-16">
+      <div class="row between mb-12">
+        <span class="badge warn">Активно</span>
+        <span class="meta small">3 дня</span>
+      </div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:8px">Установить шлагбаум во дворе?</div>
+      <div class="meta mb-16">Обсуждаем возможность установки автоматического шлагбаума на въезде. Стоимость распределится между жителями.</div>
+      <div class="progress"><div class="progress-bar" style="width:62%"></div></div>
+      <div class="row between mb-16">
+        <span class="meta small">Проголосовало 42 из 68</span>
+        <span class="meta small">62%</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="showToast('Голос «За» принят ✓')">За</button>
+        <button class="btn btn-outline" onclick="showToast('Голос «Против» принят')">Против</button>
+      </div>
+    </div>
+
+    <div class="card mb-16">
+      <div class="row between mb-12">
+        <span class="badge warn">Активно</span>
+        <span class="meta small">5 дней</span>
+      </div>
+      <div style="font-size:17px;font-weight:700;margin-bottom:8px">Продлить работу консьержа до 22:00?</div>
+      <div class="meta mb-16">Обсуждаем продление работы консьержа в будни. Обсуждение тарифов — в чате дома.</div>
+      <div class="progress"><div class="progress-bar" style="width:38%"></div></div>
+      <div class="row between mb-16">
+        <span class="meta small">Проголосовало 26 из 68</span>
+        <span class="meta small">38%</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline" onclick="showToast('Голос принят')">За</button>
+        <button class="btn btn-outline" onclick="showToast('Голос принят')">Против</button>
+      </div>
+    </div>
+
+    <div class="section-title">Завершённые</div>
+    <div class="card">
+      <div class="row between mb-8">
+        <span class="badge ok">Принято</span>
+        <span class="meta small">12 апр</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:4px">Поставить новые лавочки у подъезда</div>
+      <div class="meta small">За: 51, против: 8</div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN: NOTIFICATIONS ============ -->
+<div class="screen" id="s-notifications">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar">
+    <button class="back" onclick="showScreen('s-home')">←</button>
+    <h1>Уведомления</h1>
+    <button class="action">Прочитать</button>
+  </div>
+  <div class="content">
+    <div class="card mb-8" style="border-left:3px solid var(--green-mid)">
+      <div class="row between mb-4" style="margin-bottom:4px">
+        <div style="font-size:14px;font-weight:600">Заявка №2487 в работе</div>
+        <span class="meta small">2 мин</span>
+      </div>
+      <div class="meta small">Мастер Сергей П. выехал по вашему адресу</div>
+    </div>
+    <div class="card mb-8">
+      <div class="row between mb-4" style="margin-bottom:4px">
+        <div style="font-size:14px;font-weight:600">Новое голосование</div>
+        <span class="meta small">1 ч</span>
+      </div>
+      <div class="meta small">Установить шлагбаум во дворе — голосуйте до 20 мая</div>
+    </div>
+    <div class="card mb-8">
+      <div class="row between mb-4" style="margin-bottom:4px">
+        <div style="font-size:14px;font-weight:600">Отключение горячей воды</div>
+        <span class="meta small">3 ч</span>
+      </div>
+      <div class="meta small">15–17 мая, 9:00–18:00. Приносим извинения за неудобства</div>
+    </div>
+    <div class="card mb-8">
+      <div class="row between mb-4" style="margin-bottom:4px">
+        <div style="font-size:14px;font-weight:600">Анна Петрова ответила в чате</div>
+        <span class="meta small">5 ч</span>
+      </div>
+      <div class="meta small">"Кто идёт на йогу в субботу?"</div>
+    </div>
+    <div class="card mb-8" style="opacity:.7">
+      <div class="row between mb-4" style="margin-bottom:4px">
+        <div style="font-size:14px;font-weight:600">Заявка №2456 выполнена</div>
+        <span class="meta small">Вчера</span>
+      </div>
+      <div class="meta small">Не забудьте оценить работу мастера</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN: PROFILE ============ -->
+<div class="screen" id="s-profile">
+  <div class="status-bar"><span>9:41</span><span class="right">📶 🔋</span></div>
+  <div class="top-bar"><h1>Профиль</h1></div>
+  <div class="content">
+    <div class="profile-head">
+      <div class="avatar">А</div>
+      <h2>Анна Иванова</h2>
+      <div class="meta">+7 (999) 123-45-67</div>
+      <div class="meta small mt-8" style="background:var(--green-light);color:var(--green-dark);
+        padding:5px 12px;border-radius:20px;font-weight:600">ЖК Солнечный, кв. 247</div>
+    </div>
+
+    <div class="section-title">Аккаунт</div>
+    <div class="card">
+      <div class="list-row">
+        <div class="icon-circle sm">🏠</div>
+        <div class="body">
+          <div class="title">Мой адрес</div>
+          <div class="sub">ЖК Солнечный, корпус 1, кв. 247</div>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+      <div class="list-row">
+        <div class="icon-circle sm">👨‍👩‍👧</div>
+        <div class="body">
+          <div class="title">Члены семьи</div>
+          <div class="sub">2 человека</div>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+      <div class="list-row">
+        <div class="icon-circle sm">🚗</div>
+        <div class="body">
+          <div class="title">Мой транспорт</div>
+          <div class="sub">1 автомобиль</div>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+    </div>
+
+    <div class="section-title">Уведомления</div>
+    <div class="card">
+      <div class="list-row">
+        <div class="icon-circle sm">🔔</div>
+        <div class="body">
+          <div class="title">Push-уведомления</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="list-row">
+        <div class="icon-circle sm">📰</div>
+        <div class="body">
+          <div class="title">Новости дома</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="list-row">
+        <div class="icon-circle sm">💬</div>
+        <div class="body">
+          <div class="title">Сообщения в чатах</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+
+    <div class="section-title">Приложение</div>
+    <div class="card">
+      <div class="list-row">
+        <div class="icon-circle sm">❓</div>
+        <div class="body"><div class="title">Помощь и поддержка</div></div>
+        <span class="arrow">›</span>
+      </div>
+      <div class="list-row">
+        <div class="icon-circle sm">📄</div>
+        <div class="body"><div class="title">Документы и регламенты</div></div>
+        <span class="arrow">›</span>
+      </div>
+      <div class="list-row">
+        <div class="icon-circle sm">ℹ️</div>
+        <div class="body">
+          <div class="title">О приложении</div>
+          <div class="sub">Версия 1.0.0</div>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+    </div>
+
+    <button class="btn btn-outline mt-16 mb-24" onclick="showScreen('s-login')"
+      style="color:#dc2626;border-color:#fee2e2">Выйти из аккаунта</button>
+    <div style="height:20px"></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab" onclick="switchTab(this,'s-home')"><span class="ti">🏠</span><span class="tl">Главная</span></button>
+    <button class="tab" onclick="switchTab(this,'s-requests')"><span class="ti">📋</span><span class="tl">Заявки</span></button>
+    <button class="tab" onclick="switchTab(this,'s-zones')"><span class="ti">🏊</span><span class="tl">Зоны</span></button>
+    <button class="tab" onclick="switchTab(this,'s-community')"><span class="ti">💬</span><span class="tl">Сообщество</span></button>
+    <button class="tab active" onclick="switchTab(this,'s-profile')"><span class="ti">👤</span><span class="tl">Профиль</span></button>
+  </div>
+</div>
+
+<!-- Sheet for zones -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet" id="sheetBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+</div><!-- /phone-screen -->
+</div><!-- /phone-frame -->
+
+<script>
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el){
+    el.classList.add('active');
+    const c = el.querySelector('.content');
+    if(c) c.scrollTop = 0;
+  }
+}
+
+function switchTab(btn, id){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  showScreen(id);
+}
+
+function showToast(text){
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function submitRequest(){
+  showToast('Заявка отправлена ✓');
+  setTimeout(() => showScreen('s-requests'), 900);
+}
+
+function openZone(name){
+  document.getElementById('zoneTitle').textContent = name;
+  document.getElementById('zoneTitle2').textContent = name;
+  showScreen('s-zone-detail');
+}
+
+function bookZone(){
+  showToast('Забронировано на 12:00 ✓');
+  setTimeout(() => showScreen('s-zones'), 1200);
+}
+
+function closeSheet(){
+  document.getElementById('sheetOverlay').classList.remove('show');
+}
+
+// Slots click
+document.querySelectorAll('.slot').forEach(s => {
+  if(s.classList.contains('disabled')) return;
+  s.addEventListener('click', () => {
+    document.querySelectorAll('.slot').forEach(x => x.classList.remove('active'));
+    s.classList.add('active');
+  });
+});
+
+// Chips toggle
+document.querySelectorAll('.chips').forEach(group => {
+  group.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+});
+</script>
+</body>
+</html>
