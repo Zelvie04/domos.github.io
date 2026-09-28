@@ -46,14 +46,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* ============ ШАПКА ============ */
 .header{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(248,246,241,.85);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:100;
+  background:rgba(248,246,241,.92); /* чуть плотнее — компенсируем отказ от блюра */
   border-bottom:1px solid transparent;
-  transition:all .3s ease;
+  transition:background-color .3s ease,border-color .3s ease;
+  transform:translateZ(0); /* стабилизирует слой в WebKit */
+  -webkit-transform:translateZ(0);
 }
 .header.scrolled{
-  background:rgba(248,246,241,.95);
+  background:rgba(248,246,241,.97);
   border-bottom-color:var(--border);
 }
 .header-inner{display:flex;align-items:center;justify-content:space-between;
